@@ -8,6 +8,7 @@
   let tasks = $state<Task[]>([])
   let newTaskName = $state("")
   let isLoading = $state(true)
+  let selectedTask = $state<Task | null>(null)
 
   const tracking = useTracking()
 
@@ -30,20 +31,37 @@
     newTaskName = ""
   }
 
+  // Select a task (doesn't start tracking)
+  function handleSelectTask(task: Task) {
+    selectedTask = task
+  }
+
+  // Play/pause from task item or bottom bar
   async function handlePlayPause(task: Task) {
+    // Select the task first
+    selectedTask = task
+
     if (tracking.currentTask?.id === task.id) {
-      // Stop tracking this task
+      // Stop tracking
       await tracking.stopTracking()
-      await loadTasks() // Refresh to get updated totals
+      await loadTasks()
     } else {
       // If tracking another task, stop it first
       if (tracking.isTracking) {
         await tracking.stopTracking()
         await loadTasks()
       }
-      // Start tracking this task
+      // Start tracking the task
       tracking.startTracking(task)
     }
+  }
+
+  // Play/pause from the bottom bar
+  async function handlePlayPauseFromBottom() {
+    // Use currentTask if tracking, otherwise use selectedTask
+    const task = tracking.currentTask || selectedTask
+    if (!task) return
+    await handlePlayPause(task)
   }
 
   async function handleAdjustTime(task: Task, seconds: number) {
@@ -90,51 +108,51 @@
     </div>
   </div>
 
-  <CurrentTracking
-    isTracking={tracking.isTracking}
-    currentTask={tracking.currentTask}
-    elapsedSeconds={tracking.elapsedSeconds}
-    onStop={() => handlePlayPause(tracking.currentTask!)}
-  />
+  <!-- Add Task Form -->
+  <form onsubmit={handleAddTask} class="mb-6">
+    <input
+      type="text"
+      bind:value={newTaskName}
+      placeholder="What are you working on?"
+      class="w-full px-4 py-3 bg-surface-raised rounded-xl border-none placeholder:text-on-surface-muted"
+    />
+  </form>
 
   <!-- Task List -->
-  <div class="space-y-2 mb-6">
+  <div class="space-y-2 mb-24">
     {#if isLoading}
       <div class="text-center py-8 text-on-surface-muted">Loading...</div>
     {:else if tasks.length === 0}
       <div class="text-center py-8 text-on-surface-muted bg-surface-raised rounded-xl">
-        No tasks yet. Add one below to get started!
+        No tasks yet. Add one above to get started!
       </div>
     {:else}
       {#each tasks as task (task.id)}
-        {@const isActive = tracking.currentTask?.id === task.id}
+        {@const isSelected = selectedTask?.id === task.id}
+        {@const isTracking = tracking.currentTask?.id === task.id}
         <TaskItem
           {task}
-          {isActive}
+          isSelected={isSelected}
+          isTracking={isTracking}
           elapsedSeconds={tracking.elapsedSeconds}
+          onSelect={() => handleSelectTask(task)}
           onPlayPause={() => handlePlayPause(task)}
           onAdjustTime={(seconds) => handleAdjustTime(task, seconds)}
         />
       {/each}
     {/if}
   </div>
-
-  <!-- Add Task Form -->
-  <form onsubmit={handleAddTask}>
-    <div class="flex gap-2">
-      <input
-        type="text"
-        bind:value={newTaskName}
-        placeholder="What are you working on?"
-        class="flex-1 px-4 py-3 bg-surface-raised rounded-xl border-none placeholder:text-on-surface-muted"
-      />
-      <button
-        type="submit"
-        disabled={!newTaskName.trim()}
-        class="px-6 py-3 bg-accent text-on-accent rounded-xl font-medium hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        Add
-      </button>
-    </div>
-  </form>
 </main>
+
+<!-- Fixed Current Tracking Display at Bottom -->
+<div class="fixed bottom-0 left-0 right-0 z-50 p-6 pointer-events-none">
+  <div class="container mx-auto max-w-2xl pointer-events-auto">
+    <CurrentTracking
+      isTracking={tracking.isTracking}
+      selectedTask={selectedTask}
+      currentTask={tracking.currentTask}
+      elapsedSeconds={tracking.elapsedSeconds}
+      onPlayPause={handlePlayPauseFromBottom}
+    />
+  </div>
+</div>

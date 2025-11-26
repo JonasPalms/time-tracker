@@ -6,49 +6,76 @@
 
   let {
     task,
-    isActive,
+    isSelected,
+    isTracking,
     elapsedSeconds = 0,
+    onSelect,
     onPlayPause,
     onAdjustTime,
   }: {
     task: Task
-    isActive: boolean
+    isSelected: boolean
+    isTracking: boolean
     elapsedSeconds?: number
+    onSelect: () => void
     onPlayPause: () => void
     onAdjustTime: (seconds: number) => void
   } = $props()
 
   const timeAdjust = useTimeAdjust()
 
-  // Calculate display time (base + current elapsed if active)
+  // Calculate display time (base + current elapsed if tracking)
   const displayTime = $derived(() => {
     const baseSeconds = task.total_seconds
-    const extraSeconds = isActive ? elapsedSeconds : 0
+    const extraSeconds = isTracking ? elapsedSeconds : 0
     return formatTime(baseSeconds + extraSeconds)
   })
 
   // Get adjustment interval in seconds
   const adjustmentSeconds = $derived(timeAdjust.intervalMinutes * 60)
 
-  function handleAdd() {
+  function handleAdd(e: MouseEvent) {
+    e.stopPropagation()
     onAdjustTime(adjustmentSeconds)
   }
 
-  function handleSubtract() {
+  function handleSubtract(e: MouseEvent) {
+    e.stopPropagation()
     onAdjustTime(-adjustmentSeconds)
+  }
+
+  function handlePlayPause(e: MouseEvent) {
+    e.stopPropagation()
+    onPlayPause()
+  }
+
+  function handleDoubleClick() {
+    onPlayPause()
   }
 </script>
 
-<div class="group flex items-center gap-3 p-3 bg-surface-raised rounded-xl transition-colors">
+<div
+  role="button"
+  tabindex="0"
+  class="group flex items-center gap-3 p-3 rounded-xl transition-colors hover:bg-surface-raised cursor-pointer"
+  onclick={onSelect}
+  ondblclick={handleDoubleClick}
+  onkeydown={(e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault()
+      onSelect()
+    }
+  }}
+>
   <!-- Play/Pause Button -->
   <button
-    class="w-10 h-10 flex items-center bg-surface justify-center rounded-full transition-all {isActive
-      ? 'text-accent hover:bg-accent/20'
-      : 'hover:bg-accent/20'} hover:scale-105"
-    onclick={onPlayPause}
-    aria-label={isActive ? "Stop tracking" : "Start tracking"}
+    class="w-12 h-12 flex items-center justify-center rounded-full transition-transform {isTracking
+      ? 'text-accent'
+      : ''} hover:scale-110"
+    onclick={handlePlayPause}
+    aria-label={isTracking ? "Pause tracking" : "Start tracking"}
   >
-    <Icon name={isActive ? "pause" : "play"} />
+    <Icon name={isTracking ? "pause" : "play"} class="w-6 h-6"  />
   </button>
 
   <!-- Task Name -->
@@ -57,7 +84,7 @@
   </div>
 
   <!-- Time -->
-  <div class="font-mono text-xl {isActive ? 'text-accent font-bold' : 'text-on-surface-muted'}">
+  <div class="font-mono text-xl {isTracking ? 'text-accent font-bold' : 'text-on-surface-muted'}">
     {displayTime()}
   </div>
 
