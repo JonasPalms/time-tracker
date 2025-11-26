@@ -17,15 +17,14 @@
     onPlayPause: () => void
   } = $props()
 
-  // Show selected task if not tracking, otherwise show tracking task
-  const displayTask = $derived(selectedTask || currentTask)
+  // Only show when there's a selected task
   const showTimer = $derived(isTracking && currentTask !== null)
 </script>
 
-{#if displayTask}
-  <div class="w-full rounded-xl p-4 transition-colors bg-surface-raised border border-on-surface/10 shadow-lg pointer-events-auto">
+{#if selectedTask}
+  <div class="w-full px-4 py-6 transition-colors bg-surface-raised border-t border-on-surface/10 shadow-lg pointer-events-auto">
     <div class="flex items-center justify-between gap-4 h-9">
-      <div class="font-semibold text-lg flex-1 truncate">{displayTask.name}</div>
+      <div class="font-semibold text-lg flex-1 truncate">{selectedTask.name}</div>
       {#if showTimer}
         <div class="text-3xl font-mono font-bold text-accent">
           {formatTime(elapsedSeconds)}

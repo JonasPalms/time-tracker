@@ -119,7 +119,7 @@
   </form>
 
   <!-- Task List -->
-  <div class="space-y-2 mb-24">
+  <div class="space-y-2 {selectedTask ? 'mb-20' : ''}">
     {#if isLoading}
       <div class="text-center py-8 text-on-surface-muted">Loading...</div>
     {:else if tasks.length === 0}
@@ -145,14 +145,16 @@
 </main>
 
 <!-- Fixed Current Tracking Display at Bottom -->
-<div class="fixed bottom-0 left-0 right-0 z-50 p-6 pointer-events-none">
-  <div class="container mx-auto max-w-2xl pointer-events-auto">
-    <CurrentTracking
-      isTracking={tracking.isTracking}
-      selectedTask={selectedTask}
-      currentTask={tracking.currentTask}
-      elapsedSeconds={tracking.elapsedSeconds}
-      onPlayPause={handlePlayPauseFromBottom}
-    />
+{#if selectedTask}
+  <div class="fixed bottom-0 left-0 right-0 z-50 pointer-events-none">
+    <div class="container mx-auto max-w-2xl pointer-events-auto">
+      <CurrentTracking
+        isTracking={tracking.isTracking}
+        selectedTask={selectedTask}
+        currentTask={tracking.currentTask}
+        elapsedSeconds={tracking.elapsedSeconds}
+        onPlayPause={handlePlayPauseFromBottom}
+      />
+    </div>
   </div>
-</div>
+{/if}
