@@ -1,11 +1,8 @@
 <script lang="ts">
-  import SettingsModal from "$lib/components/SettingsModal.svelte"
   import Icon from "$lib/components/Icon.svelte"
   import { useTracking } from "$lib/tracking.svelte"
   import { getTodaysTasks, createTask, formatTime, type Task } from "$lib/tasks"
   import { onMount } from "svelte"
-
-  let settingsOpen = $state(false)
   let tasks = $state<Task[]>([])
   let newTaskName = $state("")
   let isLoading = $state(true)
@@ -67,13 +64,13 @@
       >
         <Icon name="clock" class="w-6 h-6" />
       </a>
-      <button
+      <a
+        href="/settings"
         class="p-2 rounded-lg bg-surface-raised hover:bg-accent/20 transition-colors"
-        onclick={() => (settingsOpen = true)}
         aria-label="Open settings"
       >
         <Icon name="settings" class="w-6 h-6" />
-      </button>
+      </a>
     </div>
   </div>
 
@@ -160,6 +157,3 @@
     </div>
   </form>
 </main>
-
-<!-- Settings Modal -->
-<SettingsModal bind:open={settingsOpen} />
