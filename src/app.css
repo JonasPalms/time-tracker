@@ -56,6 +56,19 @@ html {
 }
 
 /*
+ * Disable text cursor (I-beam) on regular text, but keep it for inputs
+ */
+body {
+  cursor: default;
+}
+
+input,
+textarea,
+[contenteditable] {
+  cursor: text;
+}
+
+/*
  * Global focus styles
  * Apply to all interactive elements
  */
@@ -80,7 +93,7 @@ textarea {
   &:focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: -2px;
-    border-radius: 12px;
+    border-radius: var(--radius-xl);
   }
 }
 

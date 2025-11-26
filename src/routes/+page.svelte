@@ -1,7 +1,9 @@
 <script lang="ts">
   import Icon from "$lib/components/Icon.svelte"
+  import TaskItem from "$lib/components/TaskItem.svelte"
+  import CurrentTracking from "$lib/components/CurrentTracking.svelte"
   import { useTracking } from "$lib/tracking.svelte"
-  import { getTodaysTasks, createTask, formatTime, type Task } from "$lib/tasks"
+  import { getTodaysTasks, createTask, addTimeToTask, type Task } from "$lib/tasks"
   import { onMount } from "svelte"
   let tasks = $state<Task[]>([])
   let newTaskName = $state("")
@@ -44,18 +46,32 @@
     }
   }
 
-  // Computed: total time for a task (including current elapsed if tracking)
-  function getDisplayTime(task: Task): string {
-    const baseSeconds = task.total_seconds
-    const extraSeconds = tracking.currentTask?.id === task.id ? tracking.elapsedSeconds : 0
-    return formatTime(baseSeconds + extraSeconds)
+  async function handleAdjustTime(task: Task, seconds: number) {
+    // Prevent negative time - only allow adjustment if result would be >= 0
+    const newTotal = task.total_seconds + seconds
+    if (newTotal < 0) {
+      return // Don't adjust if it would go negative
+    }
+    await addTimeToTask(task.id, seconds)
+    await loadTasks() // Refresh to get updated totals
+  }
+
+
+  function getCurrentDate(): string {
+    return new Date().toLocaleDateString("en-US", {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+    })
   }
 </script>
 
 <main class="container mx-auto p-6 max-w-2xl">
   <!-- Header -->
   <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-black text-accent">Time Tracker</h1>
+    <div>
+      <h1 class="text-2xl font-black text-accent">{getCurrentDate()}</h1>
+    </div>
     <div class="flex items-center gap-2">
       <a
         href="/history"
@@ -74,32 +90,12 @@
     </div>
   </div>
 
-  <!-- Current Tracking Display (always rendered to prevent layout shift) -->
-  <div
-    class="rounded-xl p-4 mb-6 transition-colors {tracking.isTracking
-      ? 'bg-accent/10 border border-accent/30'
-      : 'bg-surface-raised border border-transparent'}"
-  >
-    {#if tracking.isTracking && tracking.currentTask}
-      <div class="flex items-center justify-between gap-4 h-9">
-        <div class="font-semibold text-lg flex-1 truncate">{tracking.currentTask.name}</div>
-        <div class="text-3xl font-mono font-bold text-accent">
-          {formatTime(tracking.elapsedSeconds)}
-        </div>
-        <button
-          class="w-8 h-8 flex items-center justify-center bg-accent text-on-accent rounded-lg hover:bg-accent-hover transition-colors"
-          onclick={() => handlePlayPause(tracking.currentTask!)}
-          aria-label="Stop tracking"
-        >
-          <Icon name="stop" />
-        </button>
-      </div>
-    {:else}
-      <div class="flex items-center justify-center gap-2 text-on-surface-muted h-9">
-        <span>Select a task to start tracking</span>
-      </div>
-    {/if}
-  </div>
+  <CurrentTracking
+    isTracking={tracking.isTracking}
+    currentTask={tracking.currentTask}
+    elapsedSeconds={tracking.elapsedSeconds}
+    onStop={() => handlePlayPause(tracking.currentTask!)}
+  />
 
   <!-- Task List -->
   <div class="space-y-2 mb-6">
@@ -112,28 +108,13 @@
     {:else}
       {#each tasks as task (task.id)}
         {@const isActive = tracking.currentTask?.id === task.id}
-        <div class="flex items-center gap-3 p-3 bg-surface-raised rounded-xl transition-colors">
-          <!-- Play/Pause Button -->
-          <button
-            class="w-10 h-10 flex items-center bg-surface justify-center rounded-full transition-colors {isActive
-              ? 'text-accent hover:bg-accent/20'
-              : 'hover:bg-accent/20'}"
-            onclick={() => handlePlayPause(task)}
-            aria-label={isActive ? "Stop tracking" : "Start tracking"}
-          >
-            <Icon name={isActive ? "pause" : "play"} />
-          </button>
-
-          <!-- Task Name -->
-          <div class="flex-1 min-w-0">
-            <div class="font-medium truncate">{task.name}</div>
-          </div>
-
-          <!-- Time -->
-          <div class="font-mono text-lg {isActive ? 'text-accent font-bold' : 'text-on-surface-muted'}">
-            {getDisplayTime(task)}
-          </div>
-        </div>
+        <TaskItem
+          {task}
+          {isActive}
+          elapsedSeconds={tracking.elapsedSeconds}
+          onPlayPause={() => handlePlayPause(task)}
+          onAdjustTime={(seconds) => handleAdjustTime(task, seconds)}
+        />
       {/each}
     {/if}
   </div>

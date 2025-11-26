@@ -1,8 +1,26 @@
 <script lang="ts">
   import { useTheme } from "$lib/theme.svelte"
+  import { useTimeAdjust } from "$lib/timeAdjust.svelte"
   import Icon from "$lib/components/Icon.svelte"
 
   const theme = useTheme()
+  const timeAdjust = useTimeAdjust()
+
+  let inputValue = $state(timeAdjust.intervalMinutes)
+
+  // Sync input when context changes
+  $effect(() => {
+    inputValue = timeAdjust.intervalMinutes
+  })
+
+  function handleChange(e: Event) {
+    const target = e.target as HTMLInputElement
+    const value = parseInt(target.value, 10)
+    if (!isNaN(value) && value > 0 && value <= 60) {
+      inputValue = value
+      timeAdjust.setIntervalMinutes(value)
+    }
+  }
 </script>
 
 <main class="container mx-auto p-6 max-w-2xl">
@@ -39,13 +57,29 @@
       </button>
     </div>
 
-    <!-- Divider for future settings -->
+    <!-- Divider -->
     <hr class="border-on-surface/10" />
 
-    <!-- Placeholder for more settings -->
-    <div class="text-sm text-on-surface-muted text-center py-4">
-      More settings coming soon...
+    <!-- Time Adjustment Interval -->
+    <div>
+      <div class="mb-3 flex items-center gap-2 justify-between">
+        <div>
+          <p class="font-medium">Time Adjustment Interval</p>
+          <p class="text-sm text-on-surface-muted">
+            How many minutes to add/subtract per click
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <input
+            type="number"
+            min="1"
+            max="60"
+            bind:value={inputValue}
+            onchange={handleChange}
+            class="w-24 px-3 py-2 bg-surface rounded-xl border-none text-on-surface font-medium"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </main>
-

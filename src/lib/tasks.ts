@@ -64,6 +64,17 @@ export async function addTimeToTask(taskId: number, secondsToAdd: number): Promi
 }
 
 /**
+ * Adjust a task's time (can be positive or negative)
+ */
+export async function adjustTaskTime(taskId: number, secondsToAdjust: number): Promise<void> {
+  const db = await getDb()
+  await db.execute("UPDATE tasks SET total_seconds = total_seconds + ? WHERE id = ?", [
+    secondsToAdjust,
+    taskId,
+  ])
+}
+
+/**
  * Get tasks for a date range (for history view)
  */
 export async function getTasksInRange(startDate: string, endDate: string): Promise<Task[]> {
