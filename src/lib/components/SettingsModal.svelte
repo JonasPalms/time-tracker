@@ -1,5 +1,6 @@
 <script lang="ts">
   import { useTheme } from "$lib/theme.svelte"
+  import Icon from "./Icon.svelte"
 
   let { open = $bindable(false) } = $props<{ open: boolean }>()
 
@@ -48,9 +49,7 @@
       bind:this={closeBtnEl}
       aria-label="Close settings"
     >
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-      </svg>
+      <Icon name="x" />
     </button>
   </div>
 

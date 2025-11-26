@@ -1,5 +1,6 @@
 <script lang="ts">
   import { getTasksInRange, formatTimeHuman, type Task } from "$lib/tasks"
+  import Icon from "$lib/components/Icon.svelte"
 
   // State
   let weekOffset = $state(0) // 0 = current week, -1 = last week, etc.
@@ -114,9 +115,7 @@
       class="p-2 rounded-lg bg-surface-raised hover:bg-accent/20 transition-colors"
       aria-label="Back to tracker"
     >
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-      </svg>
+      <Icon name="chevron-left" class="w-6 h-6" />
     </a>
     <h1 class="text-2xl font-black text-accent">History</h1>
   </div>
@@ -128,9 +127,7 @@
       onclick={() => (weekOffset -= 1)}
       aria-label="Previous week"
     >
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-      </svg>
+      <Icon name="chevron-left" />
     </button>
 
     <div class="text-center">
@@ -146,9 +143,7 @@
       disabled={weekOffset >= 0}
       aria-label="Next week"
     >
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-      </svg>
+      <Icon name="chevron-right" />
     </button>
   </div>
 
