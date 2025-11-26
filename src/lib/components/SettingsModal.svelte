@@ -6,6 +6,7 @@
   const theme = useTheme()
 
   let dialogEl: HTMLDialogElement
+  let closeBtnEl: HTMLButtonElement
 
   // Sync the `open` prop with the dialog's native state
   $effect(() => {
@@ -13,6 +14,7 @@
 
     if (open && !dialogEl.open) {
       dialogEl.showModal()
+      closeBtnEl.blur() // Prevent auto-focus on the close button
     } else if (!open && dialogEl.open) {
       dialogEl.close()
     }
@@ -34,7 +36,8 @@
   bind:this={dialogEl}
   onclose={handleClose}
   onclick={handleBackdropClick}
-  class="m-auto bg-surface-raised text-on-surface rounded-xl shadow-2xl w-full max-w-md overflow-hidden backdrop:bg-black/50 backdrop:backdrop-blur-sm focus:outline-none focus-visible:outline-none"
+  tabindex="-1"
+  class="m-auto bg-surface-raised text-on-surface rounded-xl shadow-2xl w-full max-w-md overflow-hidden backdrop:bg-black/50 backdrop:backdrop-blur-sm"
 >
   <!-- Header -->
   <div class="flex items-center justify-between px-6 py-4 border-b border-on-surface/10">
@@ -42,6 +45,7 @@
     <button
       class="p-2 rounded-lg hover:bg-surface transition-colors text-on-surface-muted hover:text-on-surface"
       onclick={handleClose}
+      bind:this={closeBtnEl}
       aria-label="Close settings"
     >
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

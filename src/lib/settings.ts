@@ -1,6 +1,5 @@
 import { load } from "@tauri-apps/plugin-store"
 
-// The store instance (loaded lazily)
 let store: Awaited<ReturnType<typeof load>> | null = null
 
 /**
@@ -26,7 +25,7 @@ export type Theme = "dark" | "light"
 export async function getTheme(): Promise<Theme> {
   const s = await getStore()
   const theme = await s.get<Theme>("theme")
-  return theme ?? "dark" // Default to dark
+  return theme ?? "dark"
 }
 
 /**
@@ -35,5 +34,4 @@ export async function getTheme(): Promise<Theme> {
 export async function setTheme(theme: Theme): Promise<void> {
   const s = await getStore()
   await s.set("theme", theme)
-  // autoSave: true means it writes to disk automatically
 }
