@@ -87,7 +87,7 @@
 </script>
 
 <div
-  class="group flex items-center gap-3 p-3 rounded-xl transition-colors hover:bg-surface-raised"
+  class="group flex items-center gap-3 p-3 rounded-xl transition-colors hover:bg-surface-raised focus-within:bg-surface-raised"
 >
   <!-- Play/Stop Button -->
   <button
