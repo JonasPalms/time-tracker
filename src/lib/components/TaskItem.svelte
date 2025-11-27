@@ -1,23 +1,19 @@
 <script lang="ts">
   import Icon from "./Icon.svelte"
   import { type Task } from "$lib/tasks"
-  import { formatTime } from "$lib/tasks"
+  import { formatTime } from "$lib/timeUtils"
   import { useTimeAdjust } from "$lib/timeAdjust.svelte"
 
   let {
     task,
-    isSelected,
     isTracking,
     elapsedSeconds = 0,
-    onSelect,
     onPlayPause,
     onAdjustTime,
   }: {
     task: Task
-    isSelected: boolean
     isTracking: boolean
     elapsedSeconds?: number
-    onSelect: () => void
     onPlayPause: () => void
     onAdjustTime: (seconds: number) => void
   } = $props()
@@ -57,25 +53,18 @@
 <div
   role="button"
   tabindex="0"
-  class="group flex items-center gap-3 p-3 rounded-xl transition-colors hover:bg-surface-raised cursor-pointer"
-  onclick={onSelect}
+  class="group flex items-center gap-3 p-3 rounded-xl transition-colors hover:bg-surface-raised focus:bg-surface-raised cursor-pointer focus:outline-none"
   ondblclick={handleDoubleClick}
-  onkeydown={(e) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault()
-      onSelect()
-    }
-  }}
 >
-  <!-- Play/Pause Button -->
+  <!-- Play/Stop Button -->
   <button
     class="w-12 h-12 flex items-center justify-center rounded-full transition-transform {isTracking
       ? 'text-accent'
       : ''} hover:scale-110"
     onclick={handlePlayPause}
-    aria-label={isTracking ? "Pause tracking" : "Start tracking"}
+    aria-label={isTracking ? "Stop tracking" : "Start tracking"}
   >
-    <Icon name={isTracking ? "pause" : "play"} class="w-6 h-6"  />
+    <Icon name={isTracking ? "stop" : "play"} class="w-6 h-6"  />
   </button>
 
   <!-- Task Name -->
@@ -89,7 +78,7 @@
   </div>
 
   <!-- Adjust Time Buttons -->
-  <div class="flex flex-col gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+  <div class="flex flex-col gap-0.5 opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity">
     <button
       class="w-6 h-6 flex items-center justify-center rounded hover:bg-accent/20 transition-colors hover:scale-105 text-on-surface-muted"
       onclick={handleAdd}

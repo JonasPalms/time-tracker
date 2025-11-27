@@ -10,7 +10,7 @@ export type ThemeContext = {
 }
 
 /**
- * Create and provide the theme context (call in layout)
+ * Create and provide the theme context
  */
 export function createThemeContext() {
   let theme = $state<Theme>("dark")

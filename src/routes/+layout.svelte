@@ -44,5 +44,5 @@
 </script>
 
 <div class="min-h-screen bg-surface text-on-surface">
-  {@render children()}
+{@render children()}
 </div>

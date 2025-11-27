@@ -27,7 +27,7 @@ export function createTrackingContext() {
    * Start tracking time on a task
    */
   function startTracking(task: Task) {
-    // If already tracking something else, stop it first
+    // If already tracking something else, stop it first and save
     if (currentTask && currentTask.id !== task.id) {
       stopTrackingSync()
     }

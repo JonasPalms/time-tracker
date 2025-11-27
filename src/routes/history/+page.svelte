@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { getTasksInRange, formatTimeHuman, type Task } from "$lib/tasks"
+  import { getTasksInRange, type Task } from "$lib/tasks"
+  import { formatTimeHuman } from "$lib/timeUtils"
   import Icon from "$lib/components/Icon.svelte"
 
   // State
