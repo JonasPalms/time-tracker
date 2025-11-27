@@ -3,7 +3,7 @@
   import CurrentTracking from "$lib/components/CurrentTracking.svelte"
   import Header from "$lib/components/Header.svelte"
   import { useTracking } from "$lib/tracking.svelte"
-  import { getTodaysTasks, createTask, addTimeToTask, type Task } from "$lib/tasks"
+  import { getTodaysTasks, createTask, addTimeToTask, updateTaskName, type Task } from "$lib/tasks"
   import { onMount } from "svelte"
   let tasks = $state<Task[]>([])
   let newTaskName = $state("")
@@ -63,6 +63,12 @@
     await addTimeToTask(task.id, seconds)
     await loadTasks() // Refresh to get updated totals
   }
+
+  async function handleUpdateTaskName(task: Task, newName: string) {
+    if (!newName.trim()) return // Don't allow empty names
+    await updateTaskName(task.id, newName)
+    await loadTasks() // Refresh to get updated task names
+  }
 </script>
 
 <main class="container mx-auto p-6 max-w-2xl">
@@ -91,6 +97,7 @@
           elapsedSeconds={tracking.elapsedSeconds}
           onPlayPause={() => handlePlayPause(task)}
           onAdjustTime={(seconds) => handleAdjustTime(task, seconds)}
+          onUpdateName={(newName) => handleUpdateTaskName(task, newName)}
         />
       {/each}
     {/if}

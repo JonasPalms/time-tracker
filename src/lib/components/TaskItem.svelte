@@ -10,15 +10,25 @@
     elapsedSeconds = 0,
     onPlayPause,
     onAdjustTime,
+    onUpdateName,
   }: {
     task: Task
     isTracking: boolean
     elapsedSeconds?: number
     onPlayPause: () => void
     onAdjustTime: (seconds: number) => void
+    onUpdateName?: (newName: string) => void
   } = $props()
 
   const timeAdjust = useTimeAdjust()
+
+  // State for edited name
+  let editedName = $state(task.name)
+
+  // Sync editedName with task.name when task prop changes externally
+  $effect(() => {
+    editedName = task.name
+  })
 
   // Calculate display time (base + current elapsed if tracking)
   const displayTime = $derived(() => {
@@ -45,22 +55,45 @@
     onPlayPause()
   }
 
-  function handleDoubleClick() {
-    onPlayPause()
+  function handleInputClick(e: MouseEvent) {
+    e.stopPropagation()
+  }
+
+  function handleInputFocus(e: FocusEvent) {
+    e.stopPropagation()
+  }
+
+  function handleInputKeydown(e: KeyboardEvent) {
+    if (e.key === "Enter") {
+      e.preventDefault()
+      saveName()
+      ;(e.target as HTMLInputElement).blur()
+    } else if (e.key === "Escape") {
+      e.preventDefault()
+      editedName = task.name
+      ;(e.target as HTMLInputElement).blur()
+    }
+  }
+
+  function handleInputBlur() {
+    saveName()
+  }
+
+  function saveName() {
+    if (editedName.trim() !== task.name.trim() && onUpdateName) {
+      onUpdateName(editedName.trim())
+    }
   }
 </script>
 
 <div
-  role="button"
-  tabindex="0"
-  class="group flex items-center gap-3 p-3 rounded-xl transition-colors hover:bg-surface-raised focus:bg-surface-raised cursor-pointer focus:outline-none"
-  ondblclick={handleDoubleClick}
+  class="group flex items-center gap-3 p-3 rounded-xl transition-colors hover:bg-surface-raised"
 >
   <!-- Play/Stop Button -->
   <button
     class="w-12 h-12 flex items-center justify-center rounded-full transition-transform {isTracking
       ? 'text-accent'
-      : ''} hover:scale-110"
+      : ''} hover:text-accent hover:scale-120"
     onclick={handlePlayPause}
     aria-label={isTracking ? "Stop tracking" : "Start tracking"}
   >
@@ -69,7 +102,15 @@
 
   <!-- Task Name -->
   <div class="flex-1 min-w-0">
-    <div class="font-medium truncate">{task.name}</div>
+    <input
+      type="text"
+      bind:value={editedName}
+      class="font-medium truncate px-1 -mx-1 rounded selection:bg-accent selection:text-on-accent"
+      onclick={handleInputClick}
+      onfocus={handleInputFocus}
+      onkeydown={handleInputKeydown}
+      onblur={handleInputBlur}
+    />
   </div>
 
   <!-- Time -->

@@ -86,6 +86,14 @@ export async function getTasksInRange(startDate: string, endDate: string): Promi
 }
 
 /**
+ * Update a task's name
+ */
+export async function updateTaskName(taskId: number, newName: string): Promise<void> {
+  const db = await getDb()
+  await db.execute("UPDATE tasks SET name = ? WHERE id = ?", [newName, taskId])
+}
+
+/**
  * Delete a task
  */
 export async function deleteTask(taskId: number): Promise<void> {

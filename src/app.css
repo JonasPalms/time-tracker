@@ -48,55 +48,44 @@
 }
 
 /*
- * Base styles
+ * Base styles - defaults that can be overridden
  */
-html {
-  background-color: var(--color-surface);
-  color: var(--color-on-surface);
-}
-
-/*
- * Disable text cursor (I-beam) on regular text, but keep it for inputs
- */
-body {
-  cursor: default;
-}
-
-input,
-textarea,
-[contenteditable] {
-  cursor: text;
-}
-
-/*
- * Global focus styles
- * Apply to all interactive elements
- */
-button,
-a,
-[tabindex]:not([tabindex="-1"]) {
-  outline: none;
-  cursor: pointer;
-
-  &:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
-    border-radius: 4px;
+@layer base {
+  html {
+    @apply bg-surface text-on-surface;
   }
-}
 
-input,
-select,
-textarea {
-  outline: none;
-
-  &:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: -2px;
-    border-radius: var(--radius-xl);
+  body {
+    @apply cursor-default;
   }
-}
 
-::selection {
-  background-color: transparent;
+  input,
+  textarea,
+  [contenteditable] {
+    @apply cursor-text;
+  }
+
+  button,
+  a,
+  [tabindex]:not([tabindex="-1"]) {
+    @apply outline-none cursor-pointer;
+
+    &:focus-visible {
+      @apply outline-accent outline-2 -outline-offset-2 rounded-xl;
+    }
+  }
+
+  input:not(.no-focus-outline),
+  select:not(.no-focus-outline),
+  textarea:not(.no-focus-outline) {
+    @apply outline-none;
+
+    &:focus-visible {
+      @apply outline-accent outline-2 -outline-offset-2 rounded-xl;
+    }
+  }
+
+  ::selection {
+    @apply bg-transparent;
+  }
 }
