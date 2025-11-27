@@ -3,7 +3,7 @@
   import CurrentTracking from "$lib/components/CurrentTracking.svelte"
   import Header from "$lib/components/Header.svelte"
   import { useTracking } from "$lib/tracking.svelte"
-  import { getTodaysTasks, createTask, addTimeToTask, updateTaskName, type Task } from "$lib/tasks"
+  import { getTodaysTasks, createTask, addTimeToTask, updateTaskName, deleteTask, type Task } from "$lib/tasks"
   import { onMount } from "svelte"
   let tasks = $state<Task[]>([])
   let newTaskName = $state("")
@@ -69,6 +69,15 @@
     await updateTaskName(task.id, newName)
     await loadTasks() // Refresh to get updated task names
   }
+
+  async function handleDelete(task: Task) {
+    // Stop tracking if this task is currently being tracked
+    if (tracking.currentTask?.id === task.id) {
+      await tracking.stopTracking()
+    }
+    await deleteTask(task.id)
+    await loadTasks() // Refresh to remove deleted task
+  }
 </script>
 
 <main class="container mx-auto p-6 max-w-2xl">
@@ -98,6 +107,7 @@
           onPlayPause={() => handlePlayPause(task)}
           onAdjustTime={(seconds) => handleAdjustTime(task, seconds)}
           onUpdateName={(newName) => handleUpdateTaskName(task, newName)}
+          onDelete={() => handleDelete(task)}
         />
       {/each}
     {/if}

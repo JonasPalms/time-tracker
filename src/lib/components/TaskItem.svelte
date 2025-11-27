@@ -11,6 +11,7 @@
     onPlayPause,
     onAdjustTime,
     onUpdateName,
+    onDelete,
   }: {
     task: Task
     isTracking: boolean
@@ -18,6 +19,7 @@
     onPlayPause: () => void
     onAdjustTime: (seconds: number) => void
     onUpdateName?: (newName: string) => void
+    onDelete?: () => void
   } = $props()
 
   const timeAdjust = useTimeAdjust()
@@ -48,6 +50,13 @@
   function handleSubtract(e: MouseEvent) {
     e.stopPropagation()
     onAdjustTime(-adjustmentSeconds)
+  }
+
+  function handleDelete(e: MouseEvent) {
+    e.stopPropagation()
+    if (onDelete) {
+      onDelete()
+    }
   }
 
   function handlePlayPause(e: MouseEvent) {
@@ -139,4 +148,13 @@
       </svg>
     </button>
   </div>
+  {#if onDelete}
+    <button
+      class="w-6 h-6 flex items-center justify-center rounded hover:bg-red-500/20 transition-colors hover:scale-105 text-on-surface-muted opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity"
+      onclick={handleDelete}
+      aria-label="Delete task"
+    >
+      <Icon name="trash" class="w-3 h-3" />
+    </button>
+  {/if}
 </div>

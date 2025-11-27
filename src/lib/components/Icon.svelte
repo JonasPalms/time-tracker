@@ -6,7 +6,7 @@
   }) as Record<string, string>
 
   // Extract icon names from paths for the type
-  type IconName = "play" | "pause" | "stop" | "settings" | "clock" | "chevron-left" | "chevron-right" | "x"
+  type IconName = "play" | "pause" | "stop" | "settings" | "clock" | "chevron-left" | "chevron-right" | "x" | "trash"
 
   let { name, class: className = "w-5 h-5" }: { name: IconName; class?: string } = $props()
 
