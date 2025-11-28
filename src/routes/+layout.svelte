@@ -44,5 +44,8 @@
 </script>
 
 <div class="min-h-screen bg-surface text-on-surface">
-{@render children()}
+  <div class="h-10 w-full" data-tauri-drag-region></div>
+  <main class="container mx-auto px-6 pb-6 max-w-2xl">
+    {@render children()}
+  </main>
 </div>

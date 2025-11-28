@@ -108,7 +108,6 @@
   })
 </script>
 
-<main class="container mx-auto p-6 max-w-2xl">
   <!-- Header -->
   <div class="flex items-center gap-4 mb-6">
     <a
@@ -195,5 +194,4 @@
       {/each}
     </div>
   {/if}
-</main>
 

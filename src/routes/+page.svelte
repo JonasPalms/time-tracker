@@ -80,7 +80,7 @@
   }
 </script>
 
-<main class="container mx-auto p-6 pt-10 max-w-2xl">
+
   <Header />
   <form onsubmit={handleAddTask} class="mb-6">
     <input
@@ -108,7 +108,7 @@
       {/each}
     {/if}
   </div>
-</main>
+
 {#if tracking.currentTask}
   <div class="fixed bottom-0 left-0 right-0 z-50 pointer-events-none">
     <div class="container mx-auto max-w-2xl pointer-events-auto">
