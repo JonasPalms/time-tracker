@@ -93,10 +93,6 @@
   <div class="space-y-2 {tracking.currentTask ? 'mb-20' : ''}">
     {#if isLoading}
       <div class="text-center py-8 text-on-surface-muted">Loading...</div>
-    {:else if tasks.length === 0}
-      <div class="text-center py-8 text-on-surface-muted bg-surface-raised rounded-xl">
-        No tasks yet. Add one above to get started!
-      </div>
     {:else}
       {#each tasks as task (task.id)}
         {@const isTracking = tracking.currentTask?.id === task.id}
