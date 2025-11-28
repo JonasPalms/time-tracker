@@ -80,7 +80,7 @@
   }
 </script>
 
-<main class="container mx-auto p-6 max-w-2xl">
+<main class="container mx-auto p-6 pt-10 max-w-2xl">
   <Header />
   <form onsubmit={handleAddTask} class="mb-6">
     <input
