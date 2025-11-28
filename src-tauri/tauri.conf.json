@@ -15,6 +15,7 @@
         "title": "TimeTracker",
         "width": 600,
         "height": 800,
+        "hiddenTitle": true,
         "titleBarStyle": "Overlay"
       }
     ],
