@@ -21,18 +21,18 @@ export async function getDb(): Promise<Database> {
  */
 async function runMigrations(database: Database): Promise<void> {
   // Create tasks table
+  // Use localtime for created_at to match user's timezone
   await database.execute(`
     CREATE TABLE IF NOT EXISTS tasks (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
-      date TEXT NOT NULL,
       total_seconds INTEGER DEFAULT 0,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+      created_at TEXT DEFAULT (datetime('now', 'localtime'))
     )
   `)
 
-  // Create index for faster date lookups
+  // Create index for faster date lookups on created_at
   await database.execute(`
-    CREATE INDEX IF NOT EXISTS idx_tasks_date ON tasks(date)
+    CREATE INDEX IF NOT EXISTS idx_tasks_created_at ON tasks(created_at)
   `)
 }

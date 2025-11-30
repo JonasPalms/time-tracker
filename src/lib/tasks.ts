@@ -3,40 +3,43 @@ import { getDb } from "./db"
 export interface Task {
   id: number
   name: string
-  date: string
   total_seconds: number
   created_at: string
 }
 
 /**
- * Get today's date in YYYY-MM-DD format
+ * Get today's date in YYYY-MM-DD format (using local timezone)
  */
 export function getTodayDate(): string {
-  return new Date().toISOString().split("T")[0]
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, "0")
+  const day = String(now.getDate()).padStart(2, "0")
+  return `${year}-${month}-${day}`
 }
 
 /**
- * Get all tasks for today
+ * Get all tasks for today (based on created_at timestamp)
+ * Uses SQLite's date() function to filter in the database
  */
 export async function getTodaysTasks(): Promise<Task[]> {
   const db = await getDb()
   const today = getTodayDate()
-  return await db.select<Task[]>("SELECT * FROM tasks WHERE date = ? ORDER BY created_at DESC", [
-    today,
-  ])
+  // Use SQLite's date() function to extract date from created_at and filter in SQL
+  return await db.select<Task[]>(
+    "SELECT * FROM tasks WHERE date(created_at) = ? ORDER BY created_at DESC",
+    [today]
+  )
 }
 
 /**
- * Create a new task for today
+ * Create a new task (created_at is set automatically by SQLite using localtime)
  */
 export async function createTask(name: string): Promise<Task> {
   const db = await getDb()
-  const today = getTodayDate()
 
-  const result = await db.execute(
-    "INSERT INTO tasks (name, date, total_seconds) VALUES (?, ?, 0)",
-    [name, today]
-  )
+  // Insert with created_at set automatically by SQLite using localtime
+  const result = await db.execute("INSERT INTO tasks (name, total_seconds) VALUES (?, 0)", [name])
 
   // Fetch the created task
   const tasks = await db.select<Task[]>("SELECT * FROM tasks WHERE id = ?", [result.lastInsertId])
@@ -75,12 +78,14 @@ export async function adjustTaskTime(taskId: number, secondsToAdjust: number): P
 }
 
 /**
- * Get tasks for a date range (for history view)
+ * Get tasks for a date range (for history view, based on created_at)
+ * Uses SQLite's date() function to filter in the database
  */
 export async function getTasksInRange(startDate: string, endDate: string): Promise<Task[]> {
   const db = await getDb()
+  // Use SQLite's date() function to extract date from created_at and filter in SQL
   return await db.select<Task[]>(
-    "SELECT * FROM tasks WHERE date >= ? AND date <= ? ORDER BY date DESC, created_at DESC",
+    "SELECT * FROM tasks WHERE date(created_at) >= ? AND date(created_at) <= ? ORDER BY created_at DESC",
     [startDate, endDate]
   )
 }

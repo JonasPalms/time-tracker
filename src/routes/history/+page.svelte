@@ -27,7 +27,11 @@
   }
 
   function formatDate(date: Date): string {
-    return date.toISOString().split("T")[0]
+    // Format as YYYY-MM-DD using local timezone (not UTC)
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, "0")
+    const day = String(date.getDate()).padStart(2, "0")
+    return `${year}-${month}-${day}`
   }
 
   function formatDateDisplay(dateStr: string): string {
@@ -58,11 +62,13 @@
 
     const tasks = await getTasksInRange(formatDate(start), formatDate(end))
 
-    // Group tasks by date
+    // Group tasks by date (extract from created_at)
     const grouped = new Map<string, Task[]>()
     for (const task of tasks) {
-      const existing = grouped.get(task.date) || []
-      grouped.set(task.date, [...existing, task])
+      // Extract date from SQLite datetime format (YYYY-MM-DD HH:MM:SS)
+      const taskDate = task.created_at.substring(0, 10)
+      const existing = grouped.get(taskDate) || []
+      grouped.set(taskDate, [...existing, task])
     }
 
     tasksByDate = grouped
