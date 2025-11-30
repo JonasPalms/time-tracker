@@ -23,20 +23,21 @@
   }
 </script>
 
-<!-- Header -->
-<div class="flex items-center gap-4 mb-6">
-  <a
-    href="/"
-    class="p-2 rounded-lg bg-surface-raised hover:bg-accent/20 transition-colors"
-    aria-label="Back to tracker"
-  >
-    <Icon name="chevron-left" class="w-6 h-6" />
-  </a>
-  <h1 class="text-2xl font-black text-accent">Settings</h1>
-</div>
+<div class="px-6">
+  <!-- Header -->
+  <div class="flex items-center gap-4 mb-6">
+    <a
+      href="/"
+      class="p-2 rounded-lg bg-surface-raised hover:bg-accent/20 transition-colors"
+      aria-label="Back to tracker"
+    >
+      <Icon name="chevron-left" class="w-6 h-6" />
+    </a>
+    <h1 class="text-2xl font-black text-accent">Settings</h1>
+  </div>
 
-<!-- Content -->
-<div class="bg-surface-raised rounded-xl p-6 space-y-6">
+  <!-- Content -->
+  <div class="bg-surface-raised rounded-xl p-6 space-y-6">
   <!-- Theme Setting -->
   <div class="flex items-center justify-between">
     <div>
@@ -80,4 +81,5 @@
       </div>
     </div>
   </div>
+</div>
 </div>

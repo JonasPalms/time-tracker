@@ -65,58 +65,62 @@
   }
 
   async function handleUpdateTaskName(task: Task, newName: string) {
-    if (!newName.trim()) return // Don't allow empty names
+    if (!newName.trim()) return
     await updateTaskName(task.id, newName)
-    await loadTasks() // Refresh to get updated task names
+    await loadTasks()
   }
 
   async function handleDelete(task: Task) {
-    // Stop tracking if this task is currently being tracked
     if (tracking.currentTask?.id === task.id) {
       await tracking.stopTracking()
     }
     await deleteTask(task.id)
-    await loadTasks() // Refresh to remove deleted task
+    await loadTasks()
   }
 </script>
 
-
-  <Header />
-  <form onsubmit={handleAddTask} class="mb-6">
-    <input
-      type="text"
-      bind:value={newTaskName}
-      placeholder="What are you working on?"
-      class="w-full px-4 py-3 bg-surface-raised rounded-xl border-none placeholder:text-on-surface-muted"
-    />
-  </form>
-  <div class="space-y-2 {tracking.currentTask ? 'mb-20' : ''}">
-    {#if isLoading}
-      <div class="text-center py-8 text-on-surface-muted">Loading...</div>
-    {:else}
-      {#each tasks as task (task.id)}
-        {@const isTracking = tracking.currentTask?.id === task.id}
-        <TaskItem
-          {task}
-          isTracking={isTracking}
-          elapsedSeconds={tracking.elapsedSeconds}
-          onPlayPause={() => handlePlayPause(task)}
-          onAdjustTime={(seconds) => handleAdjustTime(task, seconds)}
-          onUpdateName={(newName) => handleUpdateTaskName(task, newName)}
-          onDelete={() => handleDelete(task)}
-        />
-      {/each}
-    {/if}
+<div class="h-full flex flex-col">
+  <div class="shrink-0 px-6 border-b border-on-surface/10">
+    <Header />
+    <form onsubmit={handleAddTask} class="mb-4">
+      <input
+        type="text"
+        bind:value={newTaskName}
+        placeholder="What are you working on?"
+        class="w-full px-4 py-3 bg-surface-raised rounded-xl border-none placeholder:text-on-surface-muted"
+      />
+    </form>
+  </div>
+  <div class="flex-1 overflow-y-auto py-4">
+    <div class="px-6 space-y-2">
+      {#if isLoading}
+        <div class="text-center py-8 text-on-surface-muted">Loading...</div>
+      {:else}
+        {#each tasks as task (task.id)}
+          {@const isTracking = tracking.currentTask?.id === task.id}
+          <TaskItem
+            {task}
+            isTracking={isTracking}
+            elapsedSeconds={tracking.elapsedSeconds}
+            onPlayPause={() => handlePlayPause(task)}
+            onAdjustTime={(seconds) => handleAdjustTime(task, seconds)}
+            onUpdateName={(newName) => handleUpdateTaskName(task, newName)}
+            onDelete={() => handleDelete(task)}
+          />
+        {/each}
+      {/if}
+    </div>
   </div>
 
-{#if tracking.currentTask}
-  <div class="fixed bottom-0 left-0 right-0 z-50 pointer-events-none">
-    <div class="container mx-auto max-w-2xl pointer-events-auto">
+  <div class="shrink-0 bg-surface-raised border-t border-on-surface/10 min-h-20">
+    <div class="container mx-auto max-w-2xl px-6">
+      {#if tracking.currentTask}
       <CurrentTracking
         currentTask={tracking.currentTask}
         elapsedSeconds={tracking.elapsedSeconds}
         onStop={handleStop}
       />
+      {/if}
     </div>
   </div>
-{/if}
+</div>

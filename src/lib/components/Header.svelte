@@ -3,6 +3,7 @@
   import { getCurrentDate } from "$lib/timeUtils"
 </script>
 
+
 <div class="flex items-center justify-between mb-6">
   <div>
     <h1 class="text-2xl font-black text-accent">{getCurrentDate()}</h1>

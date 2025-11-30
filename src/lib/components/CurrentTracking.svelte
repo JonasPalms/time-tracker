@@ -14,10 +14,9 @@
   } = $props()
 </script>
 
-{#if currentTask}
-  <div class="w-full px-4 py-6 transition-colors bg-surface-raised border-t border-on-surface/10 shadow-lg pointer-events-auto">
-    <div class="flex items-center justify-between gap-4 h-9">
-      <div class="font-semibold text-lg flex-1 truncate">{currentTask.name}</div>
+<div class="px-4 py-5 transition-colors">
+    <div class="flex items-center justify-between gap-4">
+      <div class="font-semibold text-lg flex-1 truncate">{currentTask?.name}</div>
       <div class="text-3xl font-mono font-bold text-accent">
         {formatTime(elapsedSeconds)}
       </div>
@@ -28,6 +27,5 @@
       >
         <Icon name="stop" />
       </button>
-    </div>
-  </div>
-{/if}
+    </div>  
+</div>

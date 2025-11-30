@@ -109,19 +109,20 @@
 </script>
 
   <!-- Header -->
-  <div class="flex items-center gap-4 mb-6">
-    <a
-      href="/"
-      class="p-2 rounded-lg bg-surface-raised hover:bg-accent/20 transition-colors"
-      aria-label="Back to tracker"
-    >
-      <Icon name="chevron-left" class="w-6 h-6" />
-    </a>
-    <h1 class="text-2xl font-black text-accent">History</h1>
-  </div>
+  <div class="px-6">
+    <div class="flex items-center gap-4 mb-6">
+      <a
+        href="/"
+        class="p-2 rounded-lg bg-surface-raised hover:bg-accent/20 transition-colors"
+        aria-label="Back to tracker"
+      >
+        <Icon name="chevron-left" class="w-6 h-6" />
+      </a>
+      <h1 class="text-2xl font-black text-accent">History</h1>
+    </div>
 
-  <!-- Week Navigation -->
-  <div class="flex items-center justify-between bg-surface-raised rounded-xl p-4 mb-6">
+    <!-- Week Navigation -->
+    <div class="flex items-center justify-between bg-surface-raised rounded-xl p-4 mb-6">
     <button
       class="p-2 rounded-lg hover:bg-surface transition-colors"
       onclick={() => (weekOffset -= 1)}
@@ -145,13 +146,15 @@
     >
       <Icon name="chevron-right" />
     </button>
+    </div>
   </div>
 
   <!-- Days List -->
-  {#if isLoading}
-    <div class="text-center py-8 text-on-surface-muted">Loading...</div>
-  {:else}
-    <div class="space-y-4">
+  <div class="px-6">
+    {#if isLoading}
+      <div class="text-center py-8 text-on-surface-muted">Loading...</div>
+    {:else}
+      <div class="space-y-4">
       {#each weekDates() as dateStr}
         {@const dayTasks = tasksByDate.get(dateStr) || []}
         {@const dayTotal = getDayTotal(dayTasks)}
@@ -192,6 +195,7 @@
           {/if}
         </div>
       {/each}
-    </div>
-  {/if}
+      </div>
+    {/if}
+  </div>
 
