@@ -23,9 +23,30 @@
   }
 </script>
 
-<div class="mb-6">
-  <!-- Action buttons in top right -->
-  <div class="flex items-center justify-end gap-2 mb-3">
+<div class="flex items-center justify-between mb-6">
+  <div class="flex items-center gap-3">
+    <button
+      class="p-2 rounded-lg bg-surface-raised hover:bg-accent/20 transition-colors"
+      onclick={handlePreviousDay}
+      aria-label="Previous day"
+    >
+      <Icon name="chevron-left" class="w-6 h-6" />
+    </button>
+    <button
+    class="p-2 rounded-lg bg-surface-raised hover:bg-accent/20 transition-colors"
+    onclick={handleNextDay}
+    aria-label="Next day"
+  >
+    <Icon name="chevron-right" class="w-6 h-6" />
+  </button>
+    <div>
+      <h1 class="text-2xl font-black text-accent">
+        {displayDate}
+      </h1>
+    </div>
+
+  </div>
+  <div class="flex items-center gap-2">
     <a
       href="/history"
       class="p-2 rounded-lg bg-surface-raised hover:bg-accent/20 transition-colors"
@@ -40,32 +61,6 @@
     >
       <Icon name="settings" class="w-6 h-6" />
     </a>
-  </div>
-  
-  <!-- Date navigation in its own section -->
-  <div class="flex items-center gap-3">
-    <button
-      class="p-2 rounded-lg bg-surface-raised hover:bg-accent/20 transition-colors"
-      onclick={handlePreviousDay}
-      aria-label="Previous day"
-    >
-      <Icon name="chevron-left" class="w-6 h-6" />
-    </button>
-    <div class="flex-1 min-w-0">
-      <h1 class="text-2xl font-black text-accent">
-        {displayDate}
-        {#if isToday}
-          <span class="text-sm ml-2 text-accent">(Today)</span>
-        {/if}
-      </h1>
-    </div>
-    <button
-      class="p-2 rounded-lg bg-surface-raised hover:bg-accent/20 transition-colors"
-      onclick={handleNextDay}
-      aria-label="Next day"
-    >
-      <Icon name="chevron-right" class="w-6 h-6" />
-    </button>
   </div>
 </div>
 
