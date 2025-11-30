@@ -19,27 +19,40 @@ export function getTodayDate(): string {
 }
 
 /**
- * Get all tasks for today (based on created_at timestamp)
+ * Get all tasks for a specific date (based on created_at timestamp)
  * Uses SQLite's date() function to filter in the database
+ * @param date - Date in YYYY-MM-DD format
  */
-export async function getTodaysTasks(): Promise<Task[]> {
+export async function getTasksForDate(date: string): Promise<Task[]> {
   const db = await getDb()
-  const today = getTodayDate()
   // Use SQLite's date() function to extract date from created_at and filter in SQL
   return await db.select<Task[]>(
     "SELECT * FROM tasks WHERE date(created_at) = ? ORDER BY created_at DESC",
-    [today]
+    [date]
   )
 }
 
 /**
- * Create a new task (created_at is set automatically by SQLite using localtime)
+ * Get all tasks for today (convenience function)
  */
-export async function createTask(name: string): Promise<Task> {
+export async function getTodaysTasks(): Promise<Task[]> {
+  return getTasksForDate(getTodayDate())
+}
+
+/**
+ * Create a new task
+ * @param name - Task name
+ * @param date - Optional date in YYYY-MM-DD format. If provided, task will be created with this date at midnight. Otherwise uses current time.
+ */
+export async function createTask(name: string, date: string): Promise<Task> {
   const db = await getDb()
 
-  // Insert with created_at set automatically by SQLite using localtime
-  const result = await db.execute("INSERT INTO tasks (name, total_seconds) VALUES (?, 0)", [name])
+  // Create task with specific date at midnight (00:00:00)
+  const datetime = `${date} 00:00:00`
+  const result = await db.execute(
+    "INSERT INTO tasks (name, total_seconds, created_at) VALUES (?, 0, ?)",
+    [name, datetime]
+  )
 
   // Fetch the created task
   const tasks = await db.select<Task[]>("SELECT * FROM tasks WHERE id = ?", [result.lastInsertId])

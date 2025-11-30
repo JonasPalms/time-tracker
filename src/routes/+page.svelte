@@ -3,29 +3,42 @@
   import CurrentTracking from "$lib/components/CurrentTracking.svelte"
   import Header from "$lib/components/Header.svelte"
   import { useTracking } from "$lib/tracking.svelte"
-  import { getTodaysTasks, createTask, addTimeToTask, updateTaskName, deleteTask, type Task } from "$lib/tasks"
+  import { getTasksForDate, getTodayDate, createTask, addTimeToTask, updateTaskName, deleteTask, type Task } from "$lib/tasks"
   import { onMount } from "svelte"
   let tasks = $state<Task[]>([])
   let newTaskName = $state("")
   let isLoading = $state(true)
+  let selectedDate = $state(getTodayDate())
 
   const tracking = useTracking()
 
-  // Load tasks on mount
+  // Load tasks on mount and when date changes
   onMount(async () => {
     await loadTasks()
     isLoading = false
   })
 
+  $effect(() => {
+    // Reload tasks when selectedDate changes
+    if (!isLoading) {
+      loadTasks()
+    }
+  })
+
   async function loadTasks() {
-    tasks = await getTodaysTasks()
+    tasks = await getTasksForDate(selectedDate)
+  }
+
+  function handleDateChange(newDate: string) {
+    selectedDate = newDate
   }
 
   async function handleAddTask(e: Event) {
     e.preventDefault()
     if (!newTaskName.trim()) return
 
-    const task = await createTask(newTaskName.trim())
+    // Create task with the selected date
+    const task = await createTask(newTaskName.trim(), selectedDate)
     tasks = [task, ...tasks]
     newTaskName = ""
   }
@@ -81,7 +94,7 @@
 
 <div class="h-full flex flex-col">
   <section class="shrink-0 px-6 border-b border-on-surface/10">
-    <Header />
+    <Header selectedDate={selectedDate} onDateChange={handleDateChange} />
     <form onsubmit={handleAddTask} class="mb-4">
       <input
         type="text"

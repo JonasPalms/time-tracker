@@ -42,3 +42,34 @@ export function getCurrentDate(): string {
     month: "short",
   })
 }
+
+/**
+ * Format a date string (YYYY-MM-DD) for display (e.g., "Wed 26 Nov")
+ */
+export function formatDateForDisplay(dateStr: string): string {
+  const date = new Date(dateStr + "T00:00:00")
+  return date.toLocaleDateString("en-US", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+  })
+}
+
+/**
+ * Convert a Date object to YYYY-MM-DD format string
+ */
+export function getDateString(date: Date): string {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, "0")
+  const day = String(date.getDate()).padStart(2, "0")
+  return `${year}-${month}-${day}`
+}
+
+/**
+ * Add or subtract days from a date string (YYYY-MM-DD)
+ */
+export function addDays(dateStr: string, days: number): string {
+  const date = new Date(dateStr + "T00:00:00")
+  date.setDate(date.getDate() + days)
+  return getDateString(date)
+}
