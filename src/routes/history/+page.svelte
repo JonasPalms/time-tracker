@@ -108,8 +108,9 @@
   })
 </script>
 
+<div class="h-full flex flex-col">
   <!-- Header -->
-  <div class="px-6">
+  <section class="shrink-0 px-6">
     <div class="flex items-center gap-4 mb-6">
       <a
         href="/"
@@ -123,79 +124,82 @@
 
     <!-- Week Navigation -->
     <div class="flex items-center justify-between bg-surface-raised rounded-xl p-4 mb-6">
-    <button
-      class="p-2 rounded-lg hover:bg-surface transition-colors"
-      onclick={() => (weekOffset -= 1)}
-      aria-label="Previous week"
-    >
-      <Icon name="chevron-left" />
-    </button>
+      <button
+        class="p-2 rounded-lg hover:bg-surface transition-colors"
+        onclick={() => (weekOffset -= 1)}
+        aria-label="Previous week"
+      >
+        <Icon name="chevron-left" />
+      </button>
 
-    <div class="text-center">
-      <div class="font-semibold">{currentRange()}</div>
-      <div class="text-sm text-on-surface-muted">
-        Total: {formatTimeHuman(weekTotal())}
+      <div class="text-center">
+        <div class="font-semibold">{currentRange()}</div>
+        <div class="text-sm text-on-surface-muted">
+          Total: {formatTimeHuman(weekTotal())}
+        </div>
       </div>
-    </div>
 
-    <button
-      class="p-2 rounded-lg hover:bg-surface transition-colors disabled:opacity-30"
-      onclick={() => (weekOffset += 1)}
-      disabled={weekOffset >= 0}
-      aria-label="Next week"
-    >
-      <Icon name="chevron-right" />
-    </button>
+      <button
+        class="p-2 rounded-lg hover:bg-surface transition-colors disabled:opacity-30"
+        onclick={() => (weekOffset += 1)}
+        disabled={weekOffset >= 0}
+        aria-label="Next week"
+      >
+        <Icon name="chevron-right" />
+      </button>
     </div>
-  </div>
+  </section>
 
   <!-- Days List -->
-  <div class="px-6">
-    {#if isLoading}
-      <div class="text-center py-8 text-on-surface-muted">Loading...</div>
-    {:else}
-      <div class="space-y-4">
-      {#each weekDates() as dateStr}
-        {@const dayTasks = tasksByDate.get(dateStr) || []}
-        {@const dayTotal = getDayTotal(dayTasks)}
-        {@const isToday = dateStr === new Date().toISOString().split("T")[0]}
+  <section class="flex-1 overflow-y-auto py-4">
+    <div class="px-6">
+      {#if isLoading}
+        <div class="text-center py-8 text-on-surface-muted">Loading...</div>
+      {:else}
+        <div class="space-y-4">
+          {#each weekDates() as dateStr}
+            {@const dayTasks = tasksByDate.get(dateStr) || []}
+            {@const dayTotal = getDayTotal(dayTasks)}
+            {@const isToday = dateStr === new Date().toISOString().split("T")[0]}
 
-        <div class="bg-surface-raised rounded-xl overflow-hidden">
-          <!-- Day Header -->
-          <div
-            class="flex items-center justify-between px-4 py-3 border-b border-on-surface/10 {isToday
-              ? 'bg-accent/10'
-              : ''}"
-          >
-            <div class="font-medium {isToday ? 'text-accent' : ''}">
-              {formatDateDisplay(dateStr)}
-              {#if isToday}
-                <span class="text-xs ml-2 text-accent">(Today)</span>
+            <div class="bg-surface-raised rounded-xl overflow-hidden">
+              <!-- Day Header -->
+              <div
+                class="flex items-center justify-between px-4 py-3 border-b border-on-surface/10 {isToday
+                  ? 'bg-accent/10'
+                  : ''}"
+              >
+                <div class="font-medium {isToday ? 'text-accent' : ''}">
+                  {formatDateDisplay(dateStr)}
+                  {#if isToday}
+                    <span class="text-xs ml-2 text-accent">(Today)</span>
+                  {/if}
+                </div>
+                <div class="font-mono text-on-surface-muted">
+                  {dayTotal > 0 ? formatTimeHuman(dayTotal) : "-"}
+                </div>
+              </div>
+
+              <!-- Tasks for this day -->
+              {#if dayTasks.length > 0}
+                <div class="divide-y divide-on-surface/5">
+                  {#each dayTasks as task}
+                    <div class="flex items-center justify-between px-4 py-2">
+                      <div class="text-sm truncate flex-1 mr-4">{task.name}</div>
+                      <div class="font-mono text-sm text-on-surface-muted">
+                        {formatTimeHuman(task.total_seconds)}
+                      </div>
+                    </div>
+                  {/each}
+                </div>
+              {:else}
+                <div class="px-4 py-3 text-sm text-on-surface-muted">No tasks</div>
               {/if}
             </div>
-            <div class="font-mono text-on-surface-muted">
-              {dayTotal > 0 ? formatTimeHuman(dayTotal) : "-"}
-            </div>
-          </div>
-
-          <!-- Tasks for this day -->
-          {#if dayTasks.length > 0}
-            <div class="divide-y divide-on-surface/5">
-              {#each dayTasks as task}
-                <div class="flex items-center justify-between px-4 py-2">
-                  <div class="text-sm truncate flex-1 mr-4">{task.name}</div>
-                  <div class="font-mono text-sm text-on-surface-muted">
-                    {formatTimeHuman(task.total_seconds)}
-                  </div>
-                </div>
-              {/each}
-            </div>
-          {:else}
-            <div class="px-4 py-3 text-sm text-on-surface-muted">No tasks</div>
-          {/if}
+          {/each}
         </div>
-      {/each}
-      </div>
-    {/if}
-  </div>
+      {/if}
+    </div>
+  </section>
+</div>
 
