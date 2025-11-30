@@ -2,11 +2,11 @@
   import TaskItem from "$lib/components/TaskItem.svelte"
   import CurrentTracking from "$lib/components/CurrentTracking.svelte"
   import Header from "$lib/components/Header.svelte"
+  import NewTaskInput from "$lib/components/NewTaskInput.svelte"
   import { useTracking } from "$lib/tracking.svelte"
   import { getTasksForDate, getTodayDate, createTask, addTimeToTask, updateTaskName, deleteTask, type Task } from "$lib/tasks"
   import { onMount } from "svelte"
   let tasks = $state<Task[]>([])
-  let newTaskName = $state("")
   let isLoading = $state(true)
   let selectedDate = $state(getTodayDate())
 
@@ -33,14 +33,10 @@
     selectedDate = newDate
   }
 
-  async function handleAddTask(e: Event) {
-    e.preventDefault()
-    if (!newTaskName.trim()) return
-
+  async function handleAddTask(taskName: string) {
     // Create task with the selected date
-    const task = await createTask(newTaskName.trim(), selectedDate)
+    const task = await createTask(taskName, selectedDate)
     tasks = [task, ...tasks]
-    newTaskName = ""
   }
 
   // Play/stop from task item
@@ -95,14 +91,7 @@
 <div class="h-full flex flex-col">
   <section class="shrink-0 px-6 border-b border-on-surface/10">
     <Header selectedDate={selectedDate} onDateChange={handleDateChange} />
-    <form onsubmit={handleAddTask} class="mb-4">
-      <input
-        type="text"
-        bind:value={newTaskName}
-        placeholder="What are you working on?"
-        class="w-full px-4 py-3 bg-surface-raised rounded-xl border-none placeholder:text-on-surface-muted"
-      />
-    </form>
+    <NewTaskInput onAddTask={handleAddTask} />
   </section>
   <section class="flex-1 overflow-y-auto py-4">
     <div class="px-6 space-y-2">
@@ -125,7 +114,7 @@
     </div>
   </section>
 
-  <section class="shrink-0 bg-surface-raised border-t border-on-surface/10 min-h-20">
+  <section class="shrink-0 bg-surface-raised border-t border-on-surface/10 min-h-22">
     <div class="container mx-auto max-w-2xl px-6">
       {#if tracking.currentTask}
       <CurrentTracking

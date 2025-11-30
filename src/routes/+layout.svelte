@@ -1,5 +1,6 @@
 <script lang="ts">
   import "../app.css"
+  import '../shadcn.css'
   import { createThemeContext } from "$lib/theme.svelte"
   import { createTrackingContext } from "$lib/tracking.svelte"
   import { createTimeAdjustContext } from "$lib/timeAdjust.svelte"
