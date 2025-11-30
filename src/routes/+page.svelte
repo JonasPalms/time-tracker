@@ -80,7 +80,7 @@
 </script>
 
 <div class="h-full flex flex-col">
-  <div class="shrink-0 px-6 border-b border-on-surface/10">
+  <section class="shrink-0 px-6 border-b border-on-surface/10">
     <Header />
     <form onsubmit={handleAddTask} class="mb-4">
       <input
@@ -90,8 +90,8 @@
         class="w-full px-4 py-3 bg-surface-raised rounded-xl border-none placeholder:text-on-surface-muted"
       />
     </form>
-  </div>
-  <div class="flex-1 overflow-y-auto py-4">
+  </section>
+  <section class="flex-1 overflow-y-auto py-4">
     <div class="px-6 space-y-2">
       {#if isLoading}
         <div class="text-center py-8 text-on-surface-muted">Loading...</div>
@@ -110,9 +110,9 @@
         {/each}
       {/if}
     </div>
-  </div>
+  </section>
 
-  <div class="shrink-0 bg-surface-raised border-t border-on-surface/10 min-h-20">
+  <section class="shrink-0 bg-surface-raised border-t border-on-surface/10 min-h-20">
     <div class="container mx-auto max-w-2xl px-6">
       {#if tracking.currentTask}
       <CurrentTracking
@@ -122,5 +122,5 @@
       />
       {/if}
     </div>
-  </div>
+  </section>
 </div>
