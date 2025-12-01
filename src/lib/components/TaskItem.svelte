@@ -150,7 +150,7 @@
   </div>
   {#if onDelete}
     <button
-      class="w-6 h-6 flex items-center justify-center rounded hover:bg-red-500/20 transition-colors hover:scale-105 text-on-surface-muted opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity"
+      class="w-6 h-6 flex items-center justify-center rounded hover:bg-red-500/20 hover:scale-105 text-on-surface-muted opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity"
       onclick={handleDelete}
       aria-label="Delete task"
     >
