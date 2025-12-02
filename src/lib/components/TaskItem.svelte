@@ -168,14 +168,16 @@
         <Button
           variant="ghost"
           size="icon-sm"
-          class="opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity"
           aria-label="Open menu"
+          class="opacity-0 group-hover:opacity-100 group-focus:opacity-100 focus-within:opacity-100 {dropdownOpen
+            ? 'opacity-100'
+            : ''} transition-opacity"
         >
           <EllipsisIcon class="w-4 h-4" />
         </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content class="w-[180px]" align="end">
-        <DropdownMenu.Item variant="destructive" onselect={handleDelete}>
+        <DropdownMenu.Item onclick={handleDelete} variant="destructive">
           <TrashIcon class="me-2 size-4" />
           Delete
         </DropdownMenu.Item>

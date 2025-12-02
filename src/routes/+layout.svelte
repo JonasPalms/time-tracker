@@ -20,7 +20,6 @@
     await initTheme();
 
     await initTimeAdjust();
-
     await getDb();
 
     const currentWindow = getCurrentWindow();
