@@ -177,9 +177,6 @@
               >
                 <div class="font-medium {isToday ? 'text-accent' : ''}">
                   {formatDateDisplay(dateStr)}
-                  {#if isToday}
-                    <span class="text-xs ml-2 text-accent">(Today)</span>
-                  {/if}
                 </div>
                 <div class="font-mono text-on-surface-muted">
                   {dayTotal > 0 ? formatTimeHuman(dayTotal) : "-"}
