@@ -1,5 +1,6 @@
 <script lang="ts">
   import Icon from "./Icon.svelte";
+  import AnimatedClock from "./AnimatedClock.svelte";
   import { type Task } from "$lib/tasks";
   import { formatTime } from "$lib/timeUtils";
   import { useTimeAdjust } from "$lib/timeAdjust.svelte";
@@ -108,17 +109,29 @@
 </script>
 
 <div
-  class="group flex items-center gap-3 px-2 py-3 rounded-xl transition-colors hover:bg-surface-raised focus-within:bg-surface-raised"
+  class="group flex items-center gap-2 px-2 py-3 rounded-xl transition-colors hover:bg-surface-raised focus-within:bg-surface-raised"
 >
   <!-- Play/Stop Button -->
   <button
     class="w-12 h-12 flex items-center justify-center rounded-full transition-transform {isTracking
       ? 'text-accent'
-      : ''} hover:text-accent hover:scale-120"
+      : ''} hover:text-accent hover:scale-120 relative"
     onclick={handlePlayPause}
     aria-label={isTracking ? "Stop tracking" : "Start tracking"}
   >
-    <Icon name={isTracking ? "stop" : "play"} class="w-6 h-6" />
+    {#if isTracking}
+      <!-- Animated clock (default, hidden on hover/focus) -->
+      <AnimatedClock
+        class="w-6 h-6 group-hover:opacity-0 group-focus:opacity-0 transition-opacity"
+      />
+      <!-- Stop icon (shown on hover/focus) -->
+      <Icon
+        name="stop"
+        class="w-6 h-6 absolute opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity"
+      />
+    {:else}
+      <Icon name="play" class="w-6 h-6" />
+    {/if}
   </button>
 
   <!-- Task Name -->
