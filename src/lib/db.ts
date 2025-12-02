@@ -1,6 +1,6 @@
-import Database from "@tauri-apps/plugin-sql"
+import Database from "@tauri-apps/plugin-sql";
 
-let db: Database | null = null
+let db: Database | null = null;
 
 /**
  * Get or create the database connection.
@@ -9,10 +9,10 @@ let db: Database | null = null
 export async function getDb(): Promise<Database> {
   if (!db) {
     // "sqlite:timetracker.db" creates the file in app data directory
-    db = await Database.load("sqlite:timetracker.db")
-    await runMigrations(db)
+    db = await Database.load("sqlite:timetracker.db");
+    await runMigrations(db);
   }
-  return db
+  return db;
 }
 
 /**
@@ -29,10 +29,10 @@ async function runMigrations(database: Database): Promise<void> {
       total_seconds INTEGER DEFAULT 0,
       created_at TEXT DEFAULT (datetime('now', 'localtime'))
     )
-  `)
+  `);
 
   // Create index for faster date lookups on created_at
   await database.execute(`
     CREATE INDEX IF NOT EXISTS idx_tasks_created_at ON tasks(created_at)
-  `)
+  `);
 }

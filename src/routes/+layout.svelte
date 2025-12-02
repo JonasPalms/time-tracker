@@ -1,39 +1,38 @@
 <script lang="ts">
-  import "../app.css"
-  import '../shadcn.css'
-  import { createThemeContext } from "$lib/theme.svelte"
-  import { createTrackingContext } from "$lib/tracking.svelte"
-  import { createTimeAdjustContext } from "$lib/timeAdjust.svelte"
-  import { getDb } from "$lib/db"
-  import { getCurrentWindow } from "@tauri-apps/api/window"
-  import { onMount, onDestroy } from "svelte"
+  import "../app.css";
+  import "../shadcn.css";
+  import { createThemeContext } from "$lib/theme.svelte";
+  import { createTrackingContext } from "$lib/tracking.svelte";
+  import { createTimeAdjustContext } from "$lib/timeAdjust.svelte";
+  import { getDb } from "$lib/db";
+  import { getCurrentWindow } from "@tauri-apps/api/window";
+  import { onMount, onDestroy } from "svelte";
 
-  let { children } = $props()
+  let { children } = $props();
 
-  const { init: initTheme } = createThemeContext()
-  const { cleanup: cleanupTracking, stopTracking } = createTrackingContext()
-  const { init: initTimeAdjust } = createTimeAdjustContext()
+  const { init: initTheme } = createThemeContext();
+  const { cleanup: cleanupTracking, stopTracking } = createTrackingContext();
+  const { init: initTimeAdjust } = createTimeAdjustContext();
 
-  let unlisten: (() => void) | null = null
+  let unlisten: (() => void) | null = null;
 
   onMount(async () => {
+    await initTheme();
 
-    await initTheme()
+    await initTimeAdjust();
 
-    await initTimeAdjust()
+    await getDb();
 
-    await getDb()
-
-    const currentWindow = getCurrentWindow()
+    const currentWindow = getCurrentWindow();
     unlisten = await currentWindow.onCloseRequested(async () => {
-      await stopTracking()
-    })
-  })
+      await stopTracking();
+    });
+  });
 
   onDestroy(() => {
-    cleanupTracking()
-    unlisten?.()
-  })
+    cleanupTracking();
+    unlisten?.();
+  });
 </script>
 
 <div class="h-screen flex flex-col bg-surface text-on-surface overflow-hidden">

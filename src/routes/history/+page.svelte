@@ -1,117 +1,117 @@
 <script lang="ts">
-  import { getTasksInRange, type Task } from "$lib/tasks"
-  import { formatTimeHuman } from "$lib/timeUtils"
-  import Icon from "$lib/components/Icon.svelte"
+  import { getTasksInRange, type Task } from "$lib/tasks";
+  import { formatTimeHuman } from "$lib/timeUtils";
+  import Icon from "$lib/components/Icon.svelte";
 
   // State
-  let weekOffset = $state(0) // 0 = current week, -1 = last week, etc.
-  let tasksByDate = $state<Map<string, Task[]>>(new Map())
-  let isLoading = $state(true)
+  let weekOffset = $state(0); // 0 = current week, -1 = last week, etc.
+  let tasksByDate = $state<Map<string, Task[]>>(new Map());
+  let isLoading = $state(true);
 
   // Get week start (Monday) and end (Sunday) for a given offset
   function getWeekRange(offset: number): { start: Date; end: Date } {
-    const now = new Date()
-    const dayOfWeek = now.getDay()
+    const now = new Date();
+    const dayOfWeek = now.getDay();
     // Adjust so Monday is 0
-    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek
+    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
 
-    const monday = new Date(now)
-    monday.setDate(now.getDate() + mondayOffset + offset * 7)
-    monday.setHours(0, 0, 0, 0)
+    const monday = new Date(now);
+    monday.setDate(now.getDate() + mondayOffset + offset * 7);
+    monday.setHours(0, 0, 0, 0);
 
-    const sunday = new Date(monday)
-    sunday.setDate(monday.getDate() + 6)
-    sunday.setHours(23, 59, 59, 999)
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+    sunday.setHours(23, 59, 59, 999);
 
-    return { start: monday, end: sunday }
+    return { start: monday, end: sunday };
   }
 
   function formatDate(date: Date): string {
     // Format as YYYY-MM-DD using local timezone (not UTC)
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, "0")
-    const day = String(date.getDate()).padStart(2, "0")
-    return `${year}-${month}-${day}`
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
   }
 
   function formatDateDisplay(dateStr: string): string {
-    const date = new Date(dateStr + "T00:00:00")
+    const date = new Date(dateStr + "T00:00:00");
     return date.toLocaleDateString("en-US", {
       weekday: "short",
       month: "short",
       day: "numeric",
-    })
+    });
   }
 
   function formatWeekRange(start: Date, end: Date): string {
     const startStr = start.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
-    })
+    });
     const endStr = end.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric",
-    })
-    return `${startStr} - ${endStr}`
+    });
+    return `${startStr} - ${endStr}`;
   }
 
   async function loadWeekTasks() {
-    isLoading = true
-    const { start, end } = getWeekRange(weekOffset)
+    isLoading = true;
+    const { start, end } = getWeekRange(weekOffset);
 
-    const tasks = await getTasksInRange(formatDate(start), formatDate(end))
+    const tasks = await getTasksInRange(formatDate(start), formatDate(end));
 
     // Group tasks by date (extract from created_at)
-    const grouped = new Map<string, Task[]>()
+    const grouped = new Map<string, Task[]>();
     for (const task of tasks) {
       // Extract date from SQLite datetime format (YYYY-MM-DD HH:MM:SS)
-      const taskDate = task.created_at.substring(0, 10)
-      const existing = grouped.get(taskDate) || []
-      grouped.set(taskDate, [...existing, task])
+      const taskDate = task.created_at.substring(0, 10);
+      const existing = grouped.get(taskDate) || [];
+      grouped.set(taskDate, [...existing, task]);
     }
 
-    tasksByDate = grouped
-    isLoading = false
+    tasksByDate = grouped;
+    isLoading = false;
   }
 
   // Load tasks when week changes
   $effect(() => {
-    weekOffset // Dependency
-    loadWeekTasks()
-  })
+    weekOffset; // Dependency
+    loadWeekTasks();
+  });
 
   // Calculate total seconds for a day
   function getDayTotal(tasks: Task[]): number {
-    return tasks.reduce((sum, task) => sum + task.total_seconds, 0)
+    return tasks.reduce((sum, task) => sum + task.total_seconds, 0);
   }
 
   // Calculate week total
   let weekTotal = $derived(() => {
-    let total = 0
+    let total = 0;
     for (const tasks of tasksByDate.values()) {
-      total += getDayTotal(tasks)
+      total += getDayTotal(tasks);
     }
-    return total
-  })
+    return total;
+  });
 
   // Get current week range for display
   let currentRange = $derived(() => {
-    const { start, end } = getWeekRange(weekOffset)
-    return formatWeekRange(start, end)
-  })
+    const { start, end } = getWeekRange(weekOffset);
+    return formatWeekRange(start, end);
+  });
 
   // Get all dates in the week for display (even if no tasks)
   let weekDates = $derived(() => {
-    const { start } = getWeekRange(weekOffset)
-    const dates: string[] = []
+    const { start } = getWeekRange(weekOffset);
+    const dates: string[] = [];
     for (let i = 0; i < 7; i++) {
-      const date = new Date(start)
-      date.setDate(start.getDate() + i)
-      dates.push(formatDate(date))
+      const date = new Date(start);
+      date.setDate(start.getDate() + i);
+      dates.push(formatDate(date));
     }
-    return dates
-  })
+    return dates;
+  });
 </script>
 
 <div class="h-full flex flex-col">
@@ -208,4 +208,3 @@
     </div>
   </section>
 </div>
-

@@ -2,17 +2,17 @@
   let {
     onAddTask,
   }: {
-    onAddTask: (taskName: string) => void
-  } = $props()
+    onAddTask: (taskName: string) => void;
+  } = $props();
 
-  let newTaskName = $state("")
+  let newTaskName = $state("");
 
   function handleSubmit(e: Event) {
-    e.preventDefault()
-    if (!newTaskName.trim()) return
+    e.preventDefault();
+    if (!newTaskName.trim()) return;
 
-    onAddTask(newTaskName.trim())
-    newTaskName = ""
+    onAddTask(newTaskName.trim());
+    newTaskName = "";
   }
 </script>
 

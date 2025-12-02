@@ -1,24 +1,24 @@
 <script lang="ts">
-  import { useTheme } from "$lib/theme.svelte"
-  import { useTimeAdjust } from "$lib/timeAdjust.svelte"
-  import Icon from "$lib/components/Icon.svelte"
+  import { useTheme } from "$lib/theme.svelte";
+  import { useTimeAdjust } from "$lib/timeAdjust.svelte";
+  import Icon from "$lib/components/Icon.svelte";
 
-  const theme = useTheme()
-  const timeAdjust = useTimeAdjust()
+  const theme = useTheme();
+  const timeAdjust = useTimeAdjust();
 
-  let inputValue = $state(timeAdjust.intervalMinutes)
+  let inputValue = $state(timeAdjust.intervalMinutes);
 
   // Sync input when context changes
   $effect(() => {
-    inputValue = timeAdjust.intervalMinutes
-  })
+    inputValue = timeAdjust.intervalMinutes;
+  });
 
   function handleChange(e: Event) {
-    const target = e.target as HTMLInputElement
-    const value = parseInt(target.value, 10)
+    const target = e.target as HTMLInputElement;
+    const value = parseInt(target.value, 10);
     if (!isNaN(value) && value > 0 && value <= 60) {
-      inputValue = value
-      timeAdjust.setIntervalMinutes(value)
+      inputValue = value;
+      timeAdjust.setIntervalMinutes(value);
     }
   }
 </script>
@@ -49,12 +49,16 @@
             <div class="text-sm text-on-surface-muted">Choose light or dark mode</div>
           </div>
           <button
-            class="relative w-16 h-9 rounded-full transition-colors {theme.isDark ? 'bg-accent' : 'bg-on-surface/20'}"
+            class="relative w-16 h-9 rounded-full transition-colors {theme.isDark
+              ? 'bg-accent'
+              : 'bg-on-surface/20'}"
             onclick={theme.toggleTheme}
             aria-label="Toggle theme"
           >
             <span
-              class="absolute top-1 left-1 w-7 h-7 rounded-full bg-surface-raised shadow-md transition-transform flex items-center justify-center {theme.isDark ? 'translate-x-7' : 'translate-x-0'}"
+              class="absolute top-1 left-1 w-7 h-7 rounded-full bg-surface-raised shadow-md transition-transform flex items-center justify-center {theme.isDark
+                ? 'translate-x-7'
+                : 'translate-x-0'}"
             >
               {theme.isDark ? "🌙" : "☀️"}
             </span>

@@ -1,25 +1,25 @@
 <script lang="ts">
-  import Icon from "./Icon.svelte"
-  import { formatDateForDisplay, getDateString, addDays } from "$lib/timeUtils"
-  import { getTodayDate } from "$lib/tasks"
+  import Icon from "./Icon.svelte";
+  import { formatDateForDisplay, getDateString, addDays } from "$lib/timeUtils";
+  import { getTodayDate } from "$lib/tasks";
 
   let {
     selectedDate,
     onDateChange,
   }: {
-    selectedDate: string
-    onDateChange: (newDate: string) => void
-  } = $props()
+    selectedDate: string;
+    onDateChange: (newDate: string) => void;
+  } = $props();
 
-  const isToday = $derived(selectedDate === getTodayDate())
-  const displayDate = $derived(formatDateForDisplay(selectedDate))
+  const isToday = $derived(selectedDate === getTodayDate());
+  const displayDate = $derived(formatDateForDisplay(selectedDate));
 
   function handlePreviousDay() {
-    onDateChange(addDays(selectedDate, -1))
+    onDateChange(addDays(selectedDate, -1));
   }
 
   function handleNextDay() {
-    onDateChange(addDays(selectedDate, 1))
+    onDateChange(addDays(selectedDate, 1));
   }
 </script>
 
@@ -33,18 +33,17 @@
       <Icon name="chevron-left" class="w-6 h-6" />
     </button>
     <button
-    class="p-2 rounded-lg bg-surface-raised hover:bg-accent/20 transition-colors"
-    onclick={handleNextDay}
-    aria-label="Next day"
-  >
-    <Icon name="chevron-right" class="w-6 h-6" />
-  </button>
+      class="p-2 rounded-lg bg-surface-raised hover:bg-accent/20 transition-colors"
+      onclick={handleNextDay}
+      aria-label="Next day"
+    >
+      <Icon name="chevron-right" class="w-6 h-6" />
+    </button>
     <div>
       <h1 class="text-2xl font-black text-accent">
         {displayDate}
       </h1>
     </div>
-
   </div>
   <div class="flex items-center gap-2">
     <a
@@ -63,4 +62,3 @@
     </a>
   </div>
 </div>
-
