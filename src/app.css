@@ -1,4 +1,4 @@
-@import "tailwindcss";
+import "../shadcn.css";
 
 /*
  * Base styles - defaults that can be overridden
@@ -40,10 +40,5 @@
 
   ::selection {
     @apply bg-transparent;
-  }
-
-  /* Show dropdown trigger button when menu is open */
-  [data-state="open"] > button[data-slot="button"] {
-    @apply opacity-100;
   }
 }

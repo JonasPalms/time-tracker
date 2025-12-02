@@ -117,7 +117,3 @@
   --color-on-accent: var(--accent-foreground);
   --color-accent-hover: theme(colors.amber.700);
 }
-
-.dark {
-  --color-accent-hover: theme(colors.amber.400);
-}

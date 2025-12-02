@@ -1,6 +1,5 @@
 <script lang="ts">
   import "../app.css";
-  import "../shadcn.css";
   import { createThemeContext } from "$lib/theme.svelte";
   import { createTrackingContext } from "$lib/tracking.svelte";
   import { createTimeAdjustContext } from "$lib/timeAdjust.svelte";
@@ -36,7 +35,7 @@
 
 <div class="h-screen flex flex-col bg-surface text-on-surface overflow-hidden">
   <div class="h-10 w-full shrink-0" data-tauri-drag-region></div>
-  <main class="flex-1 container mx-auto overflow-hidden">
+  <main class="flex-1 overflow-hidden">
     {@render children()}
   </main>
 </div>

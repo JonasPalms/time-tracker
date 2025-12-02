@@ -5,6 +5,8 @@
   import { useTimeAdjust } from "$lib/timeAdjust.svelte";
   import EllipsisIcon from "@lucide/svelte/icons/ellipsis";
   import TrashIcon from "@lucide/svelte/icons/trash-2";
+  import PlusIcon from "@lucide/svelte/icons/plus";
+  import MinusIcon from "@lucide/svelte/icons/minus";
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
   import { Button } from "$lib/components/ui/button";
 
@@ -49,11 +51,13 @@
 
   function handleAdd(e: MouseEvent) {
     e.stopPropagation();
+    e.preventDefault(); // Prevent dropdown from closing
     onAdjustTime(adjustmentSeconds);
   }
 
   function handleSubtract(e: MouseEvent) {
     e.stopPropagation();
+    e.preventDefault(); // Prevent dropdown from closing
     onAdjustTime(-adjustmentSeconds);
   }
 
@@ -104,7 +108,7 @@
 </script>
 
 <div
-  class="group flex items-center gap-3 p-3 rounded-xl transition-colors hover:bg-surface-raised focus-within:bg-surface-raised"
+  class="group flex items-center gap-3 px-2 py-3 rounded-xl transition-colors hover:bg-surface-raised focus-within:bg-surface-raised"
 >
   <!-- Play/Stop Button -->
   <button
@@ -135,33 +139,6 @@
     {displayTime()}
   </div>
 
-  <!-- Adjust Time Buttons -->
-  <div
-    class="flex flex-col gap-0.5 opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity"
-  >
-    <button
-      class="w-6 h-6 flex items-center justify-center rounded hover:bg-accent/20 transition-colors hover:scale-105 text-on-surface-muted"
-      onclick={handleAdd}
-      aria-label="Add {timeAdjust.intervalMinutes} {timeAdjust.intervalMinutes === 1
-        ? 'minute'
-        : 'minutes'}"
-    >
-      <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
-      </svg>
-    </button>
-    <button
-      class="w-6 h-6 flex items-center justify-center rounded hover:bg-accent/20 transition-colors hover:scale-105 text-on-surface-muted"
-      onclick={handleSubtract}
-      aria-label="Subtract {timeAdjust.intervalMinutes} {timeAdjust.intervalMinutes === 1
-        ? 'minute'
-        : 'minutes'}"
-    >
-      <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M19 13H5v-2h14v2z" />
-      </svg>
-    </button>
-  </div>
   {#if onDelete}
     <DropdownMenu.Root bind:open={dropdownOpen}>
       <DropdownMenu.Trigger>
@@ -177,6 +154,30 @@
         </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content class="w-[180px]" align="end">
+        <!-- Inline time adjustment buttons -->
+        <div class="flex items-center">
+          <button
+            class="flex-1 flex items-center justify-center gap-2 rounded-sm px-1 py-1.5 text-sm hover:bg-muted transition-colors"
+            onclick={handleSubtract}
+            aria-label="Subtract {timeAdjust.intervalMinutes} {timeAdjust.intervalMinutes === 1
+              ? 'minute'
+              : 'minutes'}"
+          >
+            <MinusIcon class="size-4" />
+            <span>Sub</span>
+          </button>
+          <button
+            class="flex-1 flex items-center justify-center gap-2 rounded-sm px-1 py-1.5 text-sm hover:bg-muted transition-colors"
+            onclick={handleAdd}
+            aria-label="Add {timeAdjust.intervalMinutes} {timeAdjust.intervalMinutes === 1
+              ? 'minute'
+              : 'minutes'}"
+          >
+            <PlusIcon class="size-4" />
+            <span>Add</span>
+          </button>
+        </div>
+        <DropdownMenu.Separator />
         <DropdownMenu.Item onclick={handleDelete} variant="destructive">
           <TrashIcon class="me-2 size-4" />
           Delete

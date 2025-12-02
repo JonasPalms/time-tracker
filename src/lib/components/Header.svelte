@@ -26,14 +26,14 @@
 <div class="flex items-center justify-between mb-6">
   <div class="flex items-center gap-3">
     <button
-      class="p-2 rounded-lg bg-surface-raised hover:bg-accent/20 transition-colors"
+      class="p-2 rounded-lg bg-surface-raised hover:bg-surface-hover transition-colors"
       onclick={handlePreviousDay}
       aria-label="Previous day"
     >
       <Icon name="chevron-left" class="w-6 h-6" />
     </button>
     <button
-      class="p-2 rounded-lg bg-surface-raised hover:bg-accent/20 transition-colors"
+      class="p-2 rounded-lg bg-surface-raised hover:bg-surface-hover transition-colors"
       onclick={handleNextDay}
       aria-label="Next day"
     >
@@ -48,14 +48,14 @@
   <div class="flex items-center gap-2">
     <a
       href="/history"
-      class="p-2 rounded-lg bg-surface-raised hover:bg-accent/20 transition-colors"
+      class="p-2 rounded-lg bg-surface-raised hover:bg-surface-hover transition-colors"
       aria-label="View history"
     >
       <Icon name="clock" class="w-6 h-6" />
     </a>
     <a
       href="/settings"
-      class="p-2 rounded-lg bg-surface-raised hover:bg-accent/20 transition-colors"
+      class="p-2 rounded-lg bg-surface-raised hover:bg-surface-hover transition-colors"
       aria-label="Open settings"
     >
       <Icon name="settings" class="w-6 h-6" />

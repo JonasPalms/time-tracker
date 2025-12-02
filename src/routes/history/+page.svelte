@@ -116,11 +116,11 @@
 
 <div class="h-full flex flex-col">
   <!-- Header -->
-  <section class="shrink-0 px-6">
+  <section class="shrink-0 px-4">
     <div class="flex items-center gap-4 mb-6">
       <a
         href="/"
-        class="p-2 rounded-lg bg-surface-raised hover:bg-accent/20 transition-colors"
+        class="p-2 rounded-lg bg-surface-raised hover:bg-surface-hover transition-colors"
         aria-label="Back to tracker"
       >
         <Icon name="chevron-left" class="w-6 h-6" />

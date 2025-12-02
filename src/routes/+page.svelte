@@ -97,12 +97,12 @@
 </script>
 
 <div class="h-full flex flex-col">
-  <section class="shrink-0 px-6 border-b border-on-surface/10">
+  <section class="shrink-0 px-4 border-b border-on-surface/10">
     <Header {selectedDate} onDateChange={handleDateChange} />
     <NewTaskInput onAddTask={handleAddTask} />
   </section>
   <section class="flex-1 overflow-y-auto py-4">
-    <div class="px-6 space-y-2">
+    <div class="px-4 space-y-2">
       {#if isLoading}
         <div class="text-center py-8 text-on-surface-muted">Loading...</div>
       {:else}
@@ -123,7 +123,7 @@
   </section>
 
   <section class="shrink-0 bg-surface-raised border-t border-on-surface/10 min-h-22">
-    <div class="container mx-auto max-w-2xl px-6">
+    <div class="px-4">
       {#if tracking.currentTask}
         <CurrentTracking
           currentTask={tracking.currentTask}
