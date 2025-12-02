@@ -3,13 +3,23 @@ import Database from "@tauri-apps/plugin-sql";
 let db: Database | null = null;
 
 /**
+ * Get the database name from environment variable or use default.
+ * Defaults to "timetracker-dev.db" for development.
+ */
+function getDbName(): string {
+  // Use environment variable if set, otherwise default to dev database
+  const dbName = import.meta.env.VITE_DB_NAME || "timetracker-dev.db";
+  return `sqlite:${dbName}`;
+}
+
+/**
  * Get or create the database connection.
  * Uses SQLite stored in the app's data directory.
  */
 export async function getDb(): Promise<Database> {
   if (!db) {
-    // "sqlite:timetracker.db" creates the file in app data directory
-    db = await Database.load("sqlite:timetracker.db");
+    const dbPath = getDbName();
+    db = await Database.load(dbPath);
     await runMigrations(db);
   }
   return db;
