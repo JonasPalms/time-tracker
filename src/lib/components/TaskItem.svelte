@@ -3,6 +3,10 @@
   import { type Task } from "$lib/tasks"
   import { formatTime } from "$lib/timeUtils"
   import { useTimeAdjust } from "$lib/timeAdjust.svelte"
+  import EllipsisIcon from "@lucide/svelte/icons/ellipsis"
+  import TrashIcon from "@lucide/svelte/icons/trash-2"
+  import * as DropdownMenu from "$lib/components/ui/dropdown-menu"
+  import { Button } from "$lib/components/ui/button"
 
   let {
     task,
@@ -26,6 +30,7 @@
 
   // State for edited name
   let editedName = $state(task.name)
+  let dropdownOpen = $state(false)
 
   // Sync editedName with task.name when task prop changes externally
   $effect(() => {
@@ -52,11 +57,14 @@
     onAdjustTime(-adjustmentSeconds)
   }
 
-  function handleDelete(e: MouseEvent) {
-    e.stopPropagation()
+  function handleDelete(e?: MouseEvent | Event) {
+    if (e) {
+      e.stopPropagation()
+    }
     if (onDelete) {
       onDelete()
     }
+    dropdownOpen = false
   }
 
   function handlePlayPause(e: MouseEvent) {
@@ -149,12 +157,26 @@
     </button>
   </div>
   {#if onDelete}
-    <button
-      class="w-6 h-6 flex items-center justify-center rounded hover:bg-red-500/20 hover:scale-105 text-on-surface-muted opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity"
-      onclick={handleDelete}
-      aria-label="Delete task"
-    >
-      <Icon name="trash" class="w-3 h-3" />
-    </button>
+    <DropdownMenu.Root bind:open={dropdownOpen}>
+      <DropdownMenu.Trigger>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          class="opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity"
+          aria-label="Open menu"
+        >
+          <EllipsisIcon class="w-4 h-4" />
+        </Button>
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Content class="w-[180px]" align="end">
+        <DropdownMenu.Item
+          variant="destructive"
+          onselect={handleDelete}
+        >
+          <TrashIcon class="me-2 size-4" />
+          Delete
+        </DropdownMenu.Item>
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
   {/if}
 </div>
