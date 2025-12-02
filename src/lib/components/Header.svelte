@@ -1,6 +1,6 @@
 <script lang="ts">
   import Icon from "./Icon.svelte";
-  import { formatDateForDisplay, getDateString, addDays } from "$lib/timeUtils";
+  import { formatDateForDisplay, addDays } from "$lib/timeUtils";
   import { getTodayDate } from "$lib/tasks";
 
   let {

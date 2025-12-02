@@ -1,26 +1,27 @@
 @import "tw-animate-css";
-
+@import "tailwindcss";
 @custom-variant dark (&:is(.dark *));
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.147 0.004 49.25);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.147 0.004 49.25);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.147 0.004 49.25);
+  --background: theme(colors.stone.100);
+  --foreground: theme(colors.stone.900);
+  --card: theme(colors.white);
+  --card-foreground: theme(colors.stone.900);
+  --popover: theme(colors.white);
+  --popover-foreground: theme(colors.stone.900);
   --primary: oklch(0.216 0.006 56.043);
   --primary-foreground: oklch(0.985 0.001 106.423);
   --secondary: oklch(0.97 0.001 106.424);
   --secondary-foreground: oklch(0.216 0.006 56.043);
-  --muted: oklch(0.97 0.001 106.424);
-  --muted-foreground: oklch(0.553 0.013 58.071);
-  /* Removed --accent and --accent-foreground to avoid conflict with app.css */
+  --muted: theme(colors.stone.200);
+  --muted-foreground: theme(colors.stone.500);
+  --accent: theme(colors.amber.600);
+  --accent-foreground: theme(colors.white);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.923 0.003 48.717);
   --input: oklch(0.923 0.003 48.717);
-  --ring: oklch(0.709 0.01 56.259);
+  --ring: theme(colors.amber.600);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -37,23 +38,24 @@
 }
 
 .dark {
-  --background: oklch(0.147 0.004 49.25);
-  --foreground: oklch(0.985 0.001 106.423);
-  --card: oklch(0.216 0.006 56.043);
-  --card-foreground: oklch(0.985 0.001 106.423);
-  --popover: oklch(0.216 0.006 56.043);
-  --popover-foreground: oklch(0.985 0.001 106.423);
+  --background: theme(colors.stone.950);
+  --foreground: theme(colors.stone.100);
+  --card: theme(colors.stone.900);
+  --card-foreground: theme(colors.stone.100);
+  --popover: theme(colors.stone.800);
+  --popover-foreground: theme(colors.stone.100);
   --primary: oklch(0.923 0.003 48.717);
   --primary-foreground: oklch(0.216 0.006 56.043);
   --secondary: oklch(0.268 0.007 34.298);
   --secondary-foreground: oklch(0.985 0.001 106.423);
-  --muted: oklch(0.268 0.007 34.298);
-  --muted-foreground: oklch(0.709 0.01 56.259);
-  /* Removed --accent and --accent-foreground to avoid conflict with app.css */
+  --muted: theme(colors.stone.700);
+  --muted-foreground: theme(colors.stone.500);
+  --accent: theme(colors.amber.500);
+  --accent-foreground: theme(colors.stone.950);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.553 0.013 58.071);
+  --ring: theme(colors.amber.500);
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
@@ -86,7 +88,8 @@
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-  /* Removed --color-accent and --color-accent-foreground to avoid conflict with app.css */
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-border: var(--border);
   --color-input: var(--input);
@@ -104,4 +107,17 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  /* Custom surface colors mapped to shadcn colors */
+  --color-surface: var(--background);
+  --color-surface-raised: var(--card);
+  --color-surface-elevated: var(--popover);
+  --color-surface-hover: var(--muted);
+  --color-on-surface: var(--foreground);
+  --color-on-surface-muted: var(--muted-foreground);
+  --color-on-accent: var(--accent-foreground);
+  --color-accent-hover: theme(colors.amber.700);
+}
+
+.dark {
+  --color-accent-hover: theme(colors.amber.400);
 }

@@ -22,6 +22,7 @@ export async function getDb(): Promise<Database> {
     db = await Database.load(dbPath);
     await runMigrations(db);
   }
+
   return db;
 }
 

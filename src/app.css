@@ -1,53 +1,6 @@
 @import "tailwindcss";
 
 /*
- * Design Tokens
- * These CSS variables switch based on the .dark class on <html>
- */
-
-:root {
-  /* Light theme (default) */
-  --color-surface: theme(colors.stone.100);
-  --color-surface-raised: theme(colors.white);
-  --color-on-surface: theme(colors.stone.900);
-  --color-on-surface-muted: theme(colors.stone.500);
-
-  --color-accent: theme(colors.amber.600);
-  --color-accent-hover: theme(colors.amber.700);
-  --color-on-accent: theme(colors.white);
-}
-
-:root.dark {
-  /* Dark theme */
-  --color-surface: theme(colors.stone.950);
-  --color-surface-raised: theme(colors.stone.900);
-  --color-on-surface: theme(colors.stone.100);
-  --color-on-surface-muted: theme(colors.stone.500);
-
-  --color-accent: theme(colors.amber.500);
-  --color-accent-hover: theme(colors.amber.400);
-  --color-on-accent: theme(colors.stone.950);
-}
-
-/*
- * Tailwind Theme
- */
-@theme {
-  /* Surfaces */
-  --color-surface: var(--color-surface);
-  --color-surface-raised: var(--color-surface-raised);
-
-  /* Text */
-  --color-on-surface: var(--color-on-surface);
-  --color-on-surface-muted: var(--color-on-surface-muted);
-
-  /* Accent */
-  --color-accent: var(--color-accent);
-  --color-accent-hover: var(--color-accent-hover);
-  --color-on-accent: var(--color-on-accent);
-}
-
-/*
  * Base styles - defaults that can be overridden
  */
 @layer base {
@@ -87,5 +40,10 @@
 
   ::selection {
     @apply bg-transparent;
+  }
+
+  /* Show dropdown trigger button when menu is open */
+  [data-state="open"] > button[data-slot="button"] {
+    @apply opacity-100;
   }
 }
