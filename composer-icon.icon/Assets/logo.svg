@@ -1,0 +1,40 @@
+<svg
+  width="256"
+  height="256"
+  viewBox="0 0 128 128"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <!-- Urets cirkel med accentfarven som baggrund -->
+  <circle
+    cx="64"
+    cy="64"
+    r="46"
+    fill="#FD9A00"
+  />
+
+  <!-- Timeviser (kort) -->
+  <line
+    x1="64" y1="64"
+    x2="50" y2="44"
+    stroke="#0C0A09"
+    stroke-width="4.5"
+    stroke-linecap="round"
+  />
+
+  <!-- Minutviser (lang) -->
+  <line
+    x1="64" y1="64"
+    x2="86" y2="50"
+    stroke="#0C0A09"
+    stroke-width="3.5"
+    stroke-linecap="round"
+  />
+
+  <!-- Lille cirkel i centrum -->
+  <circle
+    cx="64"
+    cy="64"
+    r="3"
+    fill="#0C0A09"
+  />
+</svg>
