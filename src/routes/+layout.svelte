@@ -2,7 +2,6 @@
   import "../app.css";
   import { createThemeContext } from "$lib/theme.svelte";
   import { createTrackingContext } from "$lib/tracking.svelte";
-  import { createTimeAdjustContext } from "$lib/timeAdjust.svelte";
   import { getDb } from "$lib/db";
   import { getCurrentWindow } from "@tauri-apps/api/window";
   import { onMount, onDestroy } from "svelte";
@@ -11,14 +10,11 @@
 
   const { init: initTheme } = createThemeContext();
   const { cleanup: cleanupTracking, stopTracking } = createTrackingContext();
-  const { init: initTimeAdjust } = createTimeAdjustContext();
 
   let unlisten: (() => void) | null = null;
 
   onMount(async () => {
     await initTheme();
-
-    await initTimeAdjust();
     await getDb();
 
     const currentWindow = getCurrentWindow();

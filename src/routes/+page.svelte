@@ -8,8 +8,8 @@
     getTasksForDate,
     getTodayDate,
     createTask,
-    addTimeToTask,
     updateTaskName,
+    updateTaskTime,
     deleteTask,
     type Task,
   } from "$lib/tasks";
@@ -42,7 +42,6 @@
   }
 
   async function handleAddTask(taskName: string) {
-    // Create task with the selected date
     const task = await createTask(taskName, selectedDate);
     tasks = [task, ...tasks];
   }
@@ -71,19 +70,15 @@
     await loadTasks();
   }
 
-  async function handleAdjustTime(task: Task, seconds: number) {
-    // Prevent negative time - only allow adjustment if result would be >= 0
-    const newTotal = task.total_seconds + seconds;
-    if (newTotal < 0) {
-      return; // Don't adjust if it would go negative
-    }
-    await addTimeToTask(task.id, seconds);
-    await loadTasks(); // Refresh to get updated totals
-  }
-
   async function handleUpdateTaskName(task: Task, newName: string) {
     if (!newName.trim()) return;
     await updateTaskName(task.id, newName);
+    await loadTasks();
+  }
+
+  async function handleUpdateTaskTime(task: Task, newTotalSeconds: number) {
+    if (newTotalSeconds < 0) return;
+    await updateTaskTime(task.id, newTotalSeconds);
     await loadTasks();
   }
 
@@ -113,8 +108,8 @@
             {isTracking}
             elapsedSeconds={tracking.elapsedSeconds}
             onPlayPause={() => handlePlayPause(task)}
-            onAdjustTime={(seconds) => handleAdjustTime(task, seconds)}
             onUpdateName={(newName) => handleUpdateTaskName(task, newName)}
+            onUpdateTime={(newTotalSeconds) => handleUpdateTaskTime(task, newTotalSeconds)}
             onDelete={() => handleDelete(task)}
           />
         {/each}

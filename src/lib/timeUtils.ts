@@ -1,5 +1,5 @@
 /**
- * Format seconds as HH:MM:SS
+ * Format seconds as HH:MM:SS (always includes hours with leading zero)
  */
 export function formatTime(totalSeconds: number): string {
   const hours = Math.floor(totalSeconds / 3600);
@@ -7,11 +7,7 @@ export function formatTime(totalSeconds: number): string {
   const seconds = totalSeconds % 60;
 
   const pad = (n: number) => n.toString().padStart(2, "0");
-
-  if (hours > 0) {
-    return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-  }
-  return `${pad(minutes)}:${pad(seconds)}`;
+  return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 }
 
 /**
@@ -72,4 +68,29 @@ export function addDays(dateStr: string, days: number): string {
   const date = new Date(dateStr + "T00:00:00");
   date.setDate(date.getDate() + days);
   return getDateString(date);
+}
+
+/**
+ * Convert time string (HH:MM:SS or MM:SS) to total seconds
+ * @param timeStr - Time string in format "HH:MM:SS" or "MM:SS"
+ * @returns Total seconds, or null if invalid format
+ */
+export function parseTimeString(timeStr: string): number | null {
+  const trimmed = timeStr.trim();
+  if (!trimmed) return null;
+
+  // Match HH:MM:SS or MM:SS format
+  const match = trimmed.match(/^(?:(\d+):)?(\d+):(\d+)$/);
+  if (!match) return null;
+
+  const hours = match[1] ? parseInt(match[1], 10) : 0;
+  const minutes = parseInt(match[2], 10);
+  const seconds = parseInt(match[3], 10);
+
+  // Validate ranges
+  if (minutes >= 60 || seconds >= 60 || minutes < 0 || seconds < 0 || hours < 0) {
+    return null;
+  }
+
+  return hours * 3600 + minutes * 60 + seconds;
 }
