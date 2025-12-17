@@ -87,7 +87,6 @@ export function parseTimeString(timeStr: string): number | null {
   const minutes = parseInt(match[2], 10);
   const seconds = parseInt(match[3], 10);
 
-  // Validate ranges
   if (minutes >= 60 || seconds >= 60 || minutes < 0 || seconds < 0 || hours < 0) {
     return null;
   }
