@@ -50,8 +50,8 @@
     selectedDate = newDate;
   }
 
-  async function handleAddTask(taskName: string) {
-    const task = await createTask(taskName, selectedDate);
+  async function handleAddTask(taskName: string, initialSeconds?: number) {
+    const task = await createTask(taskName, selectedDate, initialSeconds);
     tasks = [task, ...tasks];
     // Refresh suggestions to include the new task name
     await loadSuggestions();

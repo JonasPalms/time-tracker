@@ -42,16 +42,21 @@ export async function getTodaysTasks(): Promise<Task[]> {
 /**
  * Create a new task
  * @param name - Task name
- * @param date - Optional date in YYYY-MM-DD format. If provided, task will be created with this date at midnight. Otherwise uses current time.
+ * @param date - Date in YYYY-MM-DD format. Task will be created with this date at midnight.
+ * @param initialSeconds - Optional initial time in seconds (default: 0)
  */
-export async function createTask(name: string, date: string): Promise<Task> {
+export async function createTask(
+  name: string,
+  date: string,
+  initialSeconds: number = 0
+): Promise<Task> {
   const db = await getDb();
 
   // Create task with specific date at midnight (00:00:00)
   const datetime = `${date} 00:00:00`;
   const result = await db.execute(
-    "INSERT INTO tasks (name, total_seconds, created_at) VALUES (?, 0, ?)",
-    [name, datetime]
+    "INSERT INTO tasks (name, total_seconds, created_at) VALUES (?, ?, ?)",
+    [name, initialSeconds, datetime]
   );
 
   // Fetch the created task

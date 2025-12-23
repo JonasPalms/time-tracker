@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { tick } from "svelte";
+  import { tick, onMount, onDestroy } from "svelte";
   import * as Popover from "$lib/components/ui/popover/index.js";
   import * as Command from "$lib/components/ui/command/index.js";
 
@@ -7,7 +7,7 @@
     onAddTask,
     suggestions = [],
   }: {
-    onAddTask: (taskName: string) => void;
+    onAddTask: (taskName: string, initialSeconds?: number) => void;
     suggestions?: string[];
   } = $props();
 
@@ -17,11 +17,25 @@
   let commandRef = $state<HTMLDivElement>(null!);
   let isUsingKeyboard = $state(false);
 
-  // Filter suggestions based on input
-  const filteredSuggestions = $derived(
+  // Favourites - hardcoded for now
+  const favourites = [{ name: "Frokost", duration: "30m", seconds: 30 * 60 }];
+
+  // Filter favourites based on input
+  const filteredFavourites = $derived(
     newTaskName.trim()
+      ? favourites.filter((f) => f.name.toLowerCase().includes(newTaskName.toLowerCase()))
+      : favourites
+  );
+
+  // Get favourite names for filtering
+  const favouriteNames = new Set(favourites.map((f) => f.name.toLowerCase()));
+
+  // Filter suggestions based on input, excluding favourites
+  const filteredSuggestions = $derived(
+    (newTaskName.trim()
       ? suggestions.filter((s) => s.toLowerCase().includes(newTaskName.toLowerCase()))
       : suggestions
+    ).filter((s) => !favouriteNames.has(s.toLowerCase()))
   );
 
   function closeAndFocusTrigger() {
@@ -40,8 +54,8 @@
     closeAndFocusTrigger();
   }
 
-  function handleSelect(suggestion: string) {
-    onAddTask(suggestion);
+  function handleSelect(suggestion: string, seconds?: number) {
+    onAddTask(suggestion, seconds);
     newTaskName = "";
     closeAndFocusTrigger();
   }
@@ -76,6 +90,23 @@
   function handleMouseMove() {
     isUsingKeyboard = false;
   }
+
+  function handleGlobalKeydown(e: KeyboardEvent) {
+    // Cmd+N (Mac) or Ctrl+N (Windows/Linux) to focus input
+    if ((e.metaKey || e.ctrlKey) && e.key === "n") {
+      e.preventDefault();
+      triggerRef?.click();
+      triggerRef?.focus();
+    }
+  }
+
+  onMount(() => {
+    window.addEventListener("keydown", handleGlobalKeydown);
+  });
+
+  onDestroy(() => {
+    window.removeEventListener("keydown", handleGlobalKeydown);
+  });
 </script>
 
 <div class="relative mb-4">
@@ -96,7 +127,7 @@
         </form>
       {/snippet}
     </Popover.Trigger>
-    {#if filteredSuggestions.length > 0}
+    {#if filteredFavourites.length > 0 || filteredSuggestions.length > 0}
       <Popover.Content
         class="w-(--bits-popover-anchor-width) p-0 bg-surface-raised border-surface-hover"
         sideOffset={8}
@@ -109,20 +140,39 @@
           class={isUsingKeyboard ? "**:data-command-item:pointer-events-none!" : ""}
         >
           <Command.Root bind:ref={commandRef} class="bg-transparent" shouldFilter={false}>
-            <Command.List class="max-h-48">
-              <Command.Group>
-                {#each filteredSuggestions as suggestion (suggestion)}
-                  <Command.Item
-                    value={suggestion}
-                    onSelect={() => handleSelect(suggestion)}
-                    class="cursor-pointer py-2 text-on-surface aria-selected:bg-surface-hover aria-selected:text-on-surface text-base {isUsingKeyboard
-                      ? ''
-                      : 'hover:bg-surface-hover'}"
-                  >
-                    {suggestion}
-                  </Command.Item>
-                {/each}
-              </Command.Group>
+            <Command.List class="max-h-64">
+              {#if filteredFavourites.length > 0}
+                <Command.Group heading="Favourites">
+                  {#each filteredFavourites as favourite (favourite.name)}
+                    <Command.Item
+                      value={favourite.name}
+                      onSelect={() => handleSelect(favourite.name, favourite.seconds)}
+                      class="cursor-pointer py-2 text-on-surface aria-selected:bg-surface-hover aria-selected:text-on-surface text-base {isUsingKeyboard
+                        ? ''
+                        : 'hover:bg-surface-hover'}"
+                    >
+                      <span>{favourite.name}</span>
+                      <span class="ml-auto text-on-surface-muted text-sm">{favourite.duration}</span
+                      >
+                    </Command.Item>
+                  {/each}
+                </Command.Group>
+              {/if}
+              {#if filteredSuggestions.length > 0}
+                <Command.Group heading="Recent">
+                  {#each filteredSuggestions as suggestion (suggestion)}
+                    <Command.Item
+                      value={suggestion}
+                      onSelect={() => handleSelect(suggestion)}
+                      class="cursor-pointer py-2 text-on-surface aria-selected:bg-surface-hover aria-selected:text-on-surface text-base {isUsingKeyboard
+                        ? ''
+                        : 'hover:bg-surface-hover'}"
+                    >
+                      {suggestion}
+                    </Command.Item>
+                  {/each}
+                </Command.Group>
+              {/if}
             </Command.List>
           </Command.Root>
         </div>
