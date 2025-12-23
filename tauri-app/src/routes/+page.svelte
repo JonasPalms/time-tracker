@@ -13,10 +13,12 @@
     updateTaskName,
     updateTaskTime,
     deleteTask,
+    getUniqueTaskNames,
     type Task,
   } from "$lib/tasks";
   import { onMount } from "svelte";
   let tasks = $state<Task[]>([]);
+  let suggestions = $state<string[]>([]);
   let isLoading = $state(true);
   let selectedDate = $state(getTodayDate());
 
@@ -25,6 +27,7 @@
   // Load tasks on mount and when date changes
   onMount(async () => {
     await loadTasks();
+    await loadSuggestions();
     isLoading = false;
   });
 
@@ -39,6 +42,10 @@
     tasks = await getTasksForDate(selectedDate);
   }
 
+  async function loadSuggestions() {
+    suggestions = await getUniqueTaskNames();
+  }
+
   function handleDateChange(newDate: string) {
     selectedDate = newDate;
   }
@@ -46,6 +53,8 @@
   async function handleAddTask(taskName: string) {
     const task = await createTask(taskName, selectedDate);
     tasks = [task, ...tasks];
+    // Refresh suggestions to include the new task name
+    await loadSuggestions();
   }
 
   // Play/stop from task item
@@ -96,7 +105,7 @@
 <div class="h-full flex flex-col">
   <section class="shrink-0 px-app border-b border-on-surface/10">
     <Header {selectedDate} onDateChange={handleDateChange} />
-    <NewTaskInput onAddTask={handleAddTask} />
+    <NewTaskInput onAddTask={handleAddTask} {suggestions} />
   </section>
   <section class="flex-1 overflow-y-auto py-4">
     <div class="px-app space-y-2">

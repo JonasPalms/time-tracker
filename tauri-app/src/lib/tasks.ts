@@ -118,3 +118,15 @@ export async function deleteTask(taskId: number): Promise<void> {
   const db = await getDb();
   await db.execute("DELETE FROM tasks WHERE id = ?", [taskId]);
 }
+
+/**
+ * Get unique task names for autocomplete suggestions
+ * Returns distinct task names ordered by most recently used
+ */
+export async function getUniqueTaskNames(): Promise<string[]> {
+  const db = await getDb();
+  const results = await db.select<{ name: string }[]>(
+    "SELECT DISTINCT name FROM tasks ORDER BY created_at DESC LIMIT 50"
+  );
+  return results.map((r) => r.name);
+}
