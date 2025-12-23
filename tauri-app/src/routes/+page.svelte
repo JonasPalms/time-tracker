@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { fly } from "svelte/transition";
+  import { backInOut } from "svelte/easing";
   import TaskItem from "$lib/components/TaskItem.svelte";
   import CurrentTracking from "$lib/components/CurrentTracking.svelte";
   import Header from "$lib/components/Header.svelte";
@@ -92,12 +94,12 @@
 </script>
 
 <div class="h-full flex flex-col">
-  <section class="shrink-0 px-4 border-b border-on-surface/10">
+  <section class="shrink-0 px-app border-b border-on-surface/10">
     <Header {selectedDate} onDateChange={handleDateChange} />
     <NewTaskInput onAddTask={handleAddTask} />
   </section>
   <section class="flex-1 overflow-y-auto py-4">
-    <div class="px-4 space-y-2">
+    <div class="px-app space-y-2">
       {#if isLoading}
         <div class="text-center py-8 text-on-surface-muted">Loading...</div>
       {:else}
@@ -117,15 +119,18 @@
     </div>
   </section>
 
-  <section class="shrink-0 bg-surface-raised border-t border-on-surface/10 min-h-22">
-    <div class="px-4">
-      {#if tracking.currentTask}
+  {#if tracking.currentTask}
+    <section
+      class="shrink-0 px-app pb-app"
+      transition:fly={{ y: 100, duration: 200, easing: backInOut }}
+    >
+      <div class="bg-surface-raised/70 rounded-2xl border border-on-surface/10">
         <CurrentTracking
           currentTask={tracking.currentTask}
           elapsedSeconds={tracking.elapsedSeconds}
           onStop={handleStop}
         />
-      {/if}
-    </div>
-  </section>
+      </div>
+    </section>
+  {/if}
 </div>

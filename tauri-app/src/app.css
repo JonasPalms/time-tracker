@@ -1,5 +1,9 @@
 @import "./shadcn.css";
 
+@theme {
+  --spacing-app: 0.75rem;
+}
+
 /*
  * Base styles - defaults that can be overridden
  */

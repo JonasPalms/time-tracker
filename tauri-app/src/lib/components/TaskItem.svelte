@@ -33,7 +33,6 @@
 <div
   class="group flex items-center gap-2 px-2 py-3 rounded-xl transition-colors hover:bg-surface-raised focus-within:bg-surface-raised"
 >
-  <!-- Play/Stop Button -->
   <button
     class="w-12 h-12 flex items-center justify-center rounded-full transition-transform {isTracking
       ? 'text-accent'
@@ -42,11 +41,9 @@
     aria-label={isTracking ? "Stop tracking" : "Start tracking"}
   >
     {#if isTracking}
-      <!-- Animated clock (default, hidden on hover/focus) -->
       <AnimatedClock
         class="w-6 h-6 group-hover:opacity-0 group-focus:opacity-0 transition-opacity"
       />
-      <!-- Stop icon (shown on hover/focus) -->
       <Icon
         name="stop"
         class="w-6 h-6 absolute opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity"
@@ -55,12 +52,7 @@
       <Icon name="play" class="w-6 h-6" />
     {/if}
   </button>
-
-  <!-- Task Name -->
   <TaskItemName name={task.name} {onUpdateName} />
-
-  <!-- Time -->
   <TaskItemTime totalSeconds={task.total_seconds} {isTracking} {elapsedSeconds} {onUpdateTime} />
-
   <TaskItemMenu {onDelete} />
 </div>
