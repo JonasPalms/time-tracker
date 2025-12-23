@@ -7,7 +7,7 @@
 
 <div class="h-full flex flex-col">
   <!-- Header -->
-  <section class="shrink-0 px-4">
+  <section class="shrink-0 px-app">
     <div class="flex items-center gap-4 mb-6">
       <a
         href="/"
@@ -22,7 +22,7 @@
 
   <!-- Content -->
   <section class="flex-1 overflow-y-auto py-4">
-    <div class="px-6">
+    <div class="px-app">
       <div class="bg-surface-raised rounded-xl p-6 space-y-6">
         <!-- Theme Setting -->
         <div class="flex items-center justify-between">

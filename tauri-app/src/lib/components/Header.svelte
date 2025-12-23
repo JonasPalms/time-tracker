@@ -40,7 +40,7 @@
       <Icon name="chevron-right" class="w-6 h-6" />
     </button>
     <div>
-      <h1 class="text-2xl font-black text-accent">
+      <h1 class="text-2xl ml-2 font-black text-accent">
         {displayDate}
       </h1>
     </div>

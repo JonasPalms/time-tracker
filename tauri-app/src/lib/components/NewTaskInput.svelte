@@ -2,6 +2,7 @@
   import { tick, onMount, onDestroy } from "svelte";
   import * as Popover from "$lib/components/ui/popover/index.js";
   import * as Command from "$lib/components/ui/command/index.js";
+  import CommandIcon from "@lucide/svelte/icons/command";
 
   let {
     onAddTask,
@@ -113,17 +114,25 @@
   <Popover.Root bind:open>
     <Popover.Trigger bind:ref={triggerRef} class="w-full block">
       {#snippet child({ props })}
-        <form onsubmit={handleSubmit}>
+        <form onsubmit={handleSubmit} class="relative">
           <input
             {...props}
             type="text"
             bind:value={newTaskName}
             placeholder="What are you working on?"
-            class="w-full px-4 py-3 bg-surface-raised rounded-xl border-none placeholder:text-on-surface-muted focus:outline-none focus:ring-1 focus:ring-on-surface/50"
+            class="w-full px-4 py-3 pr-16 bg-surface-raised rounded-xl border-none placeholder:text-on-surface-muted focus:outline-none focus:ring-1 focus:ring-on-surface/50"
             role="combobox"
             autocomplete="off"
             onkeydown={handleKeydown}
           />
+          {#if !newTaskName}
+            <div
+              class="absolute right-5 top-1/2 -translate-y-1/2 flex items-center gap-1 text-on-surface-muted pointer-events-none"
+            >
+              <CommandIcon class="size-4" />
+              <span class="text-md font-medium">N</span>
+            </div>
+          {/if}
         </form>
       {/snippet}
     </Popover.Trigger>
@@ -147,7 +156,7 @@
                     <Command.Item
                       value={favourite.name}
                       onSelect={() => handleSelect(favourite.name, favourite.seconds)}
-                      class="cursor-pointer py-2 text-on-surface aria-selected:bg-surface-hover aria-selected:text-on-surface text-base {isUsingKeyboard
+                      class="cursor-pointer py-2 pr-3 mr-2 text-on-surface aria-selected:bg-surface-hover aria-selected:text-on-surface text-base {isUsingKeyboard
                         ? ''
                         : 'hover:bg-surface-hover'}"
                     >
@@ -164,7 +173,7 @@
                     <Command.Item
                       value={suggestion}
                       onSelect={() => handleSelect(suggestion)}
-                      class="cursor-pointer py-2 text-on-surface aria-selected:bg-surface-hover aria-selected:text-on-surface text-base {isUsingKeyboard
+                      class="cursor-pointer py-2 pr-3 mr-2 text-on-surface aria-selected:bg-surface-hover aria-selected:text-on-surface text-base {isUsingKeyboard
                         ? ''
                         : 'hover:bg-surface-hover'}"
                     >
