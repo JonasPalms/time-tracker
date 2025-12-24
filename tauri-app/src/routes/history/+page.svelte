@@ -116,20 +116,11 @@
 
 <div class="h-full flex flex-col">
   <!-- Header -->
-  <section class="shrink-0 px-4">
-    <div class="flex items-center gap-4 mb-6">
-      <a
-        href="/"
-        class="p-2 rounded-lg bg-surface-raised hover:bg-surface-hover transition-colors"
-        aria-label="Back to tracker"
-      >
-        <Icon name="chevron-left" class="w-6 h-6" />
-      </a>
-      <h1 class="text-2xl font-black text-accent">History</h1>
-    </div>
+  <section class="shrink-0 px-app">
+    <h1 class="text-2xl font-black text-accent mb-4">History</h1>
 
     <!-- Week Navigation -->
-    <div class="flex items-center justify-between bg-surface-raised rounded-xl p-4 mb-6">
+    <div class="flex items-center justify-between bg-surface-raised rounded-xl p-4 mb-4">
       <button
         class="p-2 rounded-lg hover:bg-surface transition-colors"
         onclick={() => (weekOffset -= 1)}
@@ -158,7 +149,7 @@
 
   <!-- Days List -->
   <section class="flex-1 overflow-y-auto py-4">
-    <div class="px-6">
+    <div class="px-app">
       {#if isLoading}
         <div class="text-center py-8 text-on-surface-muted">Loading...</div>
       {:else}

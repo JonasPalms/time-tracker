@@ -10,13 +10,14 @@
     "frontendDist": "../build"
   },
   "app": {
+    "macOSPrivateApi": true,
     "windows": [
       {
         "title": "TimeTracker",
         "width": 600,
         "height": 800,
-        "hiddenTitle": true,
-        "titleBarStyle": "Overlay"
+        "decorations": false,
+        "transparent": true
       }
     ],
     "security": {

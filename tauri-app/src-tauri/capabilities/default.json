@@ -17,6 +17,8 @@
     "sql:default",
     "sql:allow-execute",
     "sql:allow-select",
-    "sql:allow-load"
+    "sql:allow-load",
+    "core:window:allow-is-maximized",
+    "core:window:allow-unmaximize"
   ]
 }

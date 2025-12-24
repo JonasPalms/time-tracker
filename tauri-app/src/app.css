@@ -9,11 +9,11 @@
  */
 @layer base {
   html {
-    @apply bg-surface text-on-surface;
+    @apply bg-surface text-on-surface rounded-2xl;
   }
 
   body {
-    @apply cursor-default;
+    @apply cursor-default overflow-hidden;
   }
 
   input,

@@ -3,9 +3,10 @@
   import { backInOut } from "svelte/easing";
   import TaskItem from "$lib/components/TaskItem.svelte";
   import CurrentTracking from "$lib/components/CurrentTracking.svelte";
-  import Header from "$lib/components/Header.svelte";
   import NewTaskInput from "$lib/components/NewTaskInput.svelte";
+  import Icon from "$lib/components/Icon.svelte";
   import { useTracking } from "$lib/tracking.svelte";
+  import { formatDateForDisplay, addDays } from "$lib/timeUtils";
   import {
     getTasksForDate,
     getTodayDate,
@@ -23,6 +24,17 @@
   let selectedDate = $state(getTodayDate());
 
   const tracking = useTracking();
+
+  // Date navigation
+  const displayDate = $derived(formatDateForDisplay(selectedDate));
+
+  function handlePreviousDay() {
+    selectedDate = addDays(selectedDate, -1);
+  }
+
+  function handleNextDay() {
+    selectedDate = addDays(selectedDate, 1);
+  }
 
   // Load tasks on mount and when date changes
   onMount(async () => {
@@ -44,10 +56,6 @@
 
   async function loadSuggestions() {
     suggestions = await getUniqueTaskNames();
-  }
-
-  function handleDateChange(newDate: string) {
-    selectedDate = newDate;
   }
 
   async function handleAddTask(taskName: string, initialSeconds?: number) {
@@ -104,7 +112,27 @@
 
 <div class="h-full flex flex-col">
   <section class="shrink-0 px-app border-b border-on-surface/10">
-    <Header {selectedDate} onDateChange={handleDateChange} />
+    <!-- Date Navigation -->
+    <div class="flex items-center gap-3 mb-4">
+      <button
+        class="p-2 rounded-lg hover:bg-surface-raised transition-colors"
+        onclick={handlePreviousDay}
+        aria-label="Previous day"
+      >
+        <Icon name="chevron-left" class="w-6 h-6" />
+      </button>
+      <button
+        class="p-2 rounded-lg hover:bg-surface-raised transition-colors"
+        onclick={handleNextDay}
+        aria-label="Next day"
+      >
+        <Icon name="chevron-right" class="w-6 h-6" />
+      </button>
+      <h1 class="text-2xl ml-2 font-black text-accent">
+        {displayDate}
+      </h1>
+    </div>
+
     <NewTaskInput onAddTask={handleAddTask} {suggestions} />
   </section>
   <section class="flex-1 overflow-y-auto py-4">

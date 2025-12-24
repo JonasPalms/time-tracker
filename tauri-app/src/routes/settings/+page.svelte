@@ -1,6 +1,5 @@
 <script lang="ts">
   import { useTheme } from "$lib/theme.svelte";
-  import Icon from "$lib/components/Icon.svelte";
 
   const theme = useTheme();
 </script>
@@ -8,16 +7,7 @@
 <div class="h-full flex flex-col">
   <!-- Header -->
   <section class="shrink-0 px-app">
-    <div class="flex items-center gap-4 mb-6">
-      <a
-        href="/"
-        class="p-2 rounded-lg bg-surface-raised hover:bg-surface-hover transition-colors"
-        aria-label="Back to tracker"
-      >
-        <Icon name="chevron-left" class="w-6 h-6" />
-      </a>
-      <h1 class="text-2xl font-black text-accent">Settings</h1>
-    </div>
+    <h1 class="text-2xl font-black text-accent mb-4">Settings</h1>
   </section>
 
   <!-- Content -->

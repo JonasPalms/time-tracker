@@ -15,7 +15,8 @@
     | "chevron-left"
     | "chevron-right"
     | "x"
-    | "trash";
+    | "trash"
+    | "home";
 
   let { name, class: className = "w-5 h-5" }: { name: IconName; class?: string } = $props();
 

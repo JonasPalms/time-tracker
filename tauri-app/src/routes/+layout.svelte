@@ -5,6 +5,7 @@
   import { getDb } from "$lib/db";
   import { getCurrentWindow } from "@tauri-apps/api/window";
   import { onMount, onDestroy } from "svelte";
+  import AppHeader from "$lib/components/AppHeader.svelte";
 
   let { children } = $props();
 
@@ -29,8 +30,8 @@
   });
 </script>
 
-<div class="h-screen flex flex-col bg-surface text-on-surface overflow-hidden">
-  <div class="h-10 w-full shrink-0" data-tauri-drag-region></div>
+<div class="h-screen flex flex-col bg-surface text-on-surface overflow-hidden rounded-2xl">
+  <AppHeader />
   <main class="flex-1 overflow-hidden">
     {@render children()}
   </main>
