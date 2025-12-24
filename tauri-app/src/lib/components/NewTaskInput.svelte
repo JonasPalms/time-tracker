@@ -39,12 +39,11 @@
     ).filter((s) => !favouriteNames.has(s.toLowerCase()))
   );
 
-  function closeAndFocusTrigger() {
-    open = false;
-    tick().then(() => {
-      triggerRef?.focus();
-    });
-  }
+  $effect(() => {
+    if (!open) {
+      triggerRef?.blur();
+    }
+  });
 
   function handleSubmit(e: Event) {
     e.preventDefault();
@@ -52,13 +51,13 @@
 
     onAddTask(newTaskName.trim());
     newTaskName = "";
-    closeAndFocusTrigger();
+    open = false;
   }
 
   function handleSelect(suggestion: string, seconds?: number) {
     onAddTask(suggestion, seconds);
     newTaskName = "";
-    closeAndFocusTrigger();
+    open = false;
   }
 
   function handleKeydown(e: KeyboardEvent) {
