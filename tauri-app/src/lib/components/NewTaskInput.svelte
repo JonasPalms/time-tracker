@@ -4,6 +4,7 @@
   import * as Command from "$lib/components/ui/command/index.js";
   import CommandIcon from "@lucide/svelte/icons/command";
   import { useFavourites } from "$lib/hooks/favourites.svelte";
+  import { useKeyboard } from "$lib/hooks/keyboard.svelte";
   import { formatTimeHuman } from "$lib/utils/time";
 
   let {
@@ -22,6 +23,28 @@
 
   // Favourites from shared context
   const favouritesContext = useFavourites();
+  const keyboard = useKeyboard();
+
+  // Register Cmd+N shortcut to focus input
+  let unregisterShortcut: (() => void) | null = null;
+
+  onMount(() => {
+    unregisterShortcut = keyboard.register("focus-new-task", (e) => {
+      const isMac = navigator.userAgent.toLowerCase().includes("mac");
+      const modKey = isMac ? e.metaKey : e.ctrlKey;
+
+      if (modKey && e.key === "n") {
+        triggerRef?.click();
+        triggerRef?.focus();
+        return true; // Handled
+      }
+      return false;
+    });
+  });
+
+  onDestroy(() => {
+    unregisterShortcut?.();
+  });
 
   // Filter favourites based on input
   const filteredFavourites = $derived(
@@ -96,23 +119,6 @@
   function handleMouseMove() {
     isUsingKeyboard = false;
   }
-
-  function handleGlobalKeydown(e: KeyboardEvent) {
-    // Cmd+N (Mac) or Ctrl+N (Windows/Linux) to focus input
-    if ((e.metaKey || e.ctrlKey) && e.key === "n") {
-      e.preventDefault();
-      triggerRef?.click();
-      triggerRef?.focus();
-    }
-  }
-
-  onMount(() => {
-    window.addEventListener("keydown", handleGlobalKeydown);
-  });
-
-  onDestroy(() => {
-    window.removeEventListener("keydown", handleGlobalKeydown);
-  });
 </script>
 
 <div class="relative mb-4">

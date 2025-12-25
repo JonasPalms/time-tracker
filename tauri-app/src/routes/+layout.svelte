@@ -3,6 +3,7 @@
   import { useTheme } from "$lib/hooks/theme.svelte";
   import { useTracking } from "$lib/hooks/tracking.svelte";
   import { useFavourites } from "$lib/hooks/favourites.svelte";
+  import { useKeyboard } from "$lib/hooks/keyboard.svelte";
   import { getDb } from "$lib/services/db";
   import { getCurrentWindow } from "@tauri-apps/api/window";
   import { onMount, onDestroy } from "svelte";
@@ -12,6 +13,7 @@
 
   const theme = useTheme();
   const tracking = useTracking();
+  const keyboard = useKeyboard();
 
   let unlisten: (() => void) | null = null;
 
@@ -19,6 +21,7 @@
     await theme.init();
     await getDb();
     await useFavourites().reload();
+    keyboard.init();
 
     const currentWindow = getCurrentWindow();
     unlisten = await currentWindow.onCloseRequested(async () => {
@@ -28,6 +31,7 @@
 
   onDestroy(() => {
     tracking.cleanup();
+    keyboard.cleanup();
     unlisten?.();
   });
 </script>
