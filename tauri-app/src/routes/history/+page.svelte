@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getTasksInRange, type Task } from "$lib/tasks";
-  import { formatTimeHuman } from "$lib/timeUtils";
+  import { getTasksInRange, type Task } from "$lib/services/tasks";
+  import { formatTimeHuman } from "$lib/utils/time";
   import Icon from "$lib/components/Icon.svelte";
 
   // State
@@ -117,7 +117,7 @@
 <div class="h-full flex flex-col">
   <!-- Header -->
   <section class="shrink-0 px-app">
-    <h1 class="text-2xl font-black text-accent mb-4">History</h1>
+    <h1 class="text-3xl font-black text-accent mb-4">History</h1>
 
     <!-- Week Navigation -->
     <div class="flex items-center justify-between bg-surface-raised rounded-xl p-4 mb-4">

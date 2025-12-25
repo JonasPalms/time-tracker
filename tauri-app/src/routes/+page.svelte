@@ -5,8 +5,8 @@
   import CurrentTracking from "$lib/components/CurrentTracking.svelte";
   import NewTaskInput from "$lib/components/NewTaskInput.svelte";
   import Icon from "$lib/components/Icon.svelte";
-  import { useTracking } from "$lib/tracking.svelte";
-  import { formatDateForDisplay, addDays } from "$lib/timeUtils";
+  import { useTracking } from "$lib/hooks/tracking.svelte";
+  import { formatDateForDisplay, addDays } from "$lib/utils/time";
   import {
     getTasksForDate,
     getTodayDate,
@@ -16,7 +16,7 @@
     deleteTask,
     getUniqueTaskNames,
     type Task,
-  } from "$lib/tasks";
+  } from "$lib/services/tasks";
   import { onMount } from "svelte";
   let tasks = $state<Task[]>([]);
   let suggestions = $state<string[]>([]);

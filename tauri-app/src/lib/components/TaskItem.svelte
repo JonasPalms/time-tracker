@@ -1,7 +1,7 @@
 <script lang="ts">
   import Icon from "./Icon.svelte";
   import AnimatedClock from "./AnimatedClock.svelte";
-  import { type Task } from "$lib/tasks";
+  import { type Task } from "$lib/services/tasks";
   import TaskItemMenu from "./TaskItemMenu.svelte";
   import TaskItemName from "./TaskItemName.svelte";
   import TaskItemTime from "./TaskItemTime.svelte";

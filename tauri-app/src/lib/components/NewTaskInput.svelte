@@ -1,8 +1,10 @@
 <script lang="ts">
-  import { tick, onMount, onDestroy } from "svelte";
+  import { onMount, onDestroy } from "svelte";
   import * as Popover from "$lib/components/ui/popover/index.js";
   import * as Command from "$lib/components/ui/command/index.js";
   import CommandIcon from "@lucide/svelte/icons/command";
+  import { useFavourites } from "$lib/hooks/favourites.svelte";
+  import { formatTimeHuman } from "$lib/utils/time";
 
   let {
     onAddTask,
@@ -18,18 +20,22 @@
   let commandRef = $state<HTMLDivElement>(null!);
   let isUsingKeyboard = $state(false);
 
-  // Favourites - hardcoded for now
-  const favourites = [{ name: "Frokost", duration: "30m", seconds: 30 * 60 }];
+  // Favourites from shared context
+  const favouritesContext = useFavourites();
 
   // Filter favourites based on input
   const filteredFavourites = $derived(
     newTaskName.trim()
-      ? favourites.filter((f) => f.name.toLowerCase().includes(newTaskName.toLowerCase()))
-      : favourites
+      ? favouritesContext.favourites.filter((f) =>
+          f.name.toLowerCase().includes(newTaskName.toLowerCase())
+        )
+      : favouritesContext.favourites
   );
 
   // Get favourite names for filtering
-  const favouriteNames = new Set(favourites.map((f) => f.name.toLowerCase()));
+  const favouriteNames = $derived(
+    new Set(favouritesContext.favourites.map((f) => f.name.toLowerCase()))
+  );
 
   // Filter suggestions based on input, excluding favourites
   const filteredSuggestions = $derived(
@@ -113,7 +119,7 @@
   <Popover.Root bind:open>
     <Popover.Trigger bind:ref={triggerRef} class="w-full block">
       {#snippet child({ props })}
-        <form onsubmit={handleSubmit} class="relative">
+        <form onsubmit={handleSubmit} class="relative group">
           <input
             {...props}
             type="text"
@@ -126,7 +132,7 @@
           />
           {#if !newTaskName}
             <div
-              class="absolute right-5 top-1/2 -translate-y-1/2 flex items-center gap-1 text-on-surface-muted pointer-events-none"
+              class="absolute hidden group-hover:flex right-5 top-1/2 -translate-y-1/2 items-center gap-1 text-on-surface-muted pointer-events-none"
             >
               <CommandIcon class="size-4" />
               <span class="text-md font-medium">N</span>
@@ -154,13 +160,14 @@
                   {#each filteredFavourites as favourite (favourite.name)}
                     <Command.Item
                       value={favourite.name}
-                      onSelect={() => handleSelect(favourite.name, favourite.seconds)}
+                      onSelect={() => handleSelect(favourite.name, favourite.duration_seconds)}
                       class="cursor-pointer py-2 pr-3 mr-2 text-on-surface aria-selected:bg-surface-hover aria-selected:text-on-surface text-base {isUsingKeyboard
                         ? ''
                         : 'hover:bg-surface-hover'}"
                     >
                       <span>{favourite.name}</span>
-                      <span class="ml-auto text-on-surface-muted text-sm">{favourite.duration}</span
+                      <span class="ml-auto text-on-surface-muted text-sm"
+                        >{formatTimeHuman(favourite.duration_seconds)}</span
                       >
                     </Command.Item>
                   {/each}

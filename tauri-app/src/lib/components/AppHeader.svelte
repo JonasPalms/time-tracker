@@ -1,6 +1,9 @@
 <script lang="ts">
   import WindowControls from "./WindowControls.svelte";
   import Icon from "./Icon.svelte";
+  import SettingsDialog from "./SettingsDialog.svelte";
+
+  let settingsOpen = $state(false);
 
   // Prevent drag region from activating on interactive elements
   function handleInteractiveMouseDown(e: MouseEvent) {
@@ -31,12 +34,14 @@
     >
       <Icon name="clock" class="w-5 h-5" />
     </a>
-    <a
-      href="/settings"
+    <button
+      onclick={() => (settingsOpen = true)}
       class="p-2 rounded-lg hover:bg-surface-raised transition-colors"
       aria-label="Open settings"
     >
       <Icon name="settings" class="w-5 h-5" />
-    </a>
+    </button>
   </div>
 </header>
+
+<SettingsDialog bind:open={settingsOpen} />

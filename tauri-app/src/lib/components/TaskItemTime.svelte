@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { formatTime, parseTimeString } from "$lib/timeUtils";
+  import { formatTime, parseTimeString } from "$lib/utils/time";
   import { Input } from "./ui/input";
   import "./TaskItemTime.css";
 

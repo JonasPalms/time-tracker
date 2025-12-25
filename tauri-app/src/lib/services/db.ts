@@ -42,6 +42,15 @@ async function runMigrations(database: Database): Promise<void> {
     )
   `);
 
+  await database.execute(`
+    CREATE TABLE IF NOT EXISTS favourites (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      duration_seconds INTEGER NOT NULL,
+      created_at TEXT DEFAULT (datetime('now', 'localtime'))
+    )
+  `);
+
   // Create index for faster date lookups on created_at
   await database.execute(`
     CREATE INDEX IF NOT EXISTS idx_tasks_created_at ON tasks(created_at)

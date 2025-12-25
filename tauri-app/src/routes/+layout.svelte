@@ -1,31 +1,33 @@
 <script lang="ts">
   import "../app.css";
-  import { createThemeContext } from "$lib/theme.svelte";
-  import { createTrackingContext } from "$lib/tracking.svelte";
-  import { getDb } from "$lib/db";
+  import { useTheme } from "$lib/hooks/theme.svelte";
+  import { useTracking } from "$lib/hooks/tracking.svelte";
+  import { useFavourites } from "$lib/hooks/favourites.svelte";
+  import { getDb } from "$lib/services/db";
   import { getCurrentWindow } from "@tauri-apps/api/window";
   import { onMount, onDestroy } from "svelte";
   import AppHeader from "$lib/components/AppHeader.svelte";
 
   let { children } = $props();
 
-  const { init: initTheme } = createThemeContext();
-  const { cleanup: cleanupTracking, stopTracking } = createTrackingContext();
+  const theme = useTheme();
+  const tracking = useTracking();
 
   let unlisten: (() => void) | null = null;
 
   onMount(async () => {
-    await initTheme();
+    await theme.init();
     await getDb();
+    await useFavourites().reload();
 
     const currentWindow = getCurrentWindow();
     unlisten = await currentWindow.onCloseRequested(async () => {
-      await stopTracking();
+      await tracking.stopTracking();
     });
   });
 
   onDestroy(() => {
-    cleanupTracking();
+    tracking.cleanup();
     unlisten?.();
   });
 </script>

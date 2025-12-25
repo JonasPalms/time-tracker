@@ -1,7 +1,7 @@
 <script lang="ts">
   import Icon from "./Icon.svelte";
-  import { formatTime } from "$lib/timeUtils";
-  import type { Task } from "$lib/tasks";
+  import { formatTime } from "$lib/utils/time";
+  import type { Task } from "$lib/services/tasks";
 
   let {
     currentTask,
