@@ -1,6 +1,9 @@
 .DS_Store
 node_modules
 
+# Rust
+target/
+
 # Tauri App
 tauri-app/build
 tauri-app/.svelte-kit
@@ -11,6 +14,7 @@ tauri-app/.env.*
 !tauri-app/.env.production
 tauri-app/vite.config.js.timestamp-*
 tauri-app/vite.config.ts.timestamp-*
+tauri-app/src-tauri/target
 
 # Raycast Extension
 raycast-extension/node_modules

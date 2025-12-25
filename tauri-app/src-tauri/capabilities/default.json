@@ -19,6 +19,9 @@
     "sql:allow-select",
     "sql:allow-load",
     "core:window:allow-is-maximized",
-    "core:window:allow-unmaximize"
+    "core:window:allow-unmaximize",
+    "updater:default",
+    "updater:allow-check",
+    "updater:allow-download-and-install"
   ]
 }

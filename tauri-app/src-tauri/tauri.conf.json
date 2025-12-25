@@ -3,6 +3,14 @@
   "productName": "TimeTracker",
   "version": "0.1.0",
   "identifier": "com.jonaspalmsorensen.time-tracker",
+  "plugins": {
+    "updater": {
+      "endpoints": [
+        "https://github.com/jonaspalmsorensen/time-tracker/releases/latest/download/latest.json"
+      ],
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDY3NzUyMTgwNTIyQjQ3QUMKUldTc1J5dFNnQ0YxWjJRS01XcFJvaDdxMmpYbDREWGl4ZG9uS29weFdnamdJb1hkaiswZ1VJN00K"
+    }
+  },
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",

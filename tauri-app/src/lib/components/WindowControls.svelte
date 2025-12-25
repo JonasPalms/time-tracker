@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getCurrentWindow, type UnlistenFn } from "@tauri-apps/api/window";
+  import { getCurrentWindow } from "@tauri-apps/api/window";
   import { onMount, onDestroy } from "svelte";
 
   // Import traffic light SVGs
@@ -22,8 +22,8 @@
   let minimizeState = $state<"normal" | "hover" | "press">("normal");
   let maximizeState = $state<"normal" | "hover" | "press">("normal");
 
-  let unlistenFocus: UnlistenFn | null = null;
-  let unlistenBlur: UnlistenFn | null = null;
+  // Store cleanup functions in a plain object to avoid $state TypeScript narrowing issues
+  const cleanup: { focus?: () => void; blur?: () => void } = {};
 
   onMount(async () => {
     isMacOS = navigator.userAgent.toLowerCase().includes("mac");
@@ -31,14 +31,14 @@
     // Track Tauri window focus
     const tauriWindow = getCurrentWindow();
 
-    unlistenFocus = await tauriWindow.onFocusChanged(({ payload: focused }) => {
+    cleanup.focus = await tauriWindow.onFocusChanged(({ payload: focused }) => {
       isWindowFocused = focused;
     });
   });
 
   onDestroy(() => {
-    unlistenFocus?.();
-    unlistenBlur?.();
+    cleanup.focus?.();
+    cleanup.blur?.();
   });
 
   async function handleClose() {
