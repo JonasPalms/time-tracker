@@ -102,7 +102,7 @@
       onmouseleave={() => (closeState = "normal")}
       onmousedown={() => (closeState = "press")}
       onmouseup={() => (closeState = "hover")}
-      class="size-3 focus:outline-none"
+      class="size-3 focus:outline-none [&_svg]:pointer-events-none"
       aria-label="Close window"
     >
       {@html getCloseIcon()}
@@ -115,7 +115,7 @@
       onmouseleave={() => (minimizeState = "normal")}
       onmousedown={() => (minimizeState = "press")}
       onmouseup={() => (minimizeState = "hover")}
-      class="size-3 focus:outline-none"
+      class="size-3 focus:outline-none [&_svg]:pointer-events-none"
       aria-label="Minimize window"
     >
       {@html getMinimizeIcon()}
@@ -128,7 +128,7 @@
       onmouseleave={() => (maximizeState = "normal")}
       onmousedown={() => (maximizeState = "press")}
       onmouseup={() => (maximizeState = "hover")}
-      class="size-3 focus:outline-none"
+      class="size-3 focus:outline-none [&_svg]:pointer-events-none"
       aria-label="Maximize window"
     >
       {@html getMaximizeIcon()}
