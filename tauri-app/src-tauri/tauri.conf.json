@@ -8,7 +8,7 @@
       "endpoints": [
         "https://github.com/JonasPalms/time-tracker/releases/latest/download/latest.json"
       ],
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDM5MzNFQzUwNzhDQzJGNUYKUldSZkw4eDRVT3d6T1JsaktZUjlsUG10M0RCQWYxUnpiaEh0T0dndkREaW9IemkrcEFsK2ttK1oK"
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDRFNzYwMzI1QjY5QUYzMkYKUldRdjg1cTJKUU4yVGdQb216QUNuUVgzL0JDWlZ3b1hXcFNCa1FsQTQ1dE9pbjhaS2hWbEE0QXEK"
     }
   },
   "build": {
