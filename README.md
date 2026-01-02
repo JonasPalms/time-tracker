@@ -31,27 +31,6 @@ A native desktop application built with **Svelte** and **Tauri**.
 - ⭐ Favorites for quick time entry
 - ⌨️ Keyboard shortcuts
 
-### 📍 Raycast Extension (`raycast-extension`)
-Quick time tracking directly from Raycast (macOS).
-
-## 🛠️ Tech Stack
-
-- **Frontend:** Svelte + SvelteKit + Tailwind CSS
-- **Desktop Runtime:** Tauri (Rust)
-- **Database:** SQLite
-- **Build System:** Vite
-- **CI/CD:** GitHub Actions
-
-## 📖 Documentation
-
-See the individual README files for development setup:
-- [Desktop App Documentation](./tauri-app/README.md)
-- [Raycast Extension Documentation](./raycast-extension/README.md)
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
 ## 📄 License
 
 This project is open source and available under the [MIT License](LICENSE).
