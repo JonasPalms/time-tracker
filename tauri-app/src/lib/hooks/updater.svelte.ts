@@ -3,6 +3,7 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import type { Update } from "@tauri-apps/plugin-updater";
 
 let currentUpdate = $state<Update | null>(null);
+let showUpdateDialog = $state(false);
 
 async function checkForUpdates() {
   // Only check in production builds
@@ -15,17 +16,10 @@ async function checkForUpdates() {
 
     if (update) {
       currentUpdate = update;
-
-      // Show native dialog
-      const message = `Update available: v${update.version}\n\n${update.body || "A new version is available."}\n\nWould you like to update now?`;
-      const shouldUpdate = confirm(message);
-
-      if (shouldUpdate) {
-        await installUpdate();
-      }
+      showUpdateDialog = true;
     }
   } catch (error) {
-    console.error("Failed to check for updates:", error);
+    console.error("[Updater] Failed to check for updates:", error);
   }
 }
 
@@ -40,14 +34,28 @@ async function installUpdate() {
     const currentWindow = getCurrentWindow();
     await currentWindow.close();
   } catch (error) {
-    console.error("Failed to install update:", error);
-    alert(`Failed to install update: ${error}`);
+    console.error("[Updater] Failed to install update:", error);
   }
+}
+
+function dismissUpdate() {
+  showUpdateDialog = false;
+  currentUpdate = null;
 }
 
 export function useUpdater() {
   return {
+    get update() {
+      return currentUpdate;
+    },
+    get showDialog() {
+      return showUpdateDialog;
+    },
+    set showDialog(value: boolean) {
+      showUpdateDialog = value;
+    },
     checkForUpdates,
     installUpdate,
+    dismissUpdate,
   };
 }

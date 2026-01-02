@@ -9,6 +9,7 @@
   import { getCurrentWindow } from "@tauri-apps/api/window";
   import { onMount, onDestroy } from "svelte";
   import AppHeader from "$lib/components/AppHeader.svelte";
+  import UpdateDialog from "$lib/components/UpdateDialog.svelte";
 
   let { children } = $props();
 
@@ -46,3 +47,10 @@
     {@render children()}
   </main>
 </div>
+
+<UpdateDialog
+  bind:open={updater.showDialog}
+  update={updater.update}
+  onInstall={() => updater.installUpdate()}
+  onCancel={() => updater.dismissUpdate()}
+/>
