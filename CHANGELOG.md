@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-01-02
+
+### Changed
+
+- Redesigned settings dialog with cleaner list-based layout
+- Improved favourites management with inline add button
+- Removed excessive borders from individual settings items
+- Added smooth transitions and hover states throughout settings
+
+## [0.2.0] - 2025-XX-XX
+
 ### Added
 
 - Initial release of TimeTracker
