@@ -1,5 +1,5 @@
 import { check } from "@tauri-apps/plugin-updater";
-import { getCurrentWindow } from "@tauri-apps/api/window";
+import { relaunch } from "@tauri-apps/plugin-process";
 import type { Update } from "@tauri-apps/plugin-updater";
 
 let currentUpdate = $state<Update | null>(null);
@@ -30,9 +30,8 @@ async function installUpdate() {
 
   try {
     await currentUpdate.downloadAndInstall();
-    // After installation, restart the app
-    const currentWindow = getCurrentWindow();
-    await currentWindow.close();
+    // Restart the app with the new version
+    await relaunch();
   } catch (error) {
     console.error("[Updater] Failed to install update:", error);
   }
