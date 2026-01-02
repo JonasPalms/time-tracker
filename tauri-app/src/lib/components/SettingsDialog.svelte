@@ -5,7 +5,7 @@
   import { useTheme } from "$lib/hooks/theme.svelte";
   import { useFavourites } from "$lib/hooks/favourites.svelte";
   import { formatTimeHuman } from "$lib/utils/time";
-  import Icon from "./Icon.svelte";
+  import { Plus, Trash2, Check, X } from "@lucide/svelte";
 
   let {
     open = $bindable(false),
@@ -16,17 +16,38 @@
   const theme = useTheme();
   const favouritesContext = useFavourites();
 
-  let newFavouriteName = $state("");
-  let newFavouriteMinutes = $state<number | null>(null);
+  let state = $state({
+    showAddFavourite: false,
+    newFavourite: {
+      name: "",
+      minutes: null as number | null,
+    },
+  });
+
+  // Reset state when dialog closes
+  $effect(() => {
+    if (!open) {
+      cancelAddFavourite();
+    }
+  });
+
+  function cancelAddFavourite() {
+    state.showAddFavourite = false;
+    state.newFavourite.name = "";
+    state.newFavourite.minutes = null;
+  }
 
   async function handleCreateFavourite(e: Event) {
     e.preventDefault();
-    if (!newFavouriteName.trim() || newFavouriteMinutes === null || newFavouriteMinutes <= 0)
+    if (
+      !state.newFavourite.name.trim() ||
+      state.newFavourite.minutes === null ||
+      state.newFavourite.minutes <= 0
+    )
       return;
 
-    await favouritesContext.add(newFavouriteName.trim(), newFavouriteMinutes * 60);
-    newFavouriteName = "";
-    newFavouriteMinutes = null;
+    await favouritesContext.add(state.newFavourite.name.trim(), state.newFavourite.minutes * 60);
+    cancelAddFavourite();
   }
 
   async function handleDeleteFavourite(id: number) {
@@ -41,64 +62,47 @@
       <Dialog.Description>Customize your time tracker preferences.</Dialog.Description>
     </Dialog.Header>
 
-    <div class="space-y-6 py-4">
+    <div class="py-4">
       <!-- Theme Setting -->
-      <div class="space-y-2">
-        <h3 class="text-sm font-medium">Appearance</h3>
-        <div class="flex items-center justify-between rounded-lg border border-surface-hover p-4">
-          <div>
-            <div class="font-medium">Theme</div>
-            <div class="text-sm text-on-surface-muted">Choose light or dark mode</div>
-          </div>
-          <button
-            class="relative w-16 h-9 rounded-full transition-colors {theme.isDark
-              ? 'bg-accent'
-              : 'bg-on-surface/20'}"
-            onclick={theme.toggleTheme}
-            aria-label="Toggle theme"
-          >
-            <span
-              class="absolute top-1 left-1 w-7 h-7 rounded-full bg-surface-raised shadow-md transition-transform flex items-center justify-center {theme.isDark
-                ? 'translate-x-7'
-                : 'translate-x-0'}"
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium">Appearance</h3>
+        <div class="rounded-lg divide-y divide-surface-hover">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="font-medium text-on-surface-muted">Theme</div>
+            </div>
+            <button
+              class="relative w-16 h-9 rounded-full transition-colors {theme.isDark
+                ? 'bg-accent'
+                : 'bg-on-surface/20'}"
+              onclick={theme.toggleTheme}
+              aria-label="Toggle theme"
             >
-              {theme.isDark ? "🌙" : "☀️"}
-            </span>
-          </button>
+              <span
+                class="absolute top-1 left-1 w-7 h-7 rounded-full bg-surface-raised shadow-md transition-transform flex items-center justify-center {theme.isDark
+                  ? 'translate-x-7'
+                  : 'translate-x-0'}"
+              >
+                {theme.isDark ? "🌙" : "☀️"}
+              </span>
+            </button>
+          </div>
         </div>
       </div>
 
       <!-- Favourites Section -->
-      <div class="space-y-2">
-        <h3 class="text-sm font-medium">Favourites</h3>
-        <div class="rounded-lg border border-surface-hover p-4 space-y-4">
-          <!-- Add new favourite form -->
-          <form onsubmit={handleCreateFavourite} class="flex gap-2">
-            <Input
-              type="text"
-              placeholder="Name"
-              bind:value={newFavouriteName}
-              class="flex-1 bg-surface-hover border-surface-hover"
-            />
-            <Input
-              type="number"
-              min="1"
-              placeholder="Minutes"
-              bind:value={newFavouriteMinutes}
-              class="w-24 bg-surface-hover border-surface-hover"
-            />
-            <Button type="submit" variant="outline" class="shrink-0">Add</Button>
-          </form>
-
-          {#if favouritesContext.favourites.length === 0}
-            <p class="text-sm text-on-surface-muted">
-              No favourites yet. Favourites will appear in the task input dropdown for quick access.
-            </p>
-          {:else}
-            <ul class="space-y-2">
-              {#each favouritesContext.favourites as favourite (favourite.id)}
-                <li
-                  class="flex items-center justify-between py-2 px-3 rounded-md bg-surface-hover/50"
+      <div class="space-y-3 mt-6">
+        <h3 class="text-lg font-medium border-b border-muted pb-2">Favourites</h3>
+        {#if favouritesContext.favourites.length === 0}
+          <div class="text-sm text-on-surface-muted">
+            No favourites yet. Favourites will appear in the task input dropdown for quick access.
+          </div>
+        {:else}
+          <div class="space-y-2">
+            {#each favouritesContext.favourites as favourite, index (favourite.id)}
+              <div class="flex gap-2 items-stretch">
+                <div
+                  class="flex-1 flex items-center justify-between py-2 pl-4 pr-3 rounded-lg bg-surface-raised transition-colors"
                 >
                   <div>
                     <span class="font-medium">{favourite.name}</span>
@@ -106,18 +110,67 @@
                       >{formatTimeHuman(favourite.duration_seconds)}</span
                     >
                   </div>
-                  <button
+                  <Button
                     onclick={() => handleDeleteFavourite(favourite.id)}
-                    class="p-1.5 rounded-md hover:bg-surface-hover text-on-surface-muted hover:text-red-500 transition-colors"
+                    variant="ghost"
+                    size="icon"
+                    class="text-on-surface-muted hover:text-red-500"
                     aria-label="Delete favourite"
                   >
-                    <Icon name="trash" class="w-4 h-4" />
+                    <Trash2 class="w-4 h-4" />
+                  </Button>
+                </div>
+                {#if index === favouritesContext.favourites.length - 1 && !state.showAddFavourite}
+                  <div>
+                    <Button
+                      onclick={() => (state.showAddFavourite = true)}
+                      class="h-full rounded-lg bg-surface-raised hover:bg-surface-hover transition-colors text-on-surface-muted hover:text-on-surface"
+                      aria-label="Add favourite"
+                      variant="ghost"
+                    >
+                      <Plus class="w-4 h-4" />
+                    </Button>
+                  </div>
+                {/if}
+              </div>
+            {/each}
+
+            {#if state.showAddFavourite}
+              <div class="p-4 rounded-lg bg-surface-raised">
+                <form onsubmit={handleCreateFavourite} class="flex gap-2">
+                  <Input
+                    type="text"
+                    placeholder="Name"
+                    bind:value={state.newFavourite.name}
+                    class="flex-1 bg-surface-raised border-surface-hover h-9"
+                  />
+                  <Input
+                    type="number"
+                    min="1"
+                    placeholder="Min"
+                    bind:value={state.newFavourite.minutes}
+                    class="w-20 bg-surface-raised border-surface-hover h-9"
+                  />
+                  <button
+                    type="submit"
+                    class="p-2 h-9 rounded-md hover:bg-surface-hover text-accent hover:text-accent transition-colors"
+                    aria-label="Add favourite"
+                  >
+                    <Check class="w-4 h-4" />
                   </button>
-                </li>
-              {/each}
-            </ul>
-          {/if}
-        </div>
+                  <button
+                    type="button"
+                    onclick={cancelAddFavourite}
+                    class="p-2 rounded-md hover:bg-surface-hover text-on-surface-muted hover:text-red-500 transition-colors"
+                    aria-label="Cancel"
+                  >
+                    <X class="w-4 h-4" />
+                  </button>
+                </form>
+              </div>
+            {/if}
+          </div>
+        {/if}
       </div>
     </div>
 
