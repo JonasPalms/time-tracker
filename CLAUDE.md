@@ -77,3 +77,10 @@ Timestamps use local timezone: `datetime('now', 'localtime')`
 - Builds for Apple Silicon (aarch64) and Intel (x86_64)
 - Creates draft GitHub Release
 - Changelog follows [Keep a Changelog](https://keepachangelog.com/) format
+
+### Version Bump Workflow
+
+1. Update version in `tauri-app/src-tauri/tauri.conf.json`
+2. Add release entry to `CHANGELOG.md` with date and changes
+3. Commit with message: `chore: bump version to X.Y.Z`
+4. Create and push tag: `git tag vX.Y.Z && git push origin vX.Y.Z`
