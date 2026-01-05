@@ -69,11 +69,14 @@
     ).filter((s) => !favouriteNames.has(s.toLowerCase()))
   );
 
+  // Use a value that won't match any item to prevent auto-highlight
+  const NO_SELECTION = "__none__";
+
   $effect(() => {
     if (!open) {
       triggerRef?.blur();
     } else {
-      commandValue = "";
+      commandValue = NO_SELECTION;
     }
   });
 
