@@ -20,6 +20,7 @@
   let triggerRef = $state<HTMLInputElement>(null!);
   let commandRef = $state<HTMLDivElement>(null!);
   let isUsingKeyboard = $state(false);
+  let commandValue = $state("");
 
   // Favourites from shared context
   const favouritesContext = useFavourites();
@@ -71,6 +72,8 @@
   $effect(() => {
     if (!open) {
       triggerRef?.blur();
+    } else {
+      commandValue = "";
     }
   });
 
@@ -159,7 +162,12 @@
           onmousemove={handleMouseMove}
           class={isUsingKeyboard ? "**:data-command-item:pointer-events-none!" : ""}
         >
-          <Command.Root bind:ref={commandRef} class="bg-transparent" shouldFilter={false}>
+          <Command.Root
+            bind:ref={commandRef}
+            bind:value={commandValue}
+            class="bg-transparent"
+            shouldFilter={false}
+          >
             <Command.List class="max-h-64">
               {#if filteredFavourites.length > 0}
                 <Command.Group heading="Favourites">
