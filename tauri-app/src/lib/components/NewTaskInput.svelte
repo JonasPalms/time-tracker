@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
+  import { getCurrentWindow } from "@tauri-apps/api/window";
   import * as Popover from "$lib/components/ui/popover/index.js";
   import * as Command from "$lib/components/ui/command/index.js";
   import CommandIcon from "@lucide/svelte/icons/command";
@@ -17,7 +18,8 @@
 
   let newTaskName = $state("");
   let open = $state(false);
-  let triggerRef = $state<HTMLInputElement>(null!);
+  let triggerRef = $state<HTMLElement>(null!);
+  let inputRef = $state<HTMLInputElement>(null!);
   let commandRef = $state<HTMLDivElement>(null!);
   let isUsingKeyboard = $state(false);
   let commandValue = $state("");
@@ -28,23 +30,33 @@
 
   // Register Cmd+N shortcut to focus input
   let unregisterShortcut: (() => void) | null = null;
+  let unlistenWindowFocus: (() => void) | null = null;
 
-  onMount(() => {
+  onMount(async () => {
     unregisterShortcut = keyboard.register("focus-new-task", (e) => {
       const isMac = navigator.userAgent.toLowerCase().includes("mac");
       const modKey = isMac ? e.metaKey : e.ctrlKey;
 
       if (modKey && e.key === "n") {
-        triggerRef?.click();
-        triggerRef?.focus();
+        inputRef?.focus();
+        open = true;
         return true; // Handled
       }
       return false;
+    });
+
+    // Close dropdown when window loses focus
+    const tauriWindow = getCurrentWindow();
+    unlistenWindowFocus = await tauriWindow.onFocusChanged(({ payload: focused }) => {
+      if (!focused) {
+        open = false;
+      }
     });
   });
 
   onDestroy(() => {
     unregisterShortcut?.();
+    unlistenWindowFocus?.();
   });
 
   // Filter favourites based on input
@@ -73,9 +85,7 @@
   const NO_SELECTION = "__none__";
 
   $effect(() => {
-    if (!open) {
-      triggerRef?.blur();
-    } else {
+    if (open) {
       commandValue = NO_SELECTION;
     }
   });
@@ -87,12 +97,14 @@
     onAddTask(newTaskName.trim());
     newTaskName = "";
     open = false;
+    inputRef?.blur();
   }
 
   function handleSelect(suggestion: string, seconds?: number) {
     onAddTask(suggestion, seconds);
     newTaskName = "";
     open = false;
+    inputRef?.blur();
   }
 
   function handleKeydown(e: KeyboardEvent) {
@@ -107,18 +119,18 @@
         })
       );
     } else if (e.key === "Enter") {
-      // If we have a selected item, let Command handle it
+      // If we have a selected item, click it directly
       const selectedItem = commandRef?.querySelector("[aria-selected='true']");
       if (selectedItem && open) {
         e.preventDefault();
-        commandRef?.dispatchEvent(
-          new KeyboardEvent("keydown", {
-            key: "Enter",
-            bubbles: true,
-          })
-        );
+        (selectedItem as HTMLElement).click();
       }
       // Otherwise, let the form submit handle it
+    } else if (e.key === "Escape") {
+      // Clear input but keep focus and dropdown open
+      e.preventDefault();
+      e.stopPropagation();
+      newTaskName = "";
     }
   }
 
@@ -134,12 +146,16 @@
         <form onsubmit={handleSubmit} class="relative group">
           <input
             {...props}
+            bind:this={inputRef}
             type="text"
             bind:value={newTaskName}
             placeholder="What are you working on?"
             class="w-full px-4 py-3 pr-16 bg-surface-raised rounded-xl border-none placeholder:text-on-surface-muted focus:outline-none focus:ring-1 focus:ring-on-surface/50"
             role="combobox"
             autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
             onkeydown={handleKeydown}
           />
           {#if !newTaskName}
@@ -159,6 +175,10 @@
         sideOffset={8}
         align="start"
         onOpenAutoFocus={(e) => e.preventDefault()}
+        onCloseAutoFocus={(e) => e.preventDefault()}
+        onInteractOutside={() => {
+          open = false;
+        }}
       >
         <!-- svelte-ignore a11y_no_static_element_interactions -->
         <div
