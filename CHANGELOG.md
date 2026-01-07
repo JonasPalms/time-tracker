@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.5] - 2026-01-08
+
+### Fixed
+
+- Close dropdown when clicking outside or switching apps
+- Fix Enter key selection causing dropdown to reopen
+- Escape key now clears input while keeping dropdown open
+- Disable native spellcheck/autocorrect on task input
+
 ## [0.3.2] - 2026-01-05
 
 ### Fixed
