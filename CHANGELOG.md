@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-01-09
+
+### Added
+
+- Task edit page: dedicated page for editing task name, time, and notes
+- Notes field for tasks (plain text)
+- Edit button in task dropdown menu and history page
+
+### Fixed
+
+- Fixed Svelte warning about state reference in TaskItemName component
+
 ## [0.3.6] - 2026-01-08
 
 ### Changed

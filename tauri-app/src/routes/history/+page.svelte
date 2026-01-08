@@ -1,7 +1,9 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import { getTasksInRange, type Task } from "$lib/services/tasks";
   import { formatTimeHuman } from "$lib/utils/time";
   import Icon from "$lib/components/Icon.svelte";
+  import PencilIcon from "@lucide/svelte/icons/pencil";
 
   // State
   let weekOffset = $state(0); // 0 = current week, -1 = last week, etc.
@@ -120,13 +122,13 @@
     <h1 class="text-3xl font-black text-accent mb-4">History</h1>
 
     <!-- Week Navigation -->
-    <div class="flex items-center justify-between bg-surface-raised rounded-xl p-4 mb-4">
+    <div class="flex items-center justify-between p-4 mb-4">
       <button
         class="p-2 rounded-lg hover:bg-surface transition-colors"
         onclick={() => (weekOffset -= 1)}
         aria-label="Previous week"
       >
-        <Icon name="chevron-left" />
+        <Icon name="chevron-left" class="size-6" />
       </button>
 
       <div class="text-center">
@@ -142,7 +144,7 @@
         disabled={weekOffset >= 0}
         aria-label="Next week"
       >
-        <Icon name="chevron-right" />
+        <Icon name="chevron-right" class="size-6" />
       </button>
     </div>
   </section>
@@ -178,10 +180,19 @@
               {#if dayTasks.length > 0}
                 <div class="divide-y divide-on-surface/5">
                   {#each dayTasks as task}
-                    <div class="flex items-center justify-between px-4 py-2">
+                    <div class="group flex items-center justify-between px-4 py-2">
                       <div class="text-sm truncate flex-1 mr-4">{task.name}</div>
-                      <div class="font-mono text-sm text-on-surface-muted">
-                        {formatTimeHuman(task.total_seconds)}
+                      <div class="flex items-center gap-2">
+                        <div class="font-mono text-sm text-on-surface-muted">
+                          {formatTimeHuman(task.total_seconds)}
+                        </div>
+                        <button
+                          class="p-1 rounded hover:bg-surface transition-colors opacity-0 group-hover:opacity-100"
+                          onclick={() => goto(`/task/${task.id}`)}
+                          aria-label="Edit task"
+                        >
+                          <PencilIcon class="w-4 h-4 text-on-surface-muted" />
+                        </button>
                       </div>
                     </div>
                   {/each}

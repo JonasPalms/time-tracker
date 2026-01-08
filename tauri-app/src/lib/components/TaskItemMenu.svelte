@@ -1,16 +1,29 @@
 <script lang="ts">
   import EllipsisIcon from "@lucide/svelte/icons/ellipsis";
+  import PencilIcon from "@lucide/svelte/icons/pencil";
   import TrashIcon from "@lucide/svelte/icons/trash-2";
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
   import { Button } from "$lib/components/ui/button";
 
   let {
+    onEdit,
     onDelete,
   }: {
+    onEdit?: () => void;
     onDelete: () => void;
   } = $props();
 
   let dropdownOpen = $state(false);
+
+  function handleEdit(e?: MouseEvent | Event) {
+    if (e) {
+      e.stopPropagation();
+    }
+    if (onEdit) {
+      onEdit();
+    }
+    dropdownOpen = false;
+  }
 
   function handleDelete(e?: MouseEvent | Event) {
     if (e) {
@@ -37,6 +50,12 @@
     </Button>
   </DropdownMenu.Trigger>
   <DropdownMenu.Content class="w-[180px]" align="end">
+    {#if onEdit}
+      <DropdownMenu.Item onclick={handleEdit}>
+        <PencilIcon class="me-2 size-4" />
+        Edit
+      </DropdownMenu.Item>
+    {/if}
     <DropdownMenu.Item onclick={handleDelete} variant="destructive">
       <TrashIcon class="me-2 size-4" />
       Delete

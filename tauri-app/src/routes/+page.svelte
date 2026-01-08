@@ -1,6 +1,7 @@
 <script lang="ts">
   import { fly } from "svelte/transition";
   import { backInOut } from "svelte/easing";
+  import { goto } from "$app/navigation";
   import TaskItem from "$lib/components/TaskItem.svelte";
   import CurrentTracking from "$lib/components/CurrentTracking.svelte";
   import NewTaskInput from "$lib/components/NewTaskInput.svelte";
@@ -108,6 +109,10 @@
     await deleteTask(task.id);
     await loadTasks();
   }
+
+  function handleEdit(task: Task) {
+    goto(`/task/${task.id}`);
+  }
 </script>
 
 <div class="h-full flex flex-col">
@@ -149,6 +154,7 @@
             onPlayPause={() => handlePlayPause(task)}
             onUpdateName={(newName) => handleUpdateTaskName(task, newName)}
             onUpdateTime={(newTotalSeconds) => handleUpdateTaskTime(task, newTotalSeconds)}
+            onEdit={() => handleEdit(task)}
             onDelete={() => handleDelete(task)}
           />
         {/each}

@@ -13,6 +13,7 @@
     onPlayPause,
     onUpdateName,
     onUpdateTime,
+    onEdit,
     onDelete,
   }: {
     task: Task;
@@ -21,6 +22,7 @@
     onPlayPause: () => void;
     onUpdateName?: (newName: string) => void;
     onUpdateTime?: (newTotalSeconds: number) => void;
+    onEdit?: () => void;
     onDelete: () => void;
   } = $props();
 
@@ -54,5 +56,5 @@
   </button>
   <TaskItemName name={task.name} {onUpdateName} />
   <TaskItemTime totalSeconds={task.total_seconds} {isTracking} {elapsedSeconds} {onUpdateTime} />
-  <TaskItemMenu {onDelete} />
+  <TaskItemMenu {onEdit} {onDelete} />
 </div>

@@ -55,4 +55,11 @@ async function runMigrations(database: Database): Promise<void> {
   await database.execute(`
     CREATE INDEX IF NOT EXISTS idx_tasks_created_at ON tasks(created_at)
   `);
+
+  // Add note column to tasks table (added in v0.4.0)
+  try {
+    await database.execute(`ALTER TABLE tasks ADD COLUMN note TEXT`);
+  } catch {
+    // Column already exists, ignore error
+  }
 }

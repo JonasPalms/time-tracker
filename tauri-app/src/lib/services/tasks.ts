@@ -5,6 +5,7 @@ export interface Task {
   name: string;
   total_seconds: number;
   created_at: string;
+  note: string | null;
 }
 
 /**
@@ -134,4 +135,21 @@ export async function getUniqueTaskNames(): Promise<string[]> {
     "SELECT DISTINCT name FROM tasks ORDER BY created_at DESC LIMIT 50"
   );
   return results.map((r) => r.name);
+}
+
+/**
+ * Get a single task by ID
+ */
+export async function getTaskById(taskId: number): Promise<Task | null> {
+  const db = await getDb();
+  const tasks = await db.select<Task[]>("SELECT * FROM tasks WHERE id = ?", [taskId]);
+  return tasks[0] ?? null;
+}
+
+/**
+ * Update a task's note
+ */
+export async function updateTaskNote(taskId: number, note: string | null): Promise<void> {
+  const db = await getDb();
+  await db.execute("UPDATE tasks SET note = ? WHERE id = ?", [note, taskId]);
 }

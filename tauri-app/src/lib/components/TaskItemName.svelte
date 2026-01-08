@@ -7,11 +7,8 @@
     onUpdateName?: (newName: string) => void;
   } = $props();
 
-  let editedName = $state(name);
-
-  $effect(() => {
-    editedName = name;
-  });
+  let isEditing = $state(false);
+  let editedName = $state("");
 
   function handleInputClick(e: MouseEvent) {
     e.stopPropagation();
@@ -19,6 +16,8 @@
 
   function handleInputFocus(e: FocusEvent) {
     e.stopPropagation();
+    isEditing = true;
+    editedName = name;
   }
 
   function handleInputKeydown(e: KeyboardEvent) {
@@ -35,6 +34,7 @@
 
   function handleInputBlur() {
     saveName();
+    isEditing = false;
   }
 
   function saveName() {
@@ -47,8 +47,9 @@
 <div class="flex-1">
   <input
     type="text"
-    bind:value={editedName}
-    class="font-medium truncate px-1 -mx-1 rounded selection:bg-accent selection:text-on-accent"
+    value={isEditing ? editedName : name}
+    oninput={(e) => (editedName = e.currentTarget.value)}
+    class="font-medium w-full truncate px-1 -mx-1 rounded selection:bg-accent selection:text-on-accent"
     onclick={handleInputClick}
     onfocus={handleInputFocus}
     onkeydown={handleInputKeydown}
