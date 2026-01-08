@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.6] - 2026-01-08
+
+### Changed
+
+- Replaced Popover-based dropdown with simpler custom dropdown for task input
+- Improved dropdown behavior: blurs input after submitting task
+
+### Fixed
+
+- Fixed dropdown not reopening after submitting task with Enter key
+
 ## [0.3.5] - 2026-01-08
 
 ### Fixed
