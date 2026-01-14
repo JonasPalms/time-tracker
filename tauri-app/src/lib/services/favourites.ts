@@ -1,4 +1,4 @@
-import { getDb } from "./db";
+import { invoke } from "@tauri-apps/api/core";
 
 export interface Favourite {
   id: number;
@@ -10,36 +10,13 @@ export async function createFavourite(
   name: string,
   durationSeconds: number
 ): Promise<number | undefined> {
-  const db = await getDb();
-  const result = await db.execute(
-    `
-      INSERT INTO favourites (name, duration_seconds)
-      VALUES (?, ?)
-    `,
-    [name, durationSeconds]
-  );
-  return result.lastInsertId;
+  return invoke<number>("create_favourite", { name, durationSeconds });
 }
 
 export async function getFavourites(): Promise<Favourite[]> {
-  const db = await getDb();
-  const result = await db.select<Favourite[]>(
-    `
-      SELECT id, name, duration_seconds
-      FROM favourites
-    `
-  );
-
-  return result;
+  return invoke<Favourite[]>("get_favourites");
 }
 
 export async function deleteFavourite(id: number): Promise<void> {
-  const db = await getDb();
-  await db.execute(
-    `
-      DELETE FROM favourites
-      WHERE id = ?
-    `,
-    [id]
-  );
+  return invoke("delete_favourite", { id });
 }

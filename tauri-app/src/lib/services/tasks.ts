@@ -1,4 +1,4 @@
-import { getDb } from "./db";
+import { invoke } from "@tauri-apps/api/core";
 
 export interface Task {
   id: number;
@@ -21,23 +21,17 @@ export function getTodayDate(): string {
 
 /**
  * Get all tasks for a specific date (based on created_at timestamp)
- * Uses SQLite's date() function to filter in the database
  * @param date - Date in YYYY-MM-DD format
  */
 export async function getTasksForDate(date: string): Promise<Task[]> {
-  const db = await getDb();
-  // Use SQLite's date() function to extract date from created_at and filter in SQL
-  return await db.select<Task[]>(
-    "SELECT * FROM tasks WHERE date(created_at) = ? ORDER BY created_at DESC",
-    [date]
-  );
+  return invoke<Task[]>("get_tasks_for_date", { date });
 }
 
 /**
  * Get all tasks for today (convenience function)
  */
 export async function getTodaysTasks(): Promise<Task[]> {
-  return getTasksForDate(getTodayDate());
+  return invoke<Task[]>("get_todays_tasks");
 }
 
 /**
@@ -51,78 +45,53 @@ export async function createTask(
   date: string,
   initialSeconds: number = 0
 ): Promise<Task> {
-  const db = await getDb();
-
-  // Create task with specific date at midnight (00:00:00)
-  const datetime = `${date} 00:00:00`;
-  const result = await db.execute(
-    "INSERT INTO tasks (name, total_seconds, created_at) VALUES (?, ?, ?)",
-    [name, initialSeconds, datetime]
-  );
-
-  // Fetch the created task
-  const tasks = await db.select<Task[]>("SELECT * FROM tasks WHERE id = ?", [result.lastInsertId]);
-
-  return tasks[0];
+  return invoke<Task>("create_task", {
+    name,
+    date,
+    initialSeconds: initialSeconds > 0 ? initialSeconds : null,
+  });
 }
 
 /**
  * Update a task's total time
  */
 export async function updateTaskTime(taskId: number, totalSeconds: number): Promise<void> {
-  const db = await getDb();
-  await db.execute("UPDATE tasks SET total_seconds = ? WHERE id = ?", [totalSeconds, taskId]);
+  return invoke("update_task_time", { taskId, totalSeconds });
 }
 
 /**
  * Add seconds to a task's total time
  */
 export async function addTimeToTask(taskId: number, secondsToAdd: number): Promise<void> {
-  const db = await getDb();
-  await db.execute("UPDATE tasks SET total_seconds = total_seconds + ? WHERE id = ?", [
-    secondsToAdd,
-    taskId,
-  ]);
+  return invoke("add_time_to_task", { taskId, secondsToAdd });
 }
 
 /**
  * Adjust a task's time (can be positive or negative)
  */
 export async function adjustTaskTime(taskId: number, secondsToAdjust: number): Promise<void> {
-  const db = await getDb();
-  await db.execute("UPDATE tasks SET total_seconds = total_seconds + ? WHERE id = ?", [
-    secondsToAdjust,
-    taskId,
-  ]);
+  return invoke("adjust_task_time", { taskId, secondsToAdjust });
 }
 
 /**
  * Get tasks for a date range (for history view, based on created_at)
- * Uses SQLite's date() function to filter in the database
  */
 export async function getTasksInRange(startDate: string, endDate: string): Promise<Task[]> {
-  const db = await getDb();
-  // Use SQLite's date() function to extract date from created_at and filter in SQL
-  return await db.select<Task[]>(
-    "SELECT * FROM tasks WHERE date(created_at) >= ? AND date(created_at) <= ? ORDER BY created_at DESC",
-    [startDate, endDate]
-  );
+  return invoke<Task[]>("get_tasks_in_range", { startDate, endDate });
 }
 
 /**
  * Update a task's name
  */
 export async function updateTaskName(taskId: number, newName: string): Promise<void> {
-  const db = await getDb();
-  await db.execute("UPDATE tasks SET name = ? WHERE id = ?", [newName, taskId]);
+  return invoke("update_task_name", { taskId, newName });
 }
 
 /**
  * Delete a task
  */
 export async function deleteTask(taskId: number): Promise<void> {
-  const db = await getDb();
-  await db.execute("DELETE FROM tasks WHERE id = ?", [taskId]);
+  return invoke("delete_task", { taskId });
 }
 
 /**
@@ -130,26 +99,19 @@ export async function deleteTask(taskId: number): Promise<void> {
  * Returns distinct task names ordered by most recently used
  */
 export async function getUniqueTaskNames(): Promise<string[]> {
-  const db = await getDb();
-  const results = await db.select<{ name: string }[]>(
-    "SELECT DISTINCT name FROM tasks ORDER BY created_at DESC LIMIT 50"
-  );
-  return results.map((r) => r.name);
+  return invoke<string[]>("get_unique_task_names");
 }
 
 /**
  * Get a single task by ID
  */
 export async function getTaskById(taskId: number): Promise<Task | null> {
-  const db = await getDb();
-  const tasks = await db.select<Task[]>("SELECT * FROM tasks WHERE id = ?", [taskId]);
-  return tasks[0] ?? null;
+  return invoke<Task | null>("get_task_by_id", { taskId });
 }
 
 /**
  * Update a task's note
  */
 export async function updateTaskNote(taskId: number, note: string | null): Promise<void> {
-  const db = await getDb();
-  await db.execute("UPDATE tasks SET note = ? WHERE id = ?", [note, taskId]);
+  return invoke("update_task_note", { taskId, note });
 }

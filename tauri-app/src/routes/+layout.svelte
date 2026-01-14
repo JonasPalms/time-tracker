@@ -5,7 +5,6 @@
   import { useFavourites } from "$lib/hooks/favourites.svelte";
   import { useKeyboard } from "$lib/hooks/keyboard.svelte";
   import { useUpdater } from "$lib/hooks/updater.svelte";
-  import { getDb } from "$lib/services/db";
   import { getCurrentWindow } from "@tauri-apps/api/window";
   import { onMount, onDestroy } from "svelte";
   import AppHeader from "$lib/components/AppHeader.svelte";
@@ -22,7 +21,6 @@
 
   onMount(async () => {
     await theme.init();
-    await getDb();
     await useFavourites().reload();
     keyboard.init();
 
