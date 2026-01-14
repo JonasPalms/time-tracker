@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-01-14
+
+### Changed
+
+- Moved database layer from TypeScript to Rust using rusqlite
+- Frontend now communicates with backend via Tauri commands instead of direct SQL
+- Removed @tauri-apps/plugin-sql dependency
+
 ## [0.4.0] - 2026-01-09
 
 ### Added
