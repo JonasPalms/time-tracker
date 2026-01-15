@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-01-15
+
+### Changed
+
+- Redesigned history page with cleaner flat layout
+- Task entries are now clickable buttons to navigate to edit page
+- Collapsible day sections with smooth accordion animation
+- Improved accessibility with aria-expanded and aria-controls attributes
+
 ## [0.5.0] - 2026-01-14
 
 ### Changed

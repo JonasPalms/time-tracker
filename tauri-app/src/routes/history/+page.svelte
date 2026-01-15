@@ -3,12 +3,13 @@
   import { getTasksInRange, type Task } from "$lib/services/tasks";
   import { formatTimeHuman } from "$lib/utils/time";
   import Icon from "$lib/components/Icon.svelte";
-  import PencilIcon from "@lucide/svelte/icons/pencil";
+  import { slide } from "svelte/transition";
 
   // State
   let weekOffset = $state(0); // 0 = current week, -1 = last week, etc.
   let tasksByDate = $state<Map<string, Task[]>>(new Map());
   let isLoading = $state(true);
+  let openDays = $state<Set<string>>(new Set());
 
   // Get week start (Monday) and end (Sunday) for a given offset
   function getWeekRange(offset: number): { start: Date; end: Date } {
@@ -74,7 +75,17 @@
     }
 
     tasksByDate = grouped;
+    openDays = new Set(grouped.keys());
     isLoading = false;
+  }
+
+  function handleToggle(dateStr: string) {
+    if (openDays.has(dateStr)) {
+      openDays.delete(dateStr);
+      openDays = new Set(openDays);
+    } else {
+      openDays = new Set(openDays.add(dateStr));
+    }
   }
 
   // Load tasks when week changes
@@ -155,50 +166,46 @@
       {#if isLoading}
         <div class="text-center py-8 text-on-surface-muted">Loading...</div>
       {:else}
-        <div class="space-y-4">
+        <div>
           {#each weekDates() as dateStr}
             {@const dayTasks = tasksByDate.get(dateStr) || []}
             {@const dayTotal = getDayTotal(dayTasks)}
             {@const isToday = dateStr === new Date().toISOString().split("T")[0]}
 
-            <div class="bg-surface-raised rounded-xl overflow-hidden">
-              <!-- Day Header -->
-              <div
-                class="flex items-center justify-between px-4 py-3 border-b border-on-surface/10 {isToday
-                  ? 'bg-accent/10'
-                  : ''}"
+            <div class="py-2">
+              <button
+                class="w-full flex items-center justify-between px-3 py-3 rounded-lg bg-surface-elevated"
+                onclick={() => handleToggle(dateStr)}
+                aria-expanded={openDays.has(dateStr)}
+                aria-controls="day-{dateStr}"
               >
-                <div class="font-medium {isToday ? 'text-accent' : ''}">
+                <span class="font-medium {isToday ? 'text-accent' : ''}">
                   {formatDateDisplay(dateStr)}
-                </div>
-                <div class="font-mono text-on-surface-muted">
+                </span>
+                <span class="font-mono">
                   {dayTotal > 0 ? formatTimeHuman(dayTotal) : "-"}
-                </div>
-              </div>
+                </span>
+              </button>
 
-              <!-- Tasks for this day -->
-              {#if dayTasks.length > 0}
-                <div class="divide-y divide-on-surface/5">
+              {#if dayTasks.length > 0 && openDays.has(dateStr)}
+                <div
+                  id="day-{dateStr}"
+                  class="space-y-0.5 mt-2"
+                  role="region"
+                  transition:slide={{ duration: 200 }}
+                >
                   {#each dayTasks as task}
-                    <div class="group flex items-center justify-between px-4 py-2">
-                      <div class="text-sm truncate flex-1 mr-4">{task.name}</div>
-                      <div class="flex items-center gap-2">
-                        <div class="font-mono text-sm text-on-surface-muted">
-                          {formatTimeHuman(task.total_seconds)}
-                        </div>
-                        <button
-                          class="p-1 rounded hover:bg-surface transition-colors opacity-0 group-hover:opacity-100"
-                          onclick={() => goto(`/task/${task.id}`)}
-                          aria-label="Edit task"
-                        >
-                          <PencilIcon class="w-4 h-4 text-on-surface-muted" />
-                        </button>
+                    <button
+                      class="w-full flex items-center justify-between px-2 py-3 rounded-xl transition-colors hover:bg-surface-raised text-left"
+                      onclick={() => goto(`/task/${task.id}`)}
+                    >
+                      <div class="truncate flex-1 mr-4">{task.name}</div>
+                      <div class="font-mono text-on-surface-muted">
+                        {formatTimeHuman(task.total_seconds)}
                       </div>
-                    </div>
+                    </button>
                   {/each}
                 </div>
-              {:else}
-                <div class="px-4 py-3 text-sm text-on-surface-muted">No tasks</div>
               {/if}
             </div>
           {/each}
@@ -207,3 +214,4 @@
     </div>
   </section>
 </div>
+
