@@ -128,22 +128,19 @@
 </script>
 
 <div class="h-full flex flex-col">
-  <!-- Header -->
+  <!-- Week Navigation -->
   <section class="shrink-0 px-app pt-4">
-    <h1 class="text-3xl font-black text-accent mb-4">History</h1>
-
-    <!-- Week Navigation -->
-    <div class="flex items-center justify-between p-4 mb-4">
+    <div class="flex items-center justify-center gap-4 mb-2">
       <button
         class="p-2 rounded-lg hover:bg-surface transition-colors"
         onclick={() => (weekOffset -= 1)}
         aria-label="Previous week"
       >
-        <Icon name="chevron-left" class="size-6" />
+        <Icon name="chevron-left" class="size-5" />
       </button>
 
-      <div class="text-center">
-        <div class="font-semibold">{currentRange()}</div>
+      <div class="text-center min-w-48">
+        <div class="text-xl font-bold text-accent">{currentRange()}</div>
         <div class="text-sm text-on-surface-muted">
           Total: {formatTimeHuman(weekTotal())}
         </div>
@@ -155,13 +152,13 @@
         disabled={weekOffset >= 0}
         aria-label="Next week"
       >
-        <Icon name="chevron-right" class="size-6" />
+        <Icon name="chevron-right" class="size-5" />
       </button>
     </div>
   </section>
 
   <!-- Days List -->
-  <section class="flex-1 overflow-y-auto py-4">
+  <section class="flex-1 overflow-y-auto pt-2">
     <div class="px-app">
       {#if isLoading}
         <div class="text-center py-8 text-on-surface-muted">Loading...</div>
