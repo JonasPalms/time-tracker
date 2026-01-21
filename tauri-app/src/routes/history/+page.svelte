@@ -129,7 +129,7 @@
 
 <div class="h-full flex flex-col">
   <!-- Header -->
-  <section class="shrink-0 px-app">
+  <section class="shrink-0 px-app pt-4">
     <h1 class="text-3xl font-black text-accent mb-4">History</h1>
 
     <!-- Week Navigation -->

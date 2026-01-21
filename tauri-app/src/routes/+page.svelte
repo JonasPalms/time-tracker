@@ -116,7 +116,7 @@
 </script>
 
 <div class="h-full flex flex-col">
-  <section class="shrink-0 px-app border-b border-on-surface/10">
+  <section class="shrink-0 px-app pt-4 border-b border-on-surface/10">
     <!-- Date Navigation -->
     <div class="flex items-center gap-3 mb-4">
       <button
