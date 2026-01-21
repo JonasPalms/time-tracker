@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.2] - 2026-01-21
+
+### Added
+
+- Collapsible sidebar navigation replacing top header navigation
+- Draggable sidebar resize handle (60-300px width, snaps to collapsed below 100px)
+- Sidebar state persists to localStorage
+
+### Changed
+
+- Window size increased to 900x700 (was 600x800) with minimum constraints
+- History page: removed redundant title, centered week navigation with accent styling
+- Improved visual separation with title bar border
+
 ## [0.5.1] - 2026-01-15
 
 ### Changed
