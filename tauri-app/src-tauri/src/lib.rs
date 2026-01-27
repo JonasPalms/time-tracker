@@ -37,6 +37,7 @@ pub fn run() {
             commands::tasks::get_unique_task_names,
             commands::tasks::get_task_by_id,
             commands::tasks::update_task_note,
+            commands::tasks::update_task_date,
             // Favourite commands
             commands::favourites::get_favourites,
             commands::favourites::create_favourite,

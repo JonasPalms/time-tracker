@@ -115,3 +115,12 @@ export async function getTaskById(taskId: number): Promise<Task | null> {
 export async function updateTaskNote(taskId: number, note: string | null): Promise<void> {
   return invoke("update_task_note", { taskId, note });
 }
+
+/**
+ * Update a task's date
+ * @param taskId - Task ID
+ * @param newDate - Date in YYYY-MM-DD format
+ */
+export async function updateTaskDate(taskId: number, newDate: string): Promise<void> {
+  return invoke("update_task_date", { taskId, newDate });
+}

@@ -2,14 +2,18 @@
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
   import { onMount } from "svelte";
+  import { parseDate, type DateValue } from "@internationalized/date";
   import ChevronLeftIcon from "@lucide/svelte/icons/chevron-left";
   import TaskItemTime from "$lib/components/TaskItemTime.svelte";
+  import { DatePicker } from "$lib/components/ui/date-picker/index.js";
   import { useTracking } from "$lib/hooks/tracking.svelte";
+  import { getDateFromTimestamp, createTimestampFromDate } from "$lib/utils/time";
   import {
     getTaskById,
     updateTaskName,
     updateTaskTime,
     updateTaskNote,
+    updateTaskDate,
     type Task,
   } from "$lib/services/tasks";
 
@@ -17,6 +21,7 @@
   let isLoading = $state(true);
   let nameValue = $state("");
   let noteValue = $state("");
+  let dateValue = $state<DateValue | undefined>(undefined);
 
   const tracking = useTracking();
 
@@ -34,6 +39,7 @@
       task = loadedTask;
       nameValue = loadedTask.name;
       noteValue = loadedTask.note ?? "";
+      dateValue = parseDate(getDateFromTimestamp(loadedTask.created_at));
     }
   }
 
@@ -71,6 +77,15 @@
     await updateTaskNote(task.id, newNote);
     task.note = newNote;
   }
+
+  async function handleDateChange(newDate: DateValue | undefined) {
+    if (!task || !newDate) return;
+    const newDateStr = newDate.toString();
+    const currentDateStr = getDateFromTimestamp(task.created_at);
+    if (newDateStr === currentDateStr) return;
+    await updateTaskDate(task.id, newDateStr);
+    task.created_at = createTimestampFromDate(newDateStr);
+  }
 </script>
 
 <div class="h-full flex flex-col">
@@ -105,6 +120,15 @@
             onblur={handleNameBlur}
             onkeydown={handleNameKeydown}
             class="w-full px-4 py-3 bg-surface-raised rounded-xl border-none placeholder:text-on-surface-muted focus:outline-none focus:ring-1 focus:ring-on-surface/50"
+          />
+        </div>
+
+        <div class="space-y-2">
+          <span class="block text-sm font-medium text-on-surface-muted">Date</span>
+          <DatePicker
+            bind:value={dateValue}
+            onValueChange={handleDateChange}
+            class="bg-surface-raised rounded-xl border-none hover:bg-surface-raised/80"
           />
         </div>
 

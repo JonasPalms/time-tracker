@@ -246,3 +246,24 @@ pub fn update_task_note(
 
     Ok(())
 }
+
+/// Update task date (YYYY-MM-DD format)
+#[tauri::command]
+pub fn update_task_date(
+    state: State<AppState>,
+    task_id: i64,
+    new_date: String,
+) -> Result<(), String> {
+    let conn = state.db.lock().map_err(|e| e.to_string())?;
+
+    // Update created_at to midnight of the new date
+    let created_at = format!("{} 00:00:00", new_date);
+
+    conn.execute(
+        "UPDATE tasks SET created_at = ? WHERE id = ?",
+        (&created_at, task_id),
+    )
+    .map_err(|e| e.to_string())?;
+
+    Ok(())
+}

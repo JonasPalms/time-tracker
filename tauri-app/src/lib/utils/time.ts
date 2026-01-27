@@ -93,3 +93,21 @@ export function parseTimeString(timeStr: string): number | null {
 
   return hours * 3600 + minutes * 60 + seconds;
 }
+
+/**
+ * Extract the date portion (YYYY-MM-DD) from a created_at timestamp
+ * @param createdAt - Timestamp in format "YYYY-MM-DD HH:MM:SS"
+ * @returns Date string in YYYY-MM-DD format
+ */
+export function getDateFromTimestamp(createdAt: string): string {
+  return createdAt.slice(0, 10);
+}
+
+/**
+ * Create a created_at timestamp from a date string (sets time to midnight)
+ * @param dateStr - Date in YYYY-MM-DD format
+ * @returns Timestamp in format "YYYY-MM-DD 00:00:00"
+ */
+export function createTimestampFromDate(dateStr: string): string {
+  return `${dateStr} 00:00:00`;
+}
