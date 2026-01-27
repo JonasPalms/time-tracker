@@ -37,7 +37,7 @@
   data-tauri-drag-region
 >
   <!-- Navigation -->
-  <nav class="flex-1 flex flex-col gap-1 p-2" data-tauri-drag-region>
+  <nav class="flex-1 flex flex-col gap-1 px-2 py-3" data-tauri-drag-region>
     <SidebarNavItem href="/" icon="home" label="Home" collapsed={sidebar.collapsed} />
     <SidebarNavItem href="/history" icon="clock" label="History" collapsed={sidebar.collapsed} />
 

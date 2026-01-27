@@ -95,7 +95,7 @@
 
 <div class="h-full flex flex-col">
   <PageHeader>
-    <div class="flex items-center gap-3 mb-4">
+    <div class="flex items-center gap-3">
       <button
         class="p-2 rounded-lg hover:bg-surface-raised transition-colors"
         onclick={handleBack}

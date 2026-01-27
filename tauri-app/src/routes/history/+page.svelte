@@ -129,7 +129,7 @@
 </script>
 
 <div class="h-full flex flex-col">
-  <PageHeader border={false}>
+  <PageHeader>
     <div class="flex items-center gap-3">
       <button
         class="p-2 rounded-lg hover:bg-surface-raised transition-colors"
