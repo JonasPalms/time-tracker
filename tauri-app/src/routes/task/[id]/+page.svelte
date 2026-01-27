@@ -4,6 +4,7 @@
   import { onMount } from "svelte";
   import { parseDate, type DateValue } from "@internationalized/date";
   import ChevronLeftIcon from "@lucide/svelte/icons/chevron-left";
+  import PageHeader from "$lib/components/PageHeader.svelte";
   import TaskItemTime from "$lib/components/TaskItemTime.svelte";
   import { DatePicker } from "$lib/components/ui/date-picker/index.js";
   import { useTracking } from "$lib/hooks/tracking.svelte";
@@ -93,7 +94,7 @@
 </script>
 
 <div class="h-full flex flex-col">
-  <section class="shrink-0 px-app border-b border-on-surface/10">
+  <PageHeader>
     <div class="flex items-center gap-3 mb-4">
       <button
         class="p-2 rounded-lg hover:bg-surface-raised transition-colors"
@@ -104,7 +105,7 @@
       </button>
       <h1 class="text-2xl ml-2 font-black text-accent">Edit Task</h1>
     </div>
-  </section>
+  </PageHeader>
 
   <section class="flex-1 overflow-y-auto py-6">
     <div class="px-app space-y-6">

@@ -3,6 +3,7 @@
   import { getTasksInRange, type Task } from "$lib/services/tasks";
   import { formatTimeHuman } from "$lib/utils/time";
   import Icon from "$lib/components/Icon.svelte";
+  import PageHeader from "$lib/components/PageHeader.svelte";
   import { slide } from "svelte/transition";
 
   // State
@@ -128,34 +129,31 @@
 </script>
 
 <div class="h-full flex flex-col">
-  <!-- Week Navigation -->
-  <section class="shrink-0 px-app pt-4">
-    <div class="flex items-center justify-center gap-4 mb-2">
+  <PageHeader border={false}>
+    <div class="flex items-center gap-3">
       <button
-        class="p-2 rounded-lg hover:bg-surface transition-colors"
+        class="p-2 rounded-lg hover:bg-surface-raised transition-colors"
         onclick={() => (weekOffset -= 1)}
         aria-label="Previous week"
       >
-        <Icon name="chevron-left" class="size-5" />
+        <Icon name="chevron-left" class="w-6 h-6" />
       </button>
-
-      <div class="text-center min-w-48">
-        <div class="text-xl font-bold text-accent">{currentRange()}</div>
-        <div class="text-sm text-on-surface-muted">
-          Total: {formatTimeHuman(weekTotal())}
-        </div>
-      </div>
-
       <button
-        class="p-2 rounded-lg hover:bg-surface transition-colors disabled:opacity-30"
+        class="p-2 rounded-lg hover:bg-surface-raised transition-colors disabled:opacity-30"
         onclick={() => (weekOffset += 1)}
         disabled={weekOffset >= 0}
         aria-label="Next week"
       >
-        <Icon name="chevron-right" class="size-5" />
+        <Icon name="chevron-right" class="w-6 h-6" />
       </button>
+      <h1 class="text-2xl ml-2 font-black text-accent">
+        {currentRange()}
+      </h1>
+      <span class="ml-auto text-2xl font-black text-white">
+        {formatTimeHuman(weekTotal())}
+      </span>
     </div>
-  </section>
+  </PageHeader>
 
   <!-- Days List -->
   <section class="flex-1 overflow-y-auto pt-2">
