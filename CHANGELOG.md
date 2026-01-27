@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.3] - 2026-01-27
+
+### Added
+
+- Date picker on edit task page to change task date
+- Reusable Calendar and DatePicker UI components
+- PageHeader component for consistent page header styling
+
+### Changed
+
+- Edit page back button now returns to previous page instead of always going home
+- History page header layout matches front page style with navigation on left
+- History page shows weekly total time in header row
+
 ## [0.5.2] - 2026-01-21
 
 ### Added
