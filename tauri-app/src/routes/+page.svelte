@@ -28,6 +28,7 @@
 
   // Date navigation
   const displayDate = $derived(formatDateForDisplay(selectedDate));
+  const isToday = $derived(selectedDate === getTodayDate());
 
   function handlePreviousDay() {
     selectedDate = addDays(selectedDate, -1);
@@ -35,6 +36,10 @@
 
   function handleNextDay() {
     selectedDate = addDays(selectedDate, 1);
+  }
+
+  function handleGoToToday() {
+    selectedDate = getTodayDate();
   }
 
   // Load tasks on mount and when date changes
@@ -136,6 +141,14 @@
       <h1 class="text-2xl ml-2 font-black text-accent">
         {displayDate}
       </h1>
+      {#if !isToday}
+        <button
+          class="ml-auto px-3 py-1 text-sm rounded-md border border-accent text-accent hover:bg-accent/10 transition-colors"
+          onclick={handleGoToToday}
+        >
+          Go to today
+        </button>
+      {/if}
     </div>
 
     <NewTaskInput onAddTask={handleAddTask} {suggestions} />
