@@ -46,6 +46,17 @@ Svelte Components → Hooks (state) → Services → SQLite Database
 - `lib/services/` - Business logic (db.ts, tasks.ts, favourites.ts, settings.ts)
 - `lib/components/` - UI components including shadcn/bits-ui in `ui/`
 - `lib/utils/` - Utilities (time formatting, class names)
+- `lib/icons/` - Custom SVG icons for traffic lights
+
+### Icons
+
+Uses `@lucide/svelte` for icons. Import as Svelte components:
+```svelte
+import { PanelLeft, Trash2, Check } from "@lucide/svelte";
+<PanelLeft class="size-4" />
+```
+
+Browse available icons at https://lucide.dev/icons/
 
 ### State Management Pattern
 

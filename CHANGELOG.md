@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.6] - 2026-01-29
+
+### Added
+
+- Sidebar toggle button next to window traffic lights to completely hide/show sidebar
+- Smooth animation when opening/closing sidebar
+
+### Fixed
+
+- Fixed TypeScript error with bits-ui event handler prop names
+
 ## [0.5.5] - 2026-01-28
 
 ### Added
