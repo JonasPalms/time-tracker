@@ -29,8 +29,8 @@
 <Dialog.Root bind:open>
   <Dialog.Content
     class="sm:max-w-lg bg-surface border-surface-hover"
-    onInteractOutside={(e) => e.preventDefault()}
-    onEscapeKeyDown={(e) => e.preventDefault()}
+    onInteractOutside={(e: PointerEvent) => e.preventDefault()}
+    onEscapeKeydown={(e: KeyboardEvent) => e.preventDefault()}
   >
     <Dialog.Header>
       <Dialog.Title>Update Available</Dialog.Title>
