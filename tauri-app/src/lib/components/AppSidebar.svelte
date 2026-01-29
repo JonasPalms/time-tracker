@@ -32,8 +32,9 @@
 </script>
 
 <aside
-  class="shrink-0 flex flex-col relative border-r border-border"
-  style="width: {sidebar.width}px"
+  class="shrink-0 flex flex-col relative border-r border-border overflow-hidden
+    {isResizing ? '' : 'transition-[width] duration-200 ease-out'}"
+  style="width: {sidebar.hidden ? 0 : sidebar.width}px"
   data-tauri-drag-region
 >
   <!-- Navigation -->

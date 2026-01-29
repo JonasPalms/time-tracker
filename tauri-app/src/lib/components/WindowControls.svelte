@@ -1,6 +1,10 @@
 <script lang="ts">
   import { getCurrentWindow } from "@tauri-apps/api/window";
   import { onMount, onDestroy } from "svelte";
+  import { useSidebar } from "$lib/hooks/sidebar.svelte";
+  import { PanelLeftClose, PanelLeft } from "@lucide/svelte";
+
+  const sidebar = useSidebar();
 
   // Import traffic light SVGs
   import noFocusIcon from "$lib/icons/traffic-lights/0-all-three-nofocus.svg?raw";
@@ -84,54 +88,69 @@
 </script>
 
 {#if isMacOS}
-  <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <div
-    class="flex items-center gap-2 px-2"
-    onmouseenter={() => (isGroupHovered = true)}
-    onmouseleave={() => {
-      isGroupHovered = false;
-      closeState = "normal";
-      minimizeState = "normal";
-      maximizeState = "normal";
-    }}
-  >
-    <!-- Close button -->
-    <button
-      onclick={handleClose}
-      onmouseenter={() => (closeState = "hover")}
-      onmouseleave={() => (closeState = "normal")}
-      onmousedown={() => (closeState = "press")}
-      onmouseup={() => (closeState = "hover")}
-      class="size-3 focus:outline-none [&_svg]:pointer-events-none"
-      aria-label="Close window"
+  <div class="flex items-center gap-2">
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div
+      class="flex items-center gap-2 px-2"
+      onmouseenter={() => (isGroupHovered = true)}
+      onmouseleave={() => {
+        isGroupHovered = false;
+        closeState = "normal";
+        minimizeState = "normal";
+        maximizeState = "normal";
+      }}
     >
-      {@html getCloseIcon()}
-    </button>
+      <!-- Close button -->
+      <button
+        onclick={handleClose}
+        onmouseenter={() => (closeState = "hover")}
+        onmouseleave={() => (closeState = "normal")}
+        onmousedown={() => (closeState = "press")}
+        onmouseup={() => (closeState = "hover")}
+        class="size-3 focus:outline-none [&_svg]:pointer-events-none"
+        aria-label="Close window"
+      >
+        {@html getCloseIcon()}
+      </button>
 
-    <!-- Minimize button -->
-    <button
-      onclick={handleMinimize}
-      onmouseenter={() => (minimizeState = "hover")}
-      onmouseleave={() => (minimizeState = "normal")}
-      onmousedown={() => (minimizeState = "press")}
-      onmouseup={() => (minimizeState = "hover")}
-      class="size-3 focus:outline-none [&_svg]:pointer-events-none"
-      aria-label="Minimize window"
-    >
-      {@html getMinimizeIcon()}
-    </button>
+      <!-- Minimize button -->
+      <button
+        onclick={handleMinimize}
+        onmouseenter={() => (minimizeState = "hover")}
+        onmouseleave={() => (minimizeState = "normal")}
+        onmousedown={() => (minimizeState = "press")}
+        onmouseup={() => (minimizeState = "hover")}
+        class="size-3 focus:outline-none [&_svg]:pointer-events-none"
+        aria-label="Minimize window"
+      >
+        {@html getMinimizeIcon()}
+      </button>
 
-    <!-- Maximize button -->
+      <!-- Maximize button -->
+      <button
+        onclick={handleMaximize}
+        onmouseenter={() => (maximizeState = "hover")}
+        onmouseleave={() => (maximizeState = "normal")}
+        onmousedown={() => (maximizeState = "press")}
+        onmouseup={() => (maximizeState = "hover")}
+        class="size-3 focus:outline-none [&_svg]:pointer-events-none"
+        aria-label="Maximize window"
+      >
+        {@html getMaximizeIcon()}
+      </button>
+    </div>
+
+    <!-- Sidebar toggle button -->
     <button
-      onclick={handleMaximize}
-      onmouseenter={() => (maximizeState = "hover")}
-      onmouseleave={() => (maximizeState = "normal")}
-      onmousedown={() => (maximizeState = "press")}
-      onmouseup={() => (maximizeState = "hover")}
-      class="size-3 focus:outline-none [&_svg]:pointer-events-none"
-      aria-label="Maximize window"
+      onclick={sidebar.toggle}
+      class="p-1 rounded hover:bg-surface-hover text-on-surface-muted hover:text-on-surface transition-colors"
+      aria-label={sidebar.hidden ? "Show sidebar" : "Hide sidebar"}
     >
-      {@html getMaximizeIcon()}
+      {#if sidebar.hidden}
+        <PanelLeft class="size-4" />
+      {:else}
+        <PanelLeftClose class="size-4" />
+      {/if}
     </button>
   </div>
 {/if}
