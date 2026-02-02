@@ -1,7 +1,7 @@
 use rusqlite::Connection;
 use std::sync::Mutex;
 use tauri::menu::{MenuBuilder, MenuItem, PredefinedMenuItem, SubmenuBuilder};
-use tauri::Manager;
+use tauri::{Emitter, Manager};
 
 mod commands;
 mod db;
@@ -26,7 +26,17 @@ pub fn run() {
             // Set up macOS menu with Window menu for Minimize support
             #[cfg(target_os = "macos")]
             {
+                let check_updates_item = MenuItem::with_id(
+                    app,
+                    "check_updates",
+                    "Check for Updates...",
+                    true,
+                    None::<&str>,
+                )?;
+
                 let app_menu = SubmenuBuilder::new(app, "TimeTracker")
+                    .item(&check_updates_item)
+                    .separator()
                     .item(&PredefinedMenuItem::hide(app, Some("Hide TimeTracker"))?)
                     .item(&PredefinedMenuItem::hide_others(app, None)?)
                     .item(&PredefinedMenuItem::show_all(app, None)?)
@@ -89,6 +99,9 @@ pub fn run() {
                     }
                     "close" => {
                         let _ = window.close();
+                    }
+                    "check_updates" => {
+                        let _ = app.emit("check-for-updates", ());
                     }
                     _ => {}
                 }

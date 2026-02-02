@@ -1,13 +1,20 @@
 import { check } from "@tauri-apps/plugin-updater";
 import { relaunch } from "@tauri-apps/plugin-process";
+import { message } from "@tauri-apps/plugin-dialog";
 import type { Update } from "@tauri-apps/plugin-updater";
 
 let currentUpdate = $state<Update | null>(null);
 let showUpdateDialog = $state(false);
 
-async function checkForUpdates() {
+async function checkForUpdates(manual: boolean = false) {
   // Only check in production builds
   if (import.meta.env.DEV) {
+    if (manual) {
+      await message("Update checking is disabled in development mode.", {
+        title: "Check for Updates",
+        kind: "info",
+      });
+    }
     return;
   }
 
@@ -17,9 +24,20 @@ async function checkForUpdates() {
     if (update) {
       currentUpdate = update;
       showUpdateDialog = true;
+    } else if (manual) {
+      await message("You're running the latest version.", {
+        title: "Check for Updates",
+        kind: "info",
+      });
     }
   } catch (error) {
     console.error("[Updater] Failed to check for updates:", error);
+    if (manual) {
+      await message("Failed to check for updates. Please try again later.", {
+        title: "Check for Updates",
+        kind: "error",
+      });
+    }
   }
 }
 
