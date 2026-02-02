@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.7] - 2026-02-02
+
+### Added
+
+- "Check for Updates" menu item in TimeTracker menu
+- macOS menu bar with standard Edit menu (Undo, Redo, Cut, Copy, Paste, Select All)
+
+### Fixed
+
+- CMD+M now properly minimizes the window (frameless windows require manual shortcut handling)
+- Window > Minimize menu item now works with frameless window
+
 ## [0.5.6] - 2026-01-29
 
 ### Added
