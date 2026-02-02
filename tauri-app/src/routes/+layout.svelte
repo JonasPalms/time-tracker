@@ -7,6 +7,7 @@
   import { useUpdater } from "$lib/hooks/updater.svelte";
   import { useSidebar } from "$lib/hooks/sidebar.svelte";
   import { getCurrentWindow } from "@tauri-apps/api/window";
+  import { listen } from "@tauri-apps/api/event";
   import { onMount, onDestroy } from "svelte";
   import WindowControls from "$lib/components/WindowControls.svelte";
   import AppSidebar from "$lib/components/AppSidebar.svelte";
@@ -20,7 +21,8 @@
   const updater = useUpdater();
   const sidebar = useSidebar();
 
-  let unlisten: (() => void) | null = null;
+  let unlistenClose: (() => void) | null = null;
+  let unlistenCheckUpdates: (() => void) | null = null;
 
   onMount(async () => {
     await theme.init();
@@ -31,15 +33,21 @@
     updater.checkForUpdates();
 
     const currentWindow = getCurrentWindow();
-    unlisten = await currentWindow.onCloseRequested(async () => {
+    unlistenClose = await currentWindow.onCloseRequested(async () => {
       await tracking.stopTracking();
+    });
+
+    // Listen for menu-triggered update check
+    unlistenCheckUpdates = await listen("check-for-updates", () => {
+      updater.checkForUpdates(true);
     });
   });
 
   onDestroy(() => {
     tracking.cleanup();
     keyboard.cleanup();
-    unlisten?.();
+    unlistenClose?.();
+    unlistenCheckUpdates?.();
   });
 </script>
 
