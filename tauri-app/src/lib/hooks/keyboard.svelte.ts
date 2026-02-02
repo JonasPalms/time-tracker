@@ -26,6 +26,13 @@ async function handleKeydown(e: KeyboardEvent) {
     return;
   }
 
+  // Cmd/Ctrl+M to minimize window
+  if (modKey && e.key === "m") {
+    e.preventDefault();
+    await minimizeWindow();
+    return;
+  }
+
   // Run any registered custom shortcuts
   for (const { handler } of registeredShortcuts) {
     const handled = await handler(e);
@@ -44,6 +51,14 @@ async function closeWindow() {
   await tracking.stopTracking();
   const currentWindow = getCurrentWindow();
   await currentWindow.close();
+}
+
+/**
+ * Minimize the window
+ */
+async function minimizeWindow() {
+  const currentWindow = getCurrentWindow();
+  await currentWindow.minimize();
 }
 
 /**
