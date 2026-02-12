@@ -5,7 +5,8 @@
   import TaskItem from "$lib/components/TaskItem.svelte";
   import CurrentTracking from "$lib/components/CurrentTracking.svelte";
   import NewTaskInput from "$lib/components/NewTaskInput.svelte";
-  import Icon from "$lib/components/Icon.svelte";
+  import TaskDateNavigation from "$lib/components/TaskDateNavigation.svelte";
+  import TaskTableHeader from "$lib/components/TaskTableHeader.svelte";
   import { useTracking } from "$lib/hooks/tracking.svelte";
   import { formatDateForDisplay, addDays } from "$lib/utils/time";
   import {
@@ -19,16 +20,46 @@
     type Task,
   } from "$lib/services/tasks";
   import { onMount } from "svelte";
+
+  const SORT_PREFERENCE_KEY = "tasks-sort-preference";
+
+  type SortBy = "name" | "time" | null;
+  type SortDirection = "asc" | "desc";
+
+  interface SortPreference {
+    sortBy: SortBy;
+    sortDirection: SortDirection;
+  }
+
   let tasks = $state<Task[]>([]);
   let suggestions = $state<string[]>([]);
   let isLoading = $state(true);
   let selectedDate = $state(getTodayDate());
+  let sortBy = $state<SortBy>(null);
+  let sortDirection = $state<SortDirection>("asc");
+  let hasLoadedSortPreference = $state(false);
 
   const tracking = useTracking();
 
   // Date navigation
   const displayDate = $derived(formatDateForDisplay(selectedDate));
   const isToday = $derived(selectedDate === getTodayDate());
+  const sortedTasks = $derived.by(() => {
+    if (!sortBy) {
+      return tasks;
+    }
+
+    const sorted = [...tasks];
+    const direction = sortDirection === "asc" ? 1 : -1;
+
+    if (sortBy === "name") {
+      sorted.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }) * direction);
+      return sorted;
+    }
+
+    sorted.sort((a, b) => (a.total_seconds - b.total_seconds) * direction);
+    return sorted;
+  });
 
   function handlePreviousDay() {
     selectedDate = addDays(selectedDate, -1);
@@ -42,11 +73,57 @@
     selectedDate = getTodayDate();
   }
 
+  function toggleSort(column: "name" | "time") {
+    if (sortBy !== column) {
+      sortBy = column;
+      sortDirection = "asc";
+      return;
+    }
+
+    if (sortDirection === "asc") {
+      sortDirection = "desc";
+      return;
+    }
+
+    sortBy = null;
+    sortDirection = "asc";
+  }
+
+  function loadSortPreference() {
+    const stored = localStorage.getItem(SORT_PREFERENCE_KEY);
+    if (!stored) return;
+
+    try {
+      const parsed = JSON.parse(stored) as Partial<SortPreference>;
+      if (parsed.sortBy === "name" || parsed.sortBy === "time" || parsed.sortBy === null) {
+        sortBy = parsed.sortBy;
+      }
+      if (parsed.sortDirection === "asc" || parsed.sortDirection === "desc") {
+        sortDirection = parsed.sortDirection;
+      }
+    } catch {
+      localStorage.removeItem(SORT_PREFERENCE_KEY);
+    }
+  }
+
+  function saveSortPreference() {
+    const preference: SortPreference = { sortBy, sortDirection };
+    localStorage.setItem(SORT_PREFERENCE_KEY, JSON.stringify(preference));
+  }
+
   // Load tasks on mount and when date changes
   onMount(async () => {
+    loadSortPreference();
+    hasLoadedSortPreference = true;
     await loadTasks();
     await loadSuggestions();
     isLoading = false;
+  });
+
+  $effect(() => {
+    if (hasLoadedSortPreference) {
+      saveSortPreference();
+    }
   });
 
   $effect(() => {
@@ -122,55 +199,39 @@
 
 <div class="h-full flex flex-col">
   <section class="shrink-0 px-app pt-4 border-b border-on-surface/10">
-    <!-- Date Navigation -->
-    <div class="flex items-center gap-3 mb-4">
-      <button
-        class="p-2 rounded-lg hover:bg-surface-raised transition-colors"
-        onclick={handlePreviousDay}
-        aria-label="Previous day"
-      >
-        <Icon name="chevron-left" class="w-6 h-6" />
-      </button>
-      <button
-        class="p-2 rounded-lg hover:bg-surface-raised transition-colors"
-        onclick={handleNextDay}
-        aria-label="Next day"
-      >
-        <Icon name="chevron-right" class="w-6 h-6" />
-      </button>
-      <h1 class="text-2xl ml-2 font-black text-accent">
-        {displayDate}
-      </h1>
-      {#if !isToday}
-        <button
-          class="ml-auto px-3 py-1 text-sm rounded-md border border-accent text-accent hover:bg-accent/10 transition-colors"
-          onclick={handleGoToToday}
-        >
-          Go to today
-        </button>
-      {/if}
-    </div>
+    <TaskDateNavigation
+      {displayDate}
+      {isToday}
+      onPreviousDay={handlePreviousDay}
+      onNextDay={handleNextDay}
+      onGoToToday={handleGoToToday}
+    />
 
     <NewTaskInput onAddTask={handleAddTask} {suggestions} />
   </section>
   <section class="flex-1 overflow-y-auto py-4">
-    <div class="px-app space-y-2">
+    <div class="px-app">
       {#if isLoading}
         <div class="text-center py-8 text-on-surface-muted">Loading...</div>
       {:else}
-        {#each tasks as task (task.id)}
-          {@const isTracking = tracking.currentTask?.id === task.id}
-          <TaskItem
-            {task}
-            {isTracking}
-            elapsedSeconds={tracking.elapsedSeconds}
-            onPlayPause={() => handlePlayPause(task)}
-            onUpdateName={(newName) => handleUpdateTaskName(task, newName)}
-            onUpdateTime={(newTotalSeconds) => handleUpdateTaskTime(task, newTotalSeconds)}
-            onEdit={() => handleEdit(task)}
-            onDelete={() => handleDelete(task)}
-          />
-        {/each}
+        <table class="w-full border-collapse table-fixed">
+          <TaskTableHeader {sortBy} {sortDirection} onToggleSort={toggleSort} />
+          <tbody>
+            {#each sortedTasks as task (task.id)}
+              {@const isTracking = tracking.currentTask?.id === task.id}
+              <TaskItem
+                {task}
+                {isTracking}
+                elapsedSeconds={tracking.elapsedSeconds}
+                onPlayPause={() => handlePlayPause(task)}
+                onUpdateName={(newName) => handleUpdateTaskName(task, newName)}
+                onUpdateTime={(newTotalSeconds) => handleUpdateTaskTime(task, newTotalSeconds)}
+                onEdit={() => handleEdit(task)}
+                onDelete={() => handleDelete(task)}
+              />
+            {/each}
+          </tbody>
+        </table>
       {/if}
     </div>
   </section>

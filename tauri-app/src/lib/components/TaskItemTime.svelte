@@ -73,7 +73,7 @@
   placeholder="HH:MM:SS"
   disabled={isTracking}
   readonly={isTracking}
-  class="font-mono text-xl transition-colors md:text-xl w-33 -mr-3 appearance-none border-none bg-transparent! disabled:opacity-100! disabled:cursor-default {!isTracking &&
+  class="font-mono text-xl transition-colors md:text-xl w-33 appearance-none border-none bg-transparent! disabled:opacity-100! disabled:cursor-default {!isTracking &&
     'cursor-text'}"
   onkeydown={handleInputKeydown}
   onblur={handleInputBlur}

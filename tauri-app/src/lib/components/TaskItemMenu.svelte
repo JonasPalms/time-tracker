@@ -42,7 +42,7 @@
       variant="ghost"
       size="icon-sm"
       aria-label="Open menu"
-      class="opacity-0 group-hover:opacity-100 group-focus:opacity-100 focus-within:opacity-100 {dropdownOpen
+      class="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus-within:opacity-100 {dropdownOpen
         ? 'opacity-100'
         : ''} transition-opacity"
     >

@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.8] - 2026-02-12
+
+### Changed
+
+- Replaced the home page task list with a semantic table layout inspired by Spotify's list style
+- Added sortable Name and Duration columns with asc/desc/neutral cycling and active sort icons
+- Persisted selected sort order in local storage so list ordering is restored across app launches
+- Kept inline task editing, play/stop controls, and row action menu behavior in the new table rows
+- Refactored front page UI by extracting date navigation and table header into reusable components
+
 ## [0.5.7] - 2026-02-02
 
 ### Added
