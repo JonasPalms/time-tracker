@@ -4,18 +4,18 @@ node_modules
 # Rust
 target/
 
-# Tauri App
-tauri-app/build
-tauri-app/.svelte-kit
-tauri-app/package
-tauri-app/.env
-tauri-app/.env.*
-!tauri-app/.env.example
-!tauri-app/.env.production
-tauri-app/vite.config.js.timestamp-*
-tauri-app/vite.config.ts.timestamp-*
-tauri-app/src-tauri/target
+# App build artifacts
+build/
+.svelte-kit/
+package/
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
 
-# Raycast Extension
-raycast-extension/node_modules
-raycast-extension/build
+# Env files
+.env
+.env.*
+!.env.example
+!.env.production
+
+# Tauri Rust target
+src-tauri/target/
