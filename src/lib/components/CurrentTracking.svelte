@@ -21,7 +21,7 @@
       {formatTime(elapsedSeconds)}
     </div>
     <button
-      class="w-10 h-10 flex items-center justify-center bg-accent text-on-accent rounded-lg transition-transform hover:scale-105"
+      class="w-10 h-10 flex items-center justify-center bg-accent text-on-accent rounded-lg transition-transform hover:scale-105 focus-visible:brightness-95"
       onclick={onStop}
       aria-label="Stop tracking"
     >

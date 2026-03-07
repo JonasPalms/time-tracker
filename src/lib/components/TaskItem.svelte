@@ -33,9 +33,11 @@
 </script>
 
 <tr class="group transition-colors">
-  <td class="w-14 py-2 pl-2 pr-1 align-middle rounded-l-xl group-hover:bg-surface-raised/80 group-focus-within:bg-surface-raised/80">
+  <td
+    class="w-14 py-2 pl-2 pr-1 align-middle rounded-l-xl group-hover:bg-surface-raised/80 group-focus-within:bg-surface-raised/80"
+  >
     <button
-      class="w-10 h-10 flex items-center justify-center rounded-full transition-transform {isTracking
+      class="w-10 h-10 flex items-center justify-center rounded-full transition-transform focus-visible:text-accent {isTracking
         ? 'text-accent'
         : ''} hover:text-accent hover:scale-120 relative"
       onclick={handlePlayPause}
@@ -54,13 +56,19 @@
       {/if}
     </button>
   </td>
-  <td class="py-2 pr-3 align-middle group-hover:bg-surface-raised group-focus-within:bg-surface-raised">
+  <td
+    class="py-2 pr-3 align-middle group-hover:bg-surface-raised group-focus-within:bg-surface-raised"
+  >
     <TaskItemName name={task.name} {onUpdateName} />
   </td>
-  <td class="py-2 pr-2 align-middle text-right group-hover:bg-surface-raised group-focus-within:bg-surface-raised">
+  <td
+    class="py-2 pr-2 align-middle text-right group-hover:bg-surface-raised group-focus-within:bg-surface-raised"
+  >
     <TaskItemTime totalSeconds={task.total_seconds} {isTracking} {elapsedSeconds} {onUpdateTime} />
   </td>
-  <td class="w-12 py-2 pl-1 pr-2 align-middle text-right rounded-r-xl group-hover:bg-surface-raised/80 group-focus-within:bg-surface-raised/80">
+  <td
+    class="w-12 py-2 pl-1 pr-2 align-middle text-right rounded-r-xl group-hover:bg-surface-raised/80 group-focus-within:bg-surface-raised/80"
+  >
     <TaskItemMenu {onEdit} {onDelete} />
   </td>
 </tr>

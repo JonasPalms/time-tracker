@@ -172,7 +172,7 @@
       type="text"
       bind:value={newTaskName}
       placeholder="What are you working on?"
-      class="w-full px-4 py-3 pr-16 bg-surface-raised rounded-xl border-none placeholder:text-on-surface-muted focus:outline-none focus:ring-1 focus:ring-on-surface/50"
+      class="w-full px-4 py-3 pr-16 bg-surface-raised rounded-xl border-none placeholder:text-on-surface-muted"
       role="combobox"
       aria-expanded={open && hasItems}
       aria-controls="task-suggestions-listbox"

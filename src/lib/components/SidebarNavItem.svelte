@@ -24,8 +24,10 @@
 {#if href}
   <a
     {href}
-    class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors
-      {isActive ? 'bg-surface-raised text-on-surface' : 'text-on-surface-muted hover:bg-surface-raised hover:text-on-surface'}"
+    class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors focus-visible:bg-surface-raised focus-visible:text-on-surface
+      {isActive
+      ? 'bg-surface-raised text-on-surface'
+      : 'text-on-surface-muted hover:bg-surface-raised hover:text-on-surface'}"
     title={collapsed ? label : undefined}
   >
     <Icon name={icon} class="w-5 h-5 shrink-0" />
@@ -36,7 +38,7 @@
 {:else}
   <button
     {onclick}
-    class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors w-full
+    class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors w-full focus-visible:bg-surface-raised focus-visible:text-on-surface
       text-on-surface-muted hover:bg-surface-raised hover:text-on-surface"
     title={collapsed ? label : undefined}
   >

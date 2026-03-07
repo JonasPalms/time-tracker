@@ -24,11 +24,12 @@
 
   button,
   a,
+  select,
   [tabindex]:not([tabindex="-1"]) {
     @apply outline-none cursor-pointer;
 
     &:focus-visible {
-      @apply outline-accent outline-2 -outline-offset-2 rounded-xl;
+      @apply outline-accent outline-2 outline-offset-2;
     }
   }
 
@@ -38,7 +39,7 @@
     @apply outline-none;
 
     &:focus-visible {
-      @apply outline-accent outline-2 -outline-offset-2 rounded-xl;
+      @apply outline-accent outline-2 outline-offset-2;
     }
   }
 
