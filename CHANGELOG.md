@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.10] - 2026-03-07
+
+### Changed
+
+- Flattened the repository by moving the Tauri app to the root and removing the Raycast extension
+- Updated release workflow paths to build from the repository root
+- Updated `.gitignore` for root-level SvelteKit, build, environment, and Rust target outputs
+
 ## [0.5.8] - 2026-02-12
 
 ### Changed
