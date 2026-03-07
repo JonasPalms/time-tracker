@@ -5,7 +5,6 @@ import {
   type Favourite,
 } from "$lib/services/favourites";
 
-// Module-level reactive state - shared globally
 let favourites = $state<Favourite[]>([]);
 let isLoading = $state(false);
 

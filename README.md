@@ -11,6 +11,7 @@ A lightweight, cross-platform **time tracking suite** for developers and product
 [**Download the latest version**](https://github.com/JonasPalms/time-tracker/releases/latest)
 
 ### Available Platforms
+
 - 🍎 **macOS** (Apple Silicon & Intel)
 - 🪟 **Windows** (coming soon)
 - 🐧 **Linux** (coming soon)
@@ -20,9 +21,11 @@ A lightweight, cross-platform **time tracking suite** for developers and product
 This repository contains:
 
 ### 🖥️ Desktop App (`tauri-app`)
+
 A native desktop application built with **Svelte** and **Tauri**.
 
 **Features:**
+
 - ⏱️ Simple start/stop timer with real-time display
 - 📊 View history of all tracked sessions
 - 💾 Local SQLite database for data persistence
