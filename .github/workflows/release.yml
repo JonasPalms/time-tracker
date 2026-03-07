@@ -37,9 +37,7 @@ jobs:
 
       - name: Install dependencies (macOS)
         if: matrix.platform == 'macos-latest'
-        run: |
-          cd tauri-app
-          npm ci
+        run: npm ci
 
       - name: Generate updater keys
         id: updater-keys
@@ -68,7 +66,7 @@ jobs:
           APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         with:
-          projectPath: tauri-app
+          projectPath: .
           tagName: ${{ github.ref_name }}
           releaseName: "TimeTracker ${{ github.ref_name }}"
           releaseBody: |
