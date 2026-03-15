@@ -53,7 +53,10 @@
 
 <div class="h-screen flex flex-col bg-surface text-on-surface overflow-hidden rounded-2xl">
   <!-- Title bar with window controls -->
-  <header class="shrink-0 h-10 flex items-center px-2 border-b border-border" data-tauri-drag-region>
+  <header
+    class="shrink-0 h-10 flex items-center px-2 border-b border-border"
+    data-tauri-drag-region
+  >
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div onmousedown={(e) => e.stopPropagation()}>
       <WindowControls />
@@ -72,6 +75,7 @@
 <UpdateDialog
   bind:open={updater.showDialog}
   update={updater.update}
+  releaseNotes={updater.releaseNotes}
   onInstall={() => updater.installUpdate()}
   onCancel={() => updater.dismissUpdate()}
 />

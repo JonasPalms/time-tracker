@@ -2,9 +2,21 @@ import { check } from "@tauri-apps/plugin-updater";
 import { relaunch } from "@tauri-apps/plugin-process";
 import { message } from "@tauri-apps/plugin-dialog";
 import type { Update } from "@tauri-apps/plugin-updater";
+import { getChangelogSections } from "$lib/services/changelog";
+import type { ChangelogSection } from "$lib/services/changelog";
 
 let currentUpdate = $state<Update | null>(null);
 let showUpdateDialog = $state(false);
+let currentReleaseNotes = $state<ChangelogSection[]>([]);
+
+type UpdaterState = {
+  readonly update: Update | null;
+  showDialog: boolean;
+  readonly releaseNotes: ChangelogSection[];
+  checkForUpdates: (manual?: boolean) => Promise<void>;
+  installUpdate: () => Promise<void>;
+  dismissUpdate: () => void;
+};
 
 async function checkForUpdates(manual: boolean = false) {
   // Only check in production builds
@@ -23,6 +35,7 @@ async function checkForUpdates(manual: boolean = false) {
 
     if (update) {
       currentUpdate = update;
+      currentReleaseNotes = getChangelogSections(update.version);
       showUpdateDialog = true;
     } else if (manual) {
       await message("You're running the latest version.", {
@@ -58,15 +71,19 @@ async function installUpdate() {
 function dismissUpdate() {
   showUpdateDialog = false;
   currentUpdate = null;
+  currentReleaseNotes = [];
 }
 
-export function useUpdater() {
+export function useUpdater(): UpdaterState {
   return {
     get update() {
       return currentUpdate;
     },
     get showDialog() {
       return showUpdateDialog;
+    },
+    get releaseNotes() {
+      return currentReleaseNotes;
     },
     set showDialog(value: boolean) {
       showUpdateDialog = value;

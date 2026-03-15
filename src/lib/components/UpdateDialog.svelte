@@ -2,15 +2,18 @@
   import * as Dialog from "$lib/components/ui/dialog";
   import { Button } from "$lib/components/ui/button";
   import type { Update } from "@tauri-apps/plugin-updater";
+  import type { ChangelogSection } from "$lib/services/changelog";
 
   let {
     open = $bindable(false),
     update,
+    releaseNotes = [],
     onInstall,
     onCancel,
   }: {
     open?: boolean;
     update: Update | null;
+    releaseNotes?: ChangelogSection[];
     onInstall: () => void;
     onCancel: () => void;
   } = $props();
@@ -39,7 +42,6 @@
 
     {#if update}
       <div class="space-y-4 py-4">
-        <!-- Version Info -->
         <div class="rounded-lg border border-surface-hover p-4">
           <div class="flex items-baseline justify-between mb-2">
             <span class="text-sm text-on-surface-muted">Current Version</span>
@@ -51,7 +53,37 @@
           </div>
         </div>
 
-        <!-- Changelog Link -->
+        {#if releaseNotes.length > 0}
+          <div class="rounded-lg border border-surface-hover p-4 space-y-4">
+            <div>
+              <h3 class="text-sm font-medium text-on-surface">What's new</h3>
+              <p class="text-sm text-on-surface-muted mt-1">
+                Here's what is included in version {update.version}.
+              </p>
+            </div>
+
+            <div class="space-y-3 max-h-64 overflow-y-auto pr-1">
+              {#each releaseNotes as section}
+                <section class="space-y-2">
+                  <h4
+                    class="text-xs font-semibold uppercase tracking-[0.12em] text-on-surface-muted"
+                  >
+                    {section.title}
+                  </h4>
+                  <ul class="space-y-2">
+                    {#each section.items as item}
+                      <li class="flex gap-2 text-sm text-on-surface-muted leading-5">
+                        <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"></span>
+                        <span>{item}</span>
+                      </li>
+                    {/each}
+                  </ul>
+                </section>
+              {/each}
+            </div>
+          </div>
+        {/if}
+
         <div class="text-center">
           <a
             href="https://github.com/JonasPalms/time-tracker/releases/tag/v{update.version}"
