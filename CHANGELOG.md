@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.11] - 2026-03-15
+
+### Added
+
+- Added a custom accent color picker with persisted runtime theme tokens and reset support
+- Added the `Cmd+,` / `Ctrl+,` keyboard shortcut to open Settings
+
 ## [0.5.10] - 2026-03-07
 
 ### Changed
