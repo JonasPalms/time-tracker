@@ -1,12 +1,34 @@
 <script lang="ts">
+  import { onDestroy, onMount } from "svelte";
+  import { useKeyboard } from "$lib/hooks/keyboard.svelte";
   import { useSidebar } from "$lib/hooks/sidebar.svelte";
   import SidebarNavItem from "./SidebarNavItem.svelte";
   import SettingsDialog from "./SettingsDialog.svelte";
 
+  const keyboard = useKeyboard();
   const sidebar = useSidebar();
 
   let settingsOpen = $state(false);
   let isResizing = $state(false);
+  let unregisterShortcut: (() => void) | null = null;
+
+  onMount(() => {
+    unregisterShortcut = keyboard.register("open-settings", (e) => {
+      const isMac = navigator.userAgent.toLowerCase().includes("mac");
+      const modKey = isMac ? e.metaKey : e.ctrlKey;
+
+      if (modKey && !e.shiftKey && !e.altKey && e.key === ",") {
+        settingsOpen = true;
+        return true;
+      }
+
+      return false;
+    });
+  });
+
+  onDestroy(() => {
+    unregisterShortcut?.();
+  });
 
   function handleResizeStart(e: MouseEvent) {
     e.preventDefault();
