@@ -5,3 +5,4 @@ export {
   type WithoutChildrenOrChild,
   type WithElementRef,
 } from "./cn";
+export { deriveAccentPalette, getDefaultAccentColor, normalizeHexColor } from "./color";

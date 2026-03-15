@@ -7,3 +7,4 @@ export {
   type WithoutChildrenOrChild,
   type WithElementRef,
 } from "./utils/cn";
+export { deriveAccentPalette, getDefaultAccentColor, normalizeHexColor } from "./utils/color";

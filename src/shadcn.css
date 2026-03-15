@@ -17,6 +17,7 @@
   --muted: theme(colors.stone.200);
   --muted-foreground: theme(colors.stone.500);
   --accent: theme(colors.amber.600);
+  --accent-hover: theme(colors.amber.700);
   --accent-foreground: theme(colors.white);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.923 0.003 48.717);
@@ -51,6 +52,7 @@
   --muted: theme(colors.stone.700);
   --muted-foreground: theme(colors.stone.500);
   --accent: theme(colors.amber.500);
+  --accent-hover: theme(colors.amber.400);
   --accent-foreground: theme(colors.stone.950);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
@@ -115,5 +117,5 @@
   --color-on-surface: var(--foreground);
   --color-on-surface-muted: var(--muted-foreground);
   --color-on-accent: var(--accent-foreground);
-  --color-accent-hover: theme(colors.amber.700);
+  --color-accent-hover: var(--accent-hover);
 }

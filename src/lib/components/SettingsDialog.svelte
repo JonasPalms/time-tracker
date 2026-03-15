@@ -53,6 +53,11 @@
   async function handleDeleteFavourite(id: number) {
     await favouritesContext.remove(id);
   }
+
+  async function handleAccentColorInput(event: Event) {
+    const { value } = event.currentTarget as HTMLInputElement;
+    await theme.setAccentColor(value);
+  }
 </script>
 
 <Dialog.Root bind:open>
@@ -67,7 +72,7 @@
       <div class="space-y-3">
         <h3 class="text-lg font-medium">Appearance</h3>
         <div class="rounded-lg divide-y divide-surface-hover">
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between py-3">
             <div>
               <div class="font-medium text-on-surface-muted">Theme</div>
             </div>
@@ -86,6 +91,42 @@
                 {theme.isDark ? "🌙" : "☀️"}
               </span>
             </button>
+          </div>
+
+          <div class="flex items-center justify-between gap-4 py-3">
+            <div class="space-y-1">
+              <div class="font-medium text-on-surface-muted">Accent color</div>
+              <div class="text-sm text-on-surface-muted">
+                Updates highlights, focus states, and active controls.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <label
+                class="relative h-9 w-9 shrink-0 overflow-hidden rounded-md border border-surface-hover bg-surface-raised shadow-xs"
+                aria-label="Accent color"
+              >
+                <span
+                  class="pointer-events-none absolute inset-0"
+                  style={`background-color: ${theme.accentColor}`}
+                ></span>
+                <input
+                  type="color"
+                  value={theme.accentColor}
+                  oninput={handleAccentColorInput}
+                  class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                  aria-label="Pick accent color"
+                />
+              </label>
+
+              <div class="w-18 text-right font-mono text-sm text-on-surface-muted uppercase">
+                {theme.accentColor}
+              </div>
+
+              <Button variant="ghost" size="sm" onclick={theme.resetAccentColor}>
+                {theme.hasCustomAccent ? "Reset" : "Default"}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
