@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.13] - 2026-03-19
+
+### Changed
+
+- Moved new task creation into a command-style dialog with a softer overlay and refined suggestion interactions
+- Updated sidebar active navigation styling to rely on text color instead of a persistent background fill
+
+### Fixed
+
+- Prevented the new task dialog from opening while Settings or the update dialog is already open
+
 ## [0.5.12] - 2026-03-15
 
 ### Added
