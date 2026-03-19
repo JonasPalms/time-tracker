@@ -4,8 +4,11 @@
   import { Input } from "$lib/components/ui/input";
   import { useTheme } from "$lib/hooks/theme.svelte";
   import { useFavourites } from "$lib/hooks/favourites.svelte";
+  import { useModalState } from "$lib/hooks/modal-state.svelte";
   import { formatTimeHuman } from "$lib/utils/time";
   import { Plus, Trash2, Check, X } from "@lucide/svelte";
+
+  const MODAL_ID = "settings-dialog";
 
   let {
     open = $bindable(false),
@@ -15,6 +18,7 @@
 
   const theme = useTheme();
   const favouritesContext = useFavourites();
+  const modalState = useModalState();
 
   let state = $state({
     showAddFavourite: false,
@@ -26,9 +30,17 @@
 
   // Reset state when dialog closes
   $effect(() => {
+    modalState.setOpen(MODAL_ID, open);
+
     if (!open) {
       cancelAddFavourite();
     }
+  });
+
+  $effect(() => {
+    return () => {
+      modalState.setOpen(MODAL_ID, false);
+    };
   });
 
   function cancelAddFavourite() {

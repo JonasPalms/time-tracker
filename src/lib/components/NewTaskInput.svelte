@@ -5,6 +5,7 @@
   import CommandIcon from "@lucide/svelte/icons/command";
   import { useFavourites } from "$lib/hooks/favourites.svelte";
   import { useKeyboard } from "$lib/hooks/keyboard.svelte";
+  import { useModalState } from "$lib/hooks/modal-state.svelte";
   import { formatTimeHuman } from "$lib/utils/time";
 
   let {
@@ -17,6 +18,7 @@
 
   const NO_SELECTION = "__none__";
   const FORCE_DIALOG_OPEN = false;
+  const MODAL_ID = "new-task-dialog";
 
   let newTaskName = $state("");
   let open = $state(FORCE_DIALOG_OPEN);
@@ -27,6 +29,7 @@
   // Favourites from shared context
   const favouritesContext = useFavourites();
   const keyboard = useKeyboard();
+  const modalState = useModalState();
 
   // Register Cmd+N shortcut to focus input
   let unregisterShortcut: (() => void) | null = null;
@@ -42,6 +45,10 @@
       }
 
       if (modKey && e.key === "n") {
+        if (modalState.hasOtherOpen(MODAL_ID)) {
+          return true;
+        }
+
         if (open) {
           open = false;
         } else {
@@ -98,6 +105,8 @@
   const hasItems = $derived(filteredFavourites.length > 0 || filteredSuggestions.length > 0);
 
   $effect(() => {
+    modalState.setOpen(MODAL_ID, open);
+
     if (FORCE_DIALOG_OPEN && !open) {
       open = true;
       return;
@@ -106,6 +115,12 @@
     if (open) {
       commandValue = NO_SELECTION;
     }
+  });
+
+  $effect(() => {
+    return () => {
+      modalState.setOpen(MODAL_ID, false);
+    };
   });
 
   function handleSubmit() {
@@ -154,6 +169,10 @@
   function openDialog() {
     if (FORCE_DIALOG_OPEN) {
       open = true;
+      return;
+    }
+
+    if (modalState.hasOtherOpen(MODAL_ID)) {
       return;
     }
 

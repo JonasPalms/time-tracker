@@ -1,8 +1,11 @@
 <script lang="ts">
   import * as Dialog from "$lib/components/ui/dialog";
   import { Button } from "$lib/components/ui/button";
+  import { useModalState } from "$lib/hooks/modal-state.svelte";
   import type { Update } from "@tauri-apps/plugin-updater";
   import type { ChangelogSection } from "$lib/services/changelog";
+
+  const MODAL_ID = "update-dialog";
 
   let {
     open = $bindable(false),
@@ -17,6 +20,18 @@
     onInstall: () => void;
     onCancel: () => void;
   } = $props();
+
+  const modalState = useModalState();
+
+  $effect(() => {
+    modalState.setOpen(MODAL_ID, open);
+  });
+
+  $effect(() => {
+    return () => {
+      modalState.setOpen(MODAL_ID, false);
+    };
+  });
 
   function handleInstall() {
     open = false;

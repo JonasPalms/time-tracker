@@ -26,7 +26,7 @@
     {href}
     class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors focus-visible:bg-surface-raised focus-visible:text-on-surface
       {isActive
-      ? 'bg-surface-raised text-on-surface'
+      ? 'text-on-surface hover:bg-surface-raised'
       : 'text-on-surface-muted hover:bg-surface-raised hover:text-on-surface'}"
     title={collapsed ? label : undefined}
   >
