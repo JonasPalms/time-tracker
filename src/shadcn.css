@@ -43,7 +43,7 @@
   --foreground: theme(colors.stone.100);
   --card: theme(colors.stone.900);
   --card-foreground: theme(colors.stone.100);
-  --popover: theme(colors.stone.800);
+  --popover: theme(colors.stone.900);
   --popover-foreground: theme(colors.stone.100);
   --primary: oklch(0.923 0.003 48.717);
   --primary-foreground: oklch(0.216 0.006 56.043);
@@ -73,7 +73,7 @@
   --sidebar-ring: oklch(0.553 0.013 58.071);
 }
 
-@theme inline {
+@theme {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -112,7 +112,7 @@
   /* Custom surface colors mapped to shadcn colors */
   --color-surface: var(--background);
   --color-surface-raised: var(--card);
-  --color-surface-elevated: var(--popover);
+  --color-surface-elevated: theme(colors.stone.800);
   --color-surface-hover: var(--muted);
   --color-on-surface: var(--foreground);
   --color-on-surface-muted: var(--muted-foreground);

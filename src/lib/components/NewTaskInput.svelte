@@ -15,13 +15,14 @@
     suggestions?: string[];
   } = $props();
 
+  const NO_SELECTION = "__none__";
+  const FORCE_DIALOG_OPEN = false;
+
   let newTaskName = $state("");
-  let open = $state(false);
-  let inputRef = $state<HTMLInputElement>(null!);
+  let open = $state(FORCE_DIALOG_OPEN);
   let commandRef = $state<HTMLDivElement>(null!);
-  let containerRef = $state<HTMLDivElement>(null!);
-  let isUsingKeyboard = $state(false);
   let commandValue = $state("");
+  let isUsingKeyboard = $state(false);
 
   // Favourites from shared context
   const favouritesContext = useFavourites();
@@ -36,9 +37,17 @@
       const isMac = navigator.userAgent.toLowerCase().includes("mac");
       const modKey = isMac ? e.metaKey : e.ctrlKey;
 
+      if (FORCE_DIALOG_OPEN) {
+        return false;
+      }
+
       if (modKey && e.key === "n") {
-        inputRef?.focus();
-        open = true;
+        if (open) {
+          open = false;
+        } else {
+          newTaskName = "";
+          open = true;
+        }
         return true; // Handled
       }
       return false;
@@ -47,26 +56,21 @@
     // Close dropdown when window loses focus
     const tauriWindow = getCurrentWindow();
     unlistenWindowFocus = await tauriWindow.onFocusChanged(({ payload: focused }) => {
+      if (FORCE_DIALOG_OPEN) {
+        open = true;
+        return;
+      }
+
       if (!focused) {
         open = false;
       }
     });
-
-    // Handle clicks outside the component
-    document.addEventListener("mousedown", handleClickOutside);
   });
 
   onDestroy(() => {
     unregisterShortcut?.();
     unlistenWindowFocus?.();
-    document.removeEventListener("mousedown", handleClickOutside);
   });
-
-  function handleClickOutside(e: MouseEvent) {
-    if (containerRef && !containerRef.contains(e.target as Node)) {
-      open = false;
-    }
-  }
 
   // Filter favourites based on input
   const filteredFavourites = $derived(
@@ -93,157 +97,160 @@
   // Whether dropdown should show
   const hasItems = $derived(filteredFavourites.length > 0 || filteredSuggestions.length > 0);
 
-  // Use a value that won't match any item to prevent auto-highlight
-  const NO_SELECTION = "__none__";
-
   $effect(() => {
+    if (FORCE_DIALOG_OPEN && !open) {
+      open = true;
+      return;
+    }
+
     if (open) {
       commandValue = NO_SELECTION;
     }
   });
 
-  function handleSubmit(e: Event) {
-    e.preventDefault();
+  function handleSubmit() {
+    if (FORCE_DIALOG_OPEN) return;
     if (!newTaskName.trim()) return;
 
     onAddTask(newTaskName.trim());
     newTaskName = "";
     open = false;
-    inputRef?.blur();
   }
 
   function handleSelect(suggestion: string, seconds?: number) {
+    if (FORCE_DIALOG_OPEN) return;
     onAddTask(suggestion, seconds);
     newTaskName = "";
     open = false;
   }
 
-  function handleKeydown(e: KeyboardEvent) {
-    // Forward arrow keys to the Command component for navigation
+  function handleInputKeydown(e: KeyboardEvent) {
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
-      if (open && hasItems) {
+      isUsingKeyboard = true;
+    }
+
+    if (e.key === "Enter") {
+      const selectedItem = commandRef?.querySelector(
+        "[aria-selected='true']"
+      ) as HTMLElement | null;
+
+      if (!selectedItem && newTaskName.trim()) {
         e.preventDefault();
-        isUsingKeyboard = true;
-        commandRef?.dispatchEvent(
-          new KeyboardEvent("keydown", {
-            key: e.key,
-            bubbles: true,
-          })
-        );
+        handleSubmit();
       }
-    } else if (e.key === "Enter") {
-      // If dropdown is open and we have a selected item, use it
-      if (open && hasItems) {
-        const selectedItem = commandRef?.querySelector("[aria-selected='true']");
-        if (selectedItem) {
-          e.preventDefault();
-          (selectedItem as HTMLElement).click();
-          return;
-        }
-      }
-      // Otherwise let form submit handle it
-    } else if (e.key === "Escape") {
+      return;
+    }
+
+    if (e.key === "Escape" && newTaskName) {
       e.preventDefault();
-      e.stopPropagation();
-      if (newTaskName) {
-        // Clear input first
-        newTaskName = "";
-      } else {
-        // Then close dropdown and blur
-        open = false;
-        inputRef?.blur();
-      }
+      newTaskName = "";
     }
   }
 
-  function handleFocus() {
-    open = true;
+  function handleSuggestionsMouseMove() {
+    isUsingKeyboard = false;
   }
 
-  function handleMouseMove() {
-    isUsingKeyboard = false;
+  function openDialog() {
+    if (FORCE_DIALOG_OPEN) {
+      open = true;
+      return;
+    }
+
+    newTaskName = "";
+    open = true;
   }
 </script>
 
-<div class="relative mb-4" bind:this={containerRef}>
-  <form onsubmit={handleSubmit} class="relative group">
-    <input
-      bind:this={inputRef}
-      type="text"
+<div class="mb-4">
+  <button
+    type="button"
+    class="group relative w-full rounded-lg bg-surface-raised px-4 py-3 pr-16 text-left text-on-surface outline-none transition-colors focus-visible:ring-2 focus-visible:ring-on-surface/20"
+    aria-haspopup="dialog"
+    aria-expanded={open}
+    onclick={openDialog}
+  >
+    <span class="text-on-surface-muted">What are you working on?</span>
+    <div
+      class="absolute right-5 top-1/2 hidden -translate-y-1/2 items-center gap-1 text-on-surface-muted pointer-events-none group-hover:flex"
+    >
+      <CommandIcon class="size-4" />
+      <span class="text-md font-medium">N</span>
+    </div>
+  </button>
+
+  <Command.Dialog
+    bind:open
+    bind:ref={commandRef}
+    bind:value={commandValue}
+    shouldFilter={false}
+    title="Create task"
+    description="Search favourites or recents, or press Enter to create a new task."
+    class="border-none text-on-surface shadow-2xl **:data-[slot=command]:p-2 [&_[data-slot=command-input-wrapper]]:h-14 [&_[data-slot=command-input-wrapper]]:rounded-lg [&_[data-slot=command-input-wrapper]]:border [&_[data-slot=command-input-wrapper]]:border-border  [&_[data-slot=command-input-wrapper]]:bg-surface-elevated [&_[data-slot=command-input-wrapper]]:px-4 [&_[data-slot=command-input-wrapper]_svg]:size-5 [&_[data-slot=command-list]]:pt-3"
+  >
+    <Command.Input
       bind:value={newTaskName}
-      placeholder="What are you working on?"
-      class="w-full px-4 py-3 pr-16 bg-surface-raised rounded-xl border-none placeholder:text-on-surface-muted"
-      role="combobox"
-      aria-expanded={open && hasItems}
-      aria-controls="task-suggestions-listbox"
-      aria-haspopup="listbox"
+      placeholder="Search or create a task"
+      class="h-14 bg-transparent text-base placeholder:text-on-surface-muted"
       autocomplete="off"
       autocorrect="off"
       autocapitalize="off"
       spellcheck="false"
-      onkeydown={handleKeydown}
-      onfocus={handleFocus}
+      onkeydown={handleInputKeydown}
     />
-    {#if !newTaskName}
-      <div
-        class="absolute hidden group-hover:flex right-5 top-1/2 -translate-y-1/2 items-center gap-1 text-on-surface-muted pointer-events-none"
-      >
-        <CommandIcon class="size-4" />
-        <span class="text-md font-medium">N</span>
-      </div>
-    {/if}
-  </form>
+    <Command.List class="min-h-64 max-h-90 pt-3" onmousemove={handleSuggestionsMouseMove}>
+      <Command.Empty class="py-8 text-on-surface-muted">
+        {#if newTaskName.trim()}
+          <button
+            type="button"
+            class="w-full rounded-lg border border-dashed border-on-surface/10 px-4 py-3 text-left transition-colors hover:bg-surface-raised"
+            onclick={handleSubmit}
+          >
+            Create <span class="font-medium text-on-surface">{newTaskName.trim()}</span>
+          </button>
+        {:else}
+          Start typing to create a task.
+        {/if}
+      </Command.Empty>
 
-  {#if open && hasItems}
-    <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div
-      class="absolute z-50 w-full mt-2 bg-surface-raised border border-surface-hover rounded-lg shadow-lg overflow-hidden"
-      onmousemove={handleMouseMove}
-    >
-      <div class={isUsingKeyboard ? "**:data-command-item:pointer-events-none!" : ""}>
-        <Command.Root
-          bind:ref={commandRef}
-          bind:value={commandValue}
-          class="bg-transparent"
-          shouldFilter={false}
+      {#if filteredFavourites.length > 0}
+        <Command.Group
+          heading="Favourites"
+          class={isUsingKeyboard ? "px-0 **:data-command-item:pointer-events-none!" : "px-0"}
         >
-          <Command.List id="task-suggestions-listbox" class="max-h-64">
-            {#if filteredFavourites.length > 0}
-              <Command.Group heading="Favourites">
-                {#each filteredFavourites as favourite (favourite.name)}
-                  <Command.Item
-                    value={favourite.name}
-                    onSelect={() => handleSelect(favourite.name, favourite.duration_seconds)}
-                    class="cursor-pointer py-2 pr-3 mr-2 text-on-surface aria-selected:bg-surface-hover aria-selected:text-on-surface text-base {isUsingKeyboard
-                      ? ''
-                      : 'hover:bg-surface-hover'}"
-                  >
-                    <span>{favourite.name}</span>
-                    <span class="ml-auto text-on-surface-muted text-sm"
-                      >{formatTimeHuman(favourite.duration_seconds)}</span
-                    >
-                  </Command.Item>
-                {/each}
-              </Command.Group>
-            {/if}
-            {#if filteredSuggestions.length > 0}
-              <Command.Group heading="Recent">
-                {#each filteredSuggestions as suggestion (suggestion)}
-                  <Command.Item
-                    value={suggestion}
-                    onSelect={() => handleSelect(suggestion)}
-                    class="cursor-pointer py-2 pr-3 mr-2 text-on-surface aria-selected:bg-surface-hover aria-selected:text-on-surface text-base {isUsingKeyboard
-                      ? ''
-                      : 'hover:bg-surface-hover'}"
-                  >
-                    {suggestion}
-                  </Command.Item>
-                {/each}
-              </Command.Group>
-            {/if}
-          </Command.List>
-        </Command.Root>
-      </div>
-    </div>
-  {/if}
+          {#each filteredFavourites as favourite (favourite.name)}
+            <Command.Item
+              value={favourite.name}
+              keywords={[favourite.name]}
+              onSelect={() => handleSelect(favourite.name, favourite.duration_seconds)}
+              class="mr-2 cursor-pointer py-2 pr-3 text-base text-on-surface aria-selected:bg-surface-hover/70 aria-selected:text-on-surface hover:bg-surface-hover/70"
+            >
+              <span>{favourite.name}</span>
+              <span class="ml-auto text-sm text-on-surface-muted"
+                >{formatTimeHuman(favourite.duration_seconds)}</span
+              >
+            </Command.Item>
+          {/each}
+        </Command.Group>
+      {/if}
+
+      {#if filteredSuggestions.length > 0}
+        <Command.Group
+          heading="Recent"
+          class={isUsingKeyboard ? "px-0 **:data-command-item:pointer-events-none!" : "px-0"}
+        >
+          {#each filteredSuggestions as suggestion (suggestion)}
+            <Command.Item
+              value={suggestion}
+              keywords={[suggestion]}
+              onSelect={() => handleSelect(suggestion)}
+              class="mr-2 cursor-pointer py-2 pr-3 text-base text-on-surface aria-selected:bg-surface-hover/70 aria-selected:text-on-surface hover:bg-surface-hover/70"
+            >
+              {suggestion}
+            </Command.Item>
+          {/each}
+        </Command.Group>
+      {/if}
+    </Command.List>
+  </Command.Dialog>
 </div>
