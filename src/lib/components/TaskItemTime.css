@@ -1,23 +1,38 @@
-/* Override webkit datetime edit field colors to match app theme */
-input[type="time"]::-webkit-datetime-edit-hour-field,
-input[type="time"]::-webkit-datetime-edit-minute-field,
-input[type="time"]::-webkit-datetime-edit-second-field,
-input[type="time"]::-webkit-datetime-edit-text {
+/* Scoped native time input colors for webkit-based browsers */
+.time-input-muted::-webkit-datetime-edit-hour-field,
+.time-input-muted::-webkit-datetime-edit-minute-field,
+.time-input-muted::-webkit-datetime-edit-second-field,
+.time-input-muted::-webkit-datetime-edit-text {
   color: var(--muted-foreground);
   -webkit-text-fill-color: var(--muted-foreground);
 }
 
-input[type="time"]:disabled::-webkit-datetime-edit-hour-field,
-input[type="time"]:disabled::-webkit-datetime-edit-minute-field,
-input[type="time"]:disabled::-webkit-datetime-edit-second-field,
-input[type="time"]:disabled::-webkit-datetime-edit-text {
+.time-input-foreground::-webkit-datetime-edit-hour-field,
+.time-input-foreground::-webkit-datetime-edit-minute-field,
+.time-input-foreground::-webkit-datetime-edit-second-field,
+.time-input-foreground::-webkit-datetime-edit-text {
+  color: var(--foreground);
+  -webkit-text-fill-color: var(--foreground);
+}
+
+.time-input-muted:disabled::-webkit-datetime-edit-hour-field,
+.time-input-muted:disabled::-webkit-datetime-edit-minute-field,
+.time-input-muted:disabled::-webkit-datetime-edit-second-field,
+.time-input-muted:disabled::-webkit-datetime-edit-text,
+.time-input-foreground:disabled::-webkit-datetime-edit-hour-field,
+.time-input-foreground:disabled::-webkit-datetime-edit-minute-field,
+.time-input-foreground:disabled::-webkit-datetime-edit-second-field,
+.time-input-foreground:disabled::-webkit-datetime-edit-text {
   color: var(--accent) !important;
   -webkit-text-fill-color: var(--accent) !important;
 }
 
-input[type="time"]::-webkit-datetime-edit-hour-field:focus,
-input[type="time"]::-webkit-datetime-edit-minute-field:focus,
-input[type="time"]::-webkit-datetime-edit-second-field:focus {
+.time-input-muted::-webkit-datetime-edit-hour-field:focus,
+.time-input-muted::-webkit-datetime-edit-minute-field:focus,
+.time-input-muted::-webkit-datetime-edit-second-field:focus,
+.time-input-foreground::-webkit-datetime-edit-hour-field:focus,
+.time-input-foreground::-webkit-datetime-edit-minute-field:focus,
+.time-input-foreground::-webkit-datetime-edit-second-field:focus {
   background-color: var(--accent);
   color: var(--accent-foreground) !important;
   -webkit-text-fill-color: var(--accent-foreground) !important;

@@ -72,15 +72,19 @@
             {#each month.weeks as weekDates}
               <CalendarPrimitive.GridRow class="flex">
                 {#each weekDates as date}
-                  <CalendarPrimitive.Cell {date} month={month.value} class="relative p-0 text-center text-sm">
+                  <CalendarPrimitive.Cell
+                    {date}
+                    month={month.value}
+                    class="relative p-0 text-center text-sm"
+                  >
                     <CalendarPrimitive.Day
                       class={cn(
                         buttonVariants({ variant: "ghost" }),
                         "size-8 p-0 font-normal",
-                        "[&[data-today]:not([data-selected])]:bg-accent [&[data-today]:not([data-selected])]:text-accent-foreground",
+                        "[&[data-today]:not([data-selected])]:bg-surface-hover [&[data-today]:not([data-selected])]:text-on-surface",
                         "[&[data-selected]]:bg-primary [&[data-selected]]:text-primary-foreground [&[data-selected]]:opacity-100 [&[data-selected]]:hover:bg-primary [&[data-selected]]:hover:text-primary-foreground [&[data-selected]]:focus:bg-primary [&[data-selected]]:focus:text-primary-foreground",
                         "[&[data-disabled]]:text-muted-foreground [&[data-disabled]]:opacity-50",
-                        "[&[data-outside-month]]:text-muted-foreground [&[data-outside-month]]:opacity-50 [&[data-outside-month][data-selected]]:bg-accent/50 [&[data-outside-month][data-selected]]:text-muted-foreground [&[data-outside-month][data-selected]]:opacity-30",
+                        "[&[data-outside-month]]:text-muted-foreground [&[data-outside-month]]:opacity-50 [&[data-outside-month][data-selected]]:text-primary-foreground [&[data-outside-month][data-selected]]:opacity-75",
                         "[&[data-unavailable]]:text-destructive-foreground [&[data-unavailable]]:line-through"
                       )}
                     />

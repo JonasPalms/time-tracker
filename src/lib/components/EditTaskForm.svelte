@@ -4,6 +4,7 @@
   import { DatePicker } from "$lib/components/ui/date-picker/index.js";
   import { Input } from "$lib/components/ui/input";
   import { useTracking } from "$lib/hooks/tracking.svelte";
+  import "$lib/components/TaskItemTime.css";
   import {
     formatTime,
     parseTimeString,
@@ -186,31 +187,33 @@
       />
     </div>
 
-    <div class="space-y-2">
-      <span class="block text-sm font-medium text-on-surface-muted">Date</span>
-      <DatePicker
-        bind:value={dateValue}
-        class="bg-surface-raised rounded-xl border-none hover:bg-surface-raised/80"
-      />
-    </div>
-
-    <div class="space-y-2">
-      <span class="block text-sm font-medium text-on-surface-muted">Time</span>
-      <div class="space-y-2 rounded-xl bg-surface-raised px-4 py-3">
-        <Input
-          type="time"
-          step="1"
-          bind:value={timeValue}
-          disabled={isTracking}
-          readonly={isTracking}
-          class="h-auto w-33 border-none bg-transparent! px-0 py-0 font-mono text-xl shadow-none focus-visible:ring-0 disabled:opacity-100 md:text-xl"
-          aria-label={isTracking ? "Time is being tracked" : "Time"}
+    <div class="grid gap-4 sm:grid-cols-2">
+      <div class="space-y-2">
+        <span class="block text-sm font-medium text-on-surface-muted">Date</span>
+        <DatePicker
+          bind:value={dateValue}
+          class="h-auto justify-start rounded-xl border-none bg-surface-raised px-4 py-3 text-xl font-mono text-on-surface shadow-none hover:bg-surface-raised/80"
         />
-        {#if isTracking}
-          <span class="text-sm text-accent">Currently tracking</span>
-        {:else if parsedTimeValue === null}
-          <span class="text-sm text-destructive">Enter time as HH:MM:SS</span>
-        {/if}
+      </div>
+
+      <div class="space-y-2">
+        <span class="block text-sm font-medium text-on-surface-muted">Time</span>
+        <div class="space-y-2 rounded-xl bg-surface-raised px-4 py-3">
+          <Input
+            type="time"
+            step="1"
+            bind:value={timeValue}
+            disabled={isTracking}
+            readonly={isTracking}
+            class="time-input-foreground h-auto w-33 border-none bg-transparent! px-0 py-0 font-mono text-xl shadow-none focus-visible:ring-0 disabled:opacity-100 md:text-xl"
+            aria-label={isTracking ? "Time is being tracked" : "Time"}
+          />
+          {#if isTracking}
+            <span class="text-sm text-accent">Currently tracking</span>
+          {:else if parsedTimeValue === null}
+            <span class="text-sm text-destructive">Enter time as HH:MM:SS</span>
+          {/if}
+        </div>
       </div>
     </div>
 
