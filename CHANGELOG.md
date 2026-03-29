@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.14] - 2026-03-30
+
+### Changed
+
+- Moved task editing from a dedicated route into in-place dialogs on Home and History so editing keeps the current page context
+- Refined the task editor form with explicit save behavior and aligned date/time fields with the rest of the app styling
+- Updated the date picker and calendar surfaces to match the app's shared popover and muted state styling
+
+### Fixed
+
+- Fixed the sidebar active state so the current route is highlighted correctly on initial load
+- Removed a Svelte rune warning from the theme hook initialization
+- Contained dialog overlays within the rounded app shell so backdrops no longer spill past the window corners
+
 ## [0.5.13] - 2026-03-19
 
 ### Changed
