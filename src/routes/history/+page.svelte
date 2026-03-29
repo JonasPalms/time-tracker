@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
+  import EditTaskDialog from "$lib/components/EditTaskDialog.svelte";
   import { getTasksInRange, type Task } from "$lib/services/tasks";
   import { formatTimeHuman } from "$lib/utils/time";
   import Icon from "$lib/components/Icon.svelte";
@@ -11,6 +11,8 @@
   let tasksByDate = $state<Map<string, Task[]>>(new Map());
   let isLoading = $state(true);
   let openDays = $state<Set<string>>(new Set());
+  let editTaskId = $state<number | null>(null);
+  let editDialogOpen = $state(false);
 
   // Get week start (Monday) and end (Sunday) for a given offset
   function getWeekRange(offset: number): { start: Date; end: Date } {
@@ -87,6 +89,11 @@
     } else {
       openDays = new Set(openDays.add(dateStr));
     }
+  }
+
+  function handleEdit(taskId: number) {
+    editTaskId = taskId;
+    editDialogOpen = true;
   }
 
   // Load tasks when week changes
@@ -192,7 +199,7 @@
                   {#each dayTasks as task}
                     <button
                       class="w-full flex items-center justify-between px-2 py-3 rounded-xl transition-colors hover:bg-surface-raised text-left"
-                      onclick={() => goto(`/task/${task.id}`)}
+                      onclick={() => handleEdit(task.id)}
                     >
                       <div class="truncate flex-1 mr-4">{task.name}</div>
                       <div class="font-mono text-on-surface-muted">
@@ -210,3 +217,4 @@
   </section>
 </div>
 
+<EditTaskDialog bind:open={editDialogOpen} taskId={editTaskId} onTaskChange={loadWeekTasks} />

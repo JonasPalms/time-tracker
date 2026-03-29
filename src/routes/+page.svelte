@@ -1,9 +1,9 @@
 <script lang="ts">
   import { fly } from "svelte/transition";
   import { backInOut } from "svelte/easing";
-  import { goto } from "$app/navigation";
   import TaskItem from "$lib/components/TaskItem.svelte";
   import CurrentTracking from "$lib/components/CurrentTracking.svelte";
+  import EditTaskDialog from "$lib/components/EditTaskDialog.svelte";
   import NewTaskInput from "$lib/components/NewTaskInput.svelte";
   import TaskDateNavigation from "$lib/components/TaskDateNavigation.svelte";
   import TaskTableHeader from "$lib/components/TaskTableHeader.svelte";
@@ -38,6 +38,8 @@
   let sortBy = $state<SortBy>(null);
   let sortDirection = $state<SortDirection>("asc");
   let hasLoadedSortPreference = $state(false);
+  let editTaskId = $state<number | null>(null);
+  let editDialogOpen = $state(false);
 
   const tracking = useTracking();
 
@@ -53,7 +55,9 @@
     const direction = sortDirection === "asc" ? 1 : -1;
 
     if (sortBy === "name") {
-      sorted.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }) * direction);
+      sorted.sort(
+        (a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }) * direction
+      );
       return sorted;
     }
 
@@ -193,7 +197,12 @@
   }
 
   function handleEdit(task: Task) {
-    goto(`/task/${task.id}`);
+    editTaskId = task.id;
+    editDialogOpen = true;
+  }
+
+  async function handleTaskChange() {
+    await Promise.all([loadTasks(), loadSuggestions()]);
   }
 </script>
 
@@ -251,3 +260,5 @@
     </section>
   {/if}
 </div>
+
+<EditTaskDialog bind:open={editDialogOpen} taskId={editTaskId} onTaskChange={handleTaskChange} />
