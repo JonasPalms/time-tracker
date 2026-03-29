@@ -49,7 +49,7 @@
     <CalendarIcon class="size-4 shrink-0" />
     <span class="truncate">{value ? formatDate(value) : placeholder}</span>
   </Popover.Trigger>
-  <Popover.Content class="w-auto p-0 border-muted" align="start">
+  <Popover.Content class="w-auto p-0" align="start">
     <Calendar {value} onValueChange={handleValueChange} initialFocus />
   </Popover.Content>
 </Popover.Root>
