@@ -1,6 +1,6 @@
 <script lang="ts">
   import Icon from "./Icon.svelte";
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
 
   type IconName = "home" | "clock" | "settings";
 
@@ -18,7 +18,7 @@
     onclick?: () => void;
   } = $props();
 
-  const isActive = $derived(href ? $page.url.pathname === href : false);
+  const isActive = $derived(href ? page.url.pathname === href : false);
 </script>
 
 {#if href}

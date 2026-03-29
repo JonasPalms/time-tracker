@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
   import { goto } from "$app/navigation";
   import { onMount } from "svelte";
   import { parseDate, type DateValue } from "@internationalized/date";
@@ -26,7 +26,7 @@
 
   const tracking = useTracking();
 
-  const taskId = $derived(Number($page.params.id));
+  const taskId = $derived(Number(page.params.id));
   const isTracking = $derived(tracking.currentTask?.id === taskId);
 
   onMount(async () => {
