@@ -10,7 +10,7 @@ import { deriveAccentPalette, getDefaultAccentColor, normalizeHexColor } from "$
 
 // Module-level reactive state - shared globally
 let theme = $state<Theme>("dark");
-let accentColor = $state(getDefaultAccentColor(theme));
+let accentColor = $state(getDefaultAccentColor("dark"));
 let hasCustomAccent = $state(false);
 
 function applyTheme() {
