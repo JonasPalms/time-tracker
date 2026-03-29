@@ -51,7 +51,10 @@
   });
 </script>
 
-<div class="h-screen flex flex-col bg-surface text-on-surface overflow-hidden rounded-2xl">
+<div
+  id="app-shell"
+  class="relative isolate h-screen flex flex-col bg-surface text-on-surface overflow-hidden rounded-2xl"
+>
   <!-- Title bar with window controls -->
   <header
     class="shrink-0 h-10 flex items-center px-2 border-b border-border"
