@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.15] - 2026-05-11
+
+### Fixed
+
+- Fixed an occasional bug where the app would become unresponsive after closing the task edit dialog, leaving the background unclickable until reload
+
 ## [0.5.14] - 2026-03-30
 
 ### Changed
