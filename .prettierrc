@@ -6,9 +6,7 @@
   "singleQuote": false,
   "trailingComma": "es5",
   "arrowParens": "always",
-  "plugins": [
-    "prettier-plugin-svelte"
-  ],
+  "plugins": ["prettier-plugin-svelte"],
   "overrides": [
     {
       "files": "*.svelte",

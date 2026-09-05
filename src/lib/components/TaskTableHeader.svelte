@@ -23,7 +23,9 @@
 
 <thead>
   <tr>
-    <th class="w-14 py-2 pl-2 pr-1 text-left text-xs font-semibold uppercase tracking-wide text-on-surface-muted">
+    <th
+      class="w-14 py-2 pl-2 pr-1 text-left text-xs font-semibold uppercase tracking-wide text-on-surface-muted"
+    >
       <span class="sr-only">Actions</span>
     </th>
     <th
@@ -62,7 +64,9 @@
         {/if}
       </button>
     </th>
-    <th class="w-12 py-2 pl-1 pr-2 text-right text-xs font-semibold uppercase tracking-wide text-on-surface-muted">
+    <th
+      class="w-12 py-2 pl-1 pr-2 text-right text-xs font-semibold uppercase tracking-wide text-on-surface-muted"
+    >
       <span class="sr-only">More actions</span>
     </th>
   </tr>

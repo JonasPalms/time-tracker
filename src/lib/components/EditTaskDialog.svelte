@@ -89,8 +89,7 @@
       <div class="flex items-start justify-between gap-4">
         <div class="space-y-1">
           <Dialog.Title>Edit Task</Dialog.Title>
-          <Dialog.Description
-            >Update the task details without leaving this view.</Dialog.Description
+          <Dialog.Description>Update the task details without leaving this view.</Dialog.Description
           >
         </div>
         <button

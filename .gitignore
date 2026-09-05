@@ -5,6 +5,7 @@ node_modules
 # Rust
 target/
 src-tauri/target/
+src-tauri/gen/
 
 # App build outputs
 build/

@@ -37,4 +37,8 @@ Thumbs.db
 
 # Tauri
 src-tauri/target
+src-tauri/gen
+
+# Icon Composer asset
+composer-icon.icon
 
