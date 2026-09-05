@@ -94,3 +94,5 @@ export function useSidebar() {
     toggle,
   };
 }
+
+init();

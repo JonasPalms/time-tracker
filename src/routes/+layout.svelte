@@ -5,7 +5,6 @@
   import { useFavourites } from "$lib/hooks/favourites.svelte";
   import { useKeyboard } from "$lib/hooks/keyboard.svelte";
   import { useUpdater } from "$lib/hooks/updater.svelte";
-  import { useSidebar } from "$lib/hooks/sidebar.svelte";
   import { getCurrentWindow } from "@tauri-apps/api/window";
   import { listen } from "@tauri-apps/api/event";
   import { onMount, onDestroy } from "svelte";
@@ -19,28 +18,30 @@
   const tracking = useTracking();
   const keyboard = useKeyboard();
   const updater = useUpdater();
-  const sidebar = useSidebar();
 
   let unlistenClose: (() => void) | null = null;
   let unlistenCheckUpdates: (() => void) | null = null;
 
   onMount(async () => {
-    await theme.init();
-    await useFavourites().reload();
-    keyboard.init();
-    sidebar.init();
-
-    updater.checkForUpdates();
-
     const currentWindow = getCurrentWindow();
-    unlistenClose = await currentWindow.onCloseRequested(async () => {
-      await tracking.stopTracking();
-    });
 
-    // Listen for menu-triggered update check
-    unlistenCheckUpdates = await listen("check-for-updates", () => {
-      updater.checkForUpdates(true);
-    });
+    try {
+      await theme.init();
+      await useFavourites().reload();
+      keyboard.init();
+
+      updater.checkForUpdates();
+
+      unlistenClose = await currentWindow.onCloseRequested(async () => {
+        await tracking.stopTracking();
+      });
+
+      unlistenCheckUpdates = await listen("check-for-updates", () => {
+        updater.checkForUpdates(true);
+      });
+    } finally {
+      await currentWindow.show();
+    }
   });
 
   onDestroy(() => {

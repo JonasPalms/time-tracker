@@ -10,6 +10,11 @@
 @layer base {
   html {
     @apply bg-surface text-on-surface rounded-2xl;
+    color-scheme: dark;
+  }
+
+  html:not(.dark) {
+    color-scheme: light;
   }
 
   body {

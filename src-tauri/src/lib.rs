@@ -26,6 +26,10 @@ pub fn run() {
             // Set up macOS menu with Window menu for Minimize support
             #[cfg(target_os = "macos")]
             {
+                if let Some(window) = app.get_webview_window("main") {
+                    disable_macos_show_animation(&window);
+                }
+
                 let check_updates_item = MenuItem::with_id(
                     app,
                     "check_updates",
@@ -129,4 +133,14 @@ pub fn run() {
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+#[cfg(target_os = "macos")]
+fn disable_macos_show_animation(window: &tauri::WebviewWindow) {
+    use objc2_app_kit::{NSWindow, NSWindowAnimationBehavior};
+
+    if let Ok(ptr) = window.ns_window() {
+        let ns_window = unsafe { &*(ptr as *const NSWindow) };
+        ns_window.setAnimationBehavior(NSWindowAnimationBehavior::None);
+    }
 }
