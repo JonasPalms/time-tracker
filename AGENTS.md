@@ -4,29 +4,25 @@ Guidance for coding agents working in this repository.
 
 ## Project Shape
 
-- `tauri-app/`: main desktop app (Svelte 5 + Tauri v2)
-- `raycast-extension/`: read-only companion extension
+- Root: desktop app (Svelte 5 + Tauri v2)
 
 ## High-Signal Rules
 
-- Run commands from the correct package directory (`tauri-app/` or `raycast-extension/`).
+- Run Tauri commands from the repository root.
 - Keep Tauri frontend dev server on port `1420` (required by Tauri config).
-- Follow existing Svelte 5 runes pattern in `tauri-app/src/lib/hooks/*.svelte.ts` (module-level state + exported getters).
-- Put business logic in services (`tauri-app/src/lib/services/`), not page components.
+- Follow existing Svelte 5 runes pattern in `src/lib/hooks/*.svelte.ts` (module-level state + exported getters).
+- Put Tauri business logic in services (`src/lib/services/`), not page components.
 - Use `@lucide/svelte` for icons.
 
 ## Data/Storage Constraints
 
-- SQLite is via `@tauri-apps/plugin-sql`.
-- DB path is `~/.config/time-tracker/`.
-- Use local-time timestamps (`datetime('now', 'localtime')`).
-- Raycast extension must keep DB access read-only (avoid lock-causing writes).
+- Tauri SQLite lives at `~/Library/Application Support/com.jonaspalmsorensen.time-tracker/`.
+- Use local-time timestamps (`YYYY-MM-DD HH:MM:SS`).
 
 ## Validation Commands
 
-- Desktop app (`tauri-app/`): `npm run check` and `npm run build`
-- Raycast extension (`raycast-extension/`): `npm run lint` and `npm run build`
+- Desktop app (repo root): `pnpm check` and `pnpm build`
 
 ## Release Notes
 
-- For version bumps: update `tauri-app/src-tauri/tauri.conf.json`, update `CHANGELOG.md`, then tag as `vX.Y.Z`.
+- Version bumps: update `src-tauri/tauri.conf.json`, update `CHANGELOG.md`, then tag as `vX.Y.Z`.

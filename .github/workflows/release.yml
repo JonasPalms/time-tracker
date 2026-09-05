@@ -25,10 +25,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 24
+          cache: pnpm
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
@@ -37,7 +41,7 @@ jobs:
 
       - name: Install dependencies (macOS)
         if: matrix.platform == 'macos-latest'
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Generate updater keys
         id: updater-keys

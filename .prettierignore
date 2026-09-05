@@ -2,6 +2,9 @@
 node_modules
 .pnp
 .pnp.js
+.pnpm-store
+pnpm-lock.yaml
+package-lock.json
 
 # Build outputs
 .svelte-kit
@@ -17,6 +20,7 @@ dist
 # Logs
 *.log
 npm-debug.log*
+pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
