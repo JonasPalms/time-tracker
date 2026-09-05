@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.17] - 2026-09-05
+
+### Changed
+
+- Switched the desktop app from npm to pnpm
+- Updated frontend dependencies and aligned Tauri Rust crates with the matching JS package versions
+
 ## [0.5.16] - 2026-07-28
 
 ### Fixed
