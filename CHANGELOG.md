@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.18] - 2026-09-05
+
+### Fixed
+
+- Prevented a light flash and a slight window grow on startup by showing the window only after theme init and disabling the macOS show animation
+
 ## [0.5.17] - 2026-09-05
 
 ### Changed
