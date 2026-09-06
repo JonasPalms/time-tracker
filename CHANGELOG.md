@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-09-06
+
+### Fixed
+
+- Use theme-aware elevated surfaces in light mode
+- Make disabled forward navigation in History visually non-interactive
+- Highlight Home correctly when the app first opens
+- Remove the unintended shadow around inline time inputs
+
 ## [0.7.0] - 2026-09-06
 
 ### Changed
