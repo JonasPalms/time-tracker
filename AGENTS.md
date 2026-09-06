@@ -5,6 +5,7 @@ Guidance for coding agents working in this repository.
 ## Project Shape
 
 - Root: desktop app (Svelte 5 + Tauri v2)
+- `src-tauri/core/`: shared SQLite access (WAL, queries, writes)
 - `src-tauri/mcp-server/`: `timetracker-mcp` binary shipped inside the app
 
 ## High-Signal Rules
@@ -23,9 +24,11 @@ Guidance for coding agents working in this repository.
 ## MCP
 
 - Clients launch the `timetracker-mcp` binary next to the app. Do not write other apps' configs.
-- Prod SQLite by default. Local override: copy `.env.example` to `.env` and set `TIMETRACKER_DB=dev` or `prod`.
-- Read-only tools: `list_tasks`, `summarize_range`, `search_tasks`
-- Settings → MCP copies a snippet that points at that binary.
+- Prod SQLite by default. Local override: set `TIMETRACKER_DB=dev` in the client MCP env (e.g. `.cursor/mcp.json`). The app ignores this — debug uses `timetracker-dev.db`, release uses `timetracker.db`.
+- Read tools: `list_tasks`, `summarize_range`, `search_tasks`
+- Write tools: `create_task`, `set_task_time`, `add_task_time`, `set_task_name`, `set_task_note`, `set_task_date`, `delete_task`. No start/stop of the in-app timer.
+- Settings → MCP copies a snippet that points at the sidecar next to the running app.
+- Repo/dev MCP should use `src-tauri/binaries/timetracker-mcp` (what `pnpm mcp:bin` writes), not `target/debug/`.
 - Rebuild with `pnpm mcp:bin`. `tauri dev` / `tauri build` do this first.
 
 ## Validation Commands

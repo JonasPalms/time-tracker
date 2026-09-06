@@ -1,4 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 
 export interface Task {
   id: number;
@@ -123,4 +125,19 @@ export async function updateTaskNote(taskId: number, note: string | null): Promi
  */
 export async function updateTaskDate(taskId: number, newDate: string): Promise<void> {
   return invoke("update_task_date", { taskId, newDate });
+}
+
+/** Refetch when SQLite changes on disk or the window is focused again. */
+export async function subscribeTasksRefresh(onRefresh: () => void): Promise<() => void> {
+  const unlistenEvent = await listen("tasks-changed", () => {
+    onRefresh();
+  });
+  const unlistenFocus = await getCurrentWindow().onFocusChanged(({ payload: focused }) => {
+    if (focused) onRefresh();
+  });
+
+  return () => {
+    unlistenEvent();
+    unlistenFocus();
+  };
 }

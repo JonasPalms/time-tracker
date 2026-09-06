@@ -1,10 +1,11 @@
 <script lang="ts">
   import EditTaskDialog from "$lib/components/EditTaskDialog.svelte";
-  import { getTasksInRange, type Task } from "$lib/services/tasks";
+  import { getTasksInRange, subscribeTasksRefresh, type Task } from "$lib/services/tasks";
   import { formatTimeHuman } from "$lib/utils/time";
   import Icon from "$lib/components/Icon.svelte";
   import PageHeader from "$lib/components/PageHeader.svelte";
   import { slide } from "svelte/transition";
+  import { onMount } from "svelte";
 
   // State
   let weekOffset = $state(0); // 0 = current week, -1 = last week, etc.
@@ -62,8 +63,8 @@
     return `${startStr} - ${endStr}`;
   }
 
-  async function loadWeekTasks() {
-    isLoading = true;
+  async function loadWeekTasks(options: { silent?: boolean } = {}) {
+    if (!options.silent) isLoading = true;
     const { start, end } = getWeekRange(weekOffset);
 
     const tasks = await getTasksInRange(formatDate(start), formatDate(end));
@@ -78,7 +79,9 @@
     }
 
     tasksByDate = grouped;
-    openDays = new Set(grouped.keys());
+    if (!options.silent) {
+      openDays = new Set(grouped.keys());
+    }
     isLoading = false;
   }
 
@@ -100,6 +103,17 @@
   $effect(() => {
     weekOffset; // Dependency
     loadWeekTasks();
+  });
+
+  onMount(() => {
+    let unsubscribe: (() => void) | undefined;
+    void subscribeTasksRefresh(() => {
+      void loadWeekTasks({ silent: true });
+    }).then((fn) => {
+      unsubscribe = fn;
+    });
+
+    return () => unsubscribe?.();
   });
 
   // Calculate total seconds for a day

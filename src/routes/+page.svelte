@@ -17,6 +17,7 @@
     updateTaskTime,
     deleteTask,
     getUniqueTaskNames,
+    subscribeTasksRefresh,
     type Task,
   } from "$lib/services/tasks";
   import { onMount } from "svelte";
@@ -116,12 +117,23 @@
   }
 
   // Load tasks on mount and when date changes
-  onMount(async () => {
+  onMount(() => {
     loadSortPreference();
     hasLoadedSortPreference = true;
-    await loadTasks();
-    isLoading = false;
+    void loadTasks().then(() => {
+      isLoading = false;
+    });
     void loadSuggestions();
+
+    let unsubscribe: (() => void) | undefined;
+    void subscribeTasksRefresh(() => {
+      void loadTasks();
+      void loadSuggestions();
+    }).then((fn) => {
+      unsubscribe = fn;
+    });
+
+    return () => unsubscribe?.();
   });
 
   $effect(() => {

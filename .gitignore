@@ -16,8 +16,6 @@ src-tauri/binaries/
 # Env files
 .env
 .env.*
-!.env.example
-!.env.production
 
 # Vite temp files
 vite.config.js.timestamp-*

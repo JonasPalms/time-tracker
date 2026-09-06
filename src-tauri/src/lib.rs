@@ -5,6 +5,7 @@ use tauri::{Emitter, Manager};
 
 mod commands;
 mod db;
+mod db_watch;
 mod models;
 
 pub struct AppState {
@@ -19,8 +20,10 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_process::init())
         .setup(|app| {
+            let db_path = db::database_path(app.handle())?;
             let conn = db::init_db(app.handle())?;
             app.manage(AppState { db: Mutex::new(conn) });
+            db_watch::start(app.handle().clone(), db_path);
 
             // Set up macOS menu with Window menu for Minimize support
             #[cfg(target_os = "macos")]

@@ -1,0 +1,10 @@
+mod db;
+mod tasks;
+
+pub use db::{migrate, open, open_existing};
+pub use rusqlite::Connection;
+pub use tasks::{
+    add_task_time, create_task, delete_task, get_task_by_id, list_tasks_for_date,
+    list_tasks_in_range, search_tasks, set_task_date, set_task_name, set_task_note, set_task_time,
+    unique_task_names, Task,
+};
