@@ -164,7 +164,7 @@
         <Icon name="chevron-left" class="w-6 h-6" />
       </button>
       <button
-        class="p-2 rounded-lg bg-surface-raised hover:bg-surface-hover transition-colors disabled:opacity-30"
+        class="p-2 rounded-lg bg-surface-raised transition-colors enabled:hover:bg-surface-hover disabled:cursor-default disabled:opacity-30"
         onclick={() => (weekOffset += 1)}
         disabled={weekOffset >= 0}
         aria-label="Next week"
