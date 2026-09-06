@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.19] - 2026-09-06
+
+### Changed
+
+- Show the window as soon as the shell is ready instead of waiting for saved theme and favourites
+- Persist theme and accent color in localStorage and remove the Tauri store plugin
+
+### Fixed
+
+- Stop blocking the home task list on autocomplete suggestions
+
 ## [0.5.18] - 2026-09-05
 
 ### Fixed
