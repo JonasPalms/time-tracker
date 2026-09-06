@@ -22,6 +22,8 @@ pub fn open_existing(path: &Path) -> Result<Connection, String> {
 fn configure(conn: &Connection) -> Result<(), String> {
     conn.pragma_update(None, "journal_mode", "WAL")
         .map_err(|error| error.to_string())?;
+    conn.pragma_update(None, "foreign_keys", "ON")
+        .map_err(|error| error.to_string())?;
     conn.busy_timeout(BUSY_TIMEOUT)
         .map_err(|error| error.to_string())?;
     Ok(())
@@ -57,6 +59,16 @@ pub fn migrate(conn: &Connection) -> Result<(), String> {
     .map_err(|error| format!("Failed to create index: {error}"))?;
 
     let _ = conn.execute("ALTER TABLE tasks ADD COLUMN note TEXT", []);
+
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS active_tracking (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            task_id INTEGER NOT NULL UNIQUE REFERENCES tasks(id) ON DELETE CASCADE,
+            started_at TEXT NOT NULL
+        )",
+        [],
+    )
+    .map_err(|error| format!("Failed to create active_tracking table: {error}"))?;
 
     Ok(())
 }

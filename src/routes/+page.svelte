@@ -166,19 +166,12 @@
 
   // Play/stop from task item
   async function handlePlayPause(task: Task) {
-    // If clicking the same task that's currently tracking, stop it
     if (tracking.currentTask?.id === task.id) {
       await tracking.stopTracking();
-      await loadTasks();
     } else {
-      // If tracking another task, stop it first and save
-      if (tracking.currentTask) {
-        await tracking.stopTracking();
-        await loadTasks();
-      }
-      // Start tracking the new task
-      tracking.startTracking(task);
+      await tracking.startTracking(task);
     }
+    await loadTasks();
   }
 
   // Stop from the bottom bar

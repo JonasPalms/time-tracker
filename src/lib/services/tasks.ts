@@ -127,6 +127,24 @@ export async function updateTaskDate(taskId: number, newDate: string): Promise<v
   return invoke("update_task_date", { taskId, newDate });
 }
 
+export interface ActiveTracking {
+  task: Task;
+  started_at: string;
+  elapsed_seconds: number;
+}
+
+export async function getActiveTracking(): Promise<ActiveTracking | null> {
+  return invoke<ActiveTracking | null>("get_active_tracking");
+}
+
+export async function startTracking(taskId: number): Promise<ActiveTracking> {
+  return invoke<ActiveTracking>("start_tracking", { taskId });
+}
+
+export async function stopTracking(): Promise<Task | null> {
+  return invoke<Task | null>("stop_tracking");
+}
+
 /** Refetch when SQLite changes on disk or the window is focused again. */
 export async function subscribeTasksRefresh(onRefresh: () => void): Promise<() => void> {
   const unlistenEvent = await listen("tasks-changed", () => {

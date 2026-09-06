@@ -62,6 +62,9 @@ struct TaskIdArgs {
     task_id: i64,
 }
 
+#[derive(Debug, Deserialize, schemars::JsonSchema, Default)]
+struct EmptyArgs {}
+
 #[derive(Debug, Deserialize, schemars::JsonSchema)]
 struct SetTaskTimeArgs {
     task_id: i64,
@@ -110,11 +113,12 @@ impl TimeTracker {
         tool_json(|| {
             let range = resolve_range(args.date, args.from, args.to)?;
             let db = open_tasks_db()?;
+            let running = time_tracker_core::get_active_tracking(&db)?;
             let tasks = time_tracker_core::list_tasks_in_range(&db, &range.from, &range.to)?;
             Ok(json!({
                 "from": range.from,
                 "to": range.to,
-                "tasks": tasks.iter().map(present_task).collect::<Vec<_>>(),
+                "tasks": tasks.iter().map(|task| present_task(task, running.as_ref())).collect::<Vec<_>>(),
             }))
         })
     }
@@ -150,12 +154,13 @@ impl TimeTracker {
                 Some(args.to.unwrap_or(today)),
             )?;
             let db = open_tasks_db()?;
+            let running = time_tracker_core::get_active_tracking(&db)?;
             let tasks = time_tracker_core::search_tasks(&db, &args.query, &range.from, &range.to)?;
             Ok(json!({
                 "query": args.query,
                 "from": range.from,
                 "to": range.to,
-                "tasks": tasks.iter().map(present_task).collect::<Vec<_>>(),
+                "tasks": tasks.iter().map(|task| present_task(task, running.as_ref())).collect::<Vec<_>>(),
             }))
         })
     }
@@ -182,11 +187,11 @@ impl TimeTracker {
                 args.initial_seconds,
                 args.note.as_deref(),
             )?;
-            Ok(present_task(&task))
+            Ok(present_task(&task, None))
         })
     }
 
-    #[tool(description = "Set a task's total duration in seconds. Does not start or stop the in-app timer.")]
+    #[tool(description = "Set a task's committed duration in seconds. Does not start or stop the timer. A running timer is extra and is added on stop.")]
     fn set_task_time(&self, Parameters(args): Parameters<SetTaskTimeArgs>) -> CallToolResult {
         tool_json(|| {
             if args.total_seconds < 0 {
@@ -194,20 +199,20 @@ impl TimeTracker {
             }
             let db = open_tasks_db()?;
             let task = time_tracker_core::set_task_time(&db, args.task_id, args.total_seconds)?;
-            Ok(present_task(&task))
+            Ok(present_task(&task, None))
         })
     }
 
-    #[tool(description = "Add seconds to a task's total duration. Negative values subtract. Does not start or stop the in-app timer.")]
+    #[tool(description = "Add seconds to a task's committed duration. Negative values subtract. Does not start or stop the timer.")]
     fn add_task_time(&self, Parameters(args): Parameters<AddTaskTimeArgs>) -> CallToolResult {
         tool_json(|| {
             let db = open_tasks_db()?;
             let task = time_tracker_core::add_task_time(&db, args.task_id, args.seconds)?;
-            Ok(present_task(&task))
+            Ok(present_task(&task, None))
         })
     }
 
-    #[tool(description = "Rename a TimeTracker task. Does not start or stop the in-app timer.")]
+    #[tool(description = "Rename a TimeTracker task.")]
     fn set_task_name(&self, Parameters(args): Parameters<SetTaskNameArgs>) -> CallToolResult {
         tool_json(|| {
             let name = args.name.trim();
@@ -216,7 +221,7 @@ impl TimeTracker {
             }
             let db = open_tasks_db()?;
             let task = time_tracker_core::set_task_name(&db, args.task_id, name)?;
-            Ok(present_task(&task))
+            Ok(present_task(&task, None))
         })
     }
 
@@ -225,7 +230,7 @@ impl TimeTracker {
         tool_json(|| {
             let db = open_tasks_db()?;
             let task = time_tracker_core::set_task_note(&db, args.task_id, args.note.as_deref())?;
-            Ok(present_task(&task))
+            Ok(present_task(&task, None))
         })
     }
 
@@ -235,16 +240,47 @@ impl TimeTracker {
             parse_local_date(&args.date)?;
             let db = open_tasks_db()?;
             let task = time_tracker_core::set_task_date(&db, args.task_id, &args.date)?;
-            Ok(present_task(&task))
+            Ok(present_task(&task, None))
         })
     }
 
-    #[tool(description = "Delete a TimeTracker task. Does not stop the in-app timer.")]
+    #[tool(description = "Delete a TimeTracker task. If it is running, the timer is cleared without committing elapsed time.")]
     fn delete_task(&self, Parameters(args): Parameters<TaskIdArgs>) -> CallToolResult {
         tool_json(|| {
             let db = open_tasks_db()?;
             time_tracker_core::delete_task(&db, args.task_id)?;
             Ok(json!({ "deleted": args.task_id }))
+        })
+    }
+
+    #[tool(description = "Start the TimeTracker timer on a task. Stops any other running task first and commits that elapsed time.")]
+    fn start_task(&self, Parameters(args): Parameters<TaskIdArgs>) -> CallToolResult {
+        tool_json(|| {
+            let db = open_tasks_db()?;
+            let running = time_tracker_core::start_tracking(&db, args.task_id)?;
+            Ok(present_tracking(&running))
+        })
+    }
+
+    #[tool(description = "Stop the running TimeTracker timer and add elapsed time to the task. No-op if nothing is running.")]
+    fn stop_task(&self, Parameters(_args): Parameters<EmptyArgs>) -> CallToolResult {
+        tool_json(|| {
+            let db = open_tasks_db()?;
+            match time_tracker_core::stop_tracking(&db)? {
+                Some(task) => Ok(present_task(&task, None)),
+                None => Ok(json!({ "stopped": false })),
+            }
+        })
+    }
+
+    #[tool(description = "Get the currently running TimeTracker timer, if any.")]
+    fn get_active_tracking(&self, Parameters(_args): Parameters<EmptyArgs>) -> CallToolResult {
+        tool_json(|| {
+            let db = open_tasks_db()?;
+            match time_tracker_core::get_active_tracking(&db)? {
+                Some(running) => Ok(present_tracking(&running)),
+                None => Ok(json!({ "running": false })),
+            }
         })
     }
 }
@@ -255,7 +291,7 @@ impl ServerHandler for TimeTracker {
         ServerInfo::new(ServerCapabilities::builder().enable_tools().build())
             .with_server_info(Implementation::new("time-tracker", "0.1.0"))
             .with_instructions(
-                "Read and write local TimeTracker task logs. Creating or editing a task does not start or stop the in-app timer.",
+                "Read and write local TimeTracker task logs. total_seconds is committed time only. A running timer is stored in the database and listed as running/running_seconds. Use start_task and stop_task to control it. Do not copy a running display time into set_task_time.",
             )
     }
 }
@@ -348,7 +384,8 @@ fn format_duration(total_seconds: i64) -> String {
     }
 }
 
-fn present_task(task: &Task) -> Value {
+fn present_task(task: &Task, running: Option<&time_tracker_core::ActiveTracking>) -> Value {
+    let is_running = running.is_some_and(|active| active.task.id == task.id);
     json!({
         "id": task.id,
         "name": task.name,
@@ -356,6 +393,17 @@ fn present_task(task: &Task) -> Value {
         "duration": format_duration(task.total_seconds),
         "total_seconds": task.total_seconds,
         "note": task.note,
+        "running": is_running,
+        "running_seconds": is_running.then(|| running.map(|active| active.elapsed_seconds)).flatten(),
+    })
+}
+
+fn present_tracking(running: &time_tracker_core::ActiveTracking) -> Value {
+    json!({
+        "running": true,
+        "started_at": running.started_at,
+        "elapsed_seconds": running.elapsed_seconds,
+        "task": present_task(&running.task, Some(running)),
     })
 }
 

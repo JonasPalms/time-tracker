@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Ship a local MCP sidecar and expose copyable client snippets in Settings
 - MCP write tools for creating, editing, and deleting tasks
+- Persist the running timer in SQLite and expose start/stop over MCP
 - Refresh the task list when the database file changes or the window is focused
 
 ## [0.5.19] - 2026-09-06

@@ -29,6 +29,7 @@
       keyboard.init();
       updater.checkForUpdates();
       void useFavourites().reload();
+      void tracking.init();
     } finally {
       await currentWindow.show();
     }

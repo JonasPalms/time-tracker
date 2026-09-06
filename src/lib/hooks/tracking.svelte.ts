@@ -1,82 +1,97 @@
-import { type Task, addTimeToTask } from "$lib/services/tasks";
+import {
+  type Task,
+  getActiveTracking,
+  startTracking as startTrackingSession,
+  stopTracking as stopTrackingSession,
+  subscribeTasksRefresh,
+  type ActiveTracking,
+} from "$lib/services/tasks";
 
-// Module-level reactive state - shared globally
 let currentTask = $state<Task | null>(null);
+let startedAtMs = $state<number | null>(null);
 let elapsedSeconds = $state(0);
-let startTime: number | null = null;
 let intervalId: ReturnType<typeof setInterval> | null = null;
+let unsubscribeRefresh: (() => void) | undefined;
+let initialized = false;
 
-// Derived state
 let isTracking = $derived(currentTask !== null);
 
-/**
- * Start tracking time on a task
- */
-function startTracking(task: Task) {
-  // If already tracking something else, stop it first and save
-  if (currentTask && currentTask.id !== task.id) {
-    stopTrackingSync();
-  }
-
-  // If clicking the same task that's already tracking, do nothing
-  if (currentTask?.id === task.id) {
-    return;
-  }
-
-  currentTask = task;
-  elapsedSeconds = 0;
-  startTime = Date.now();
-
-  // Update elapsed time every second
-  intervalId = setInterval(() => {
-    if (startTime) {
-      elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
-    }
-  }, 1000);
+function parseLocalDateTime(value: string): number {
+  const [datePart, timePart = "00:00:00"] = value.split(" ");
+  const [year, month, day] = datePart.split("-").map(Number);
+  const [hours, minutes, seconds] = timePart.split(":").map(Number);
+  return new Date(year, month - 1, day, hours, minutes, seconds || 0).getTime();
 }
 
-/**
- * Stop tracking (sync version for internal use)
- */
-function stopTrackingSync(): number {
+function tick() {
+  if (startedAtMs === null) {
+    elapsedSeconds = 0;
+    return;
+  }
+  elapsedSeconds = Math.max(0, Math.floor((Date.now() - startedAtMs) / 1000));
+}
+
+function ensureInterval() {
+  if (intervalId) return;
+  intervalId = setInterval(tick, 1000);
+}
+
+function clearIntervalOnly() {
   if (intervalId) {
     clearInterval(intervalId);
     intervalId = null;
   }
-
-  const elapsed = elapsedSeconds;
-  currentTask = null;
-  elapsedSeconds = 0;
-  startTime = null;
-
-  return elapsed;
 }
 
-/**
- * Stop tracking and save elapsed time to database
- */
+function applySession(session: ActiveTracking | null) {
+  if (!session) {
+    clearIntervalOnly();
+    currentTask = null;
+    startedAtMs = null;
+    elapsedSeconds = 0;
+    return;
+  }
+
+  const nextStartedAt = parseLocalDateTime(session.started_at);
+  currentTask = session.task;
+  if (startedAtMs !== nextStartedAt) {
+    startedAtMs = nextStartedAt;
+  }
+  tick();
+  ensureInterval();
+}
+
+async function syncFromDb() {
+  applySession(await getActiveTracking());
+}
+
+async function startTracking(task: Task) {
+  if (currentTask?.id === task.id) return;
+  applySession(await startTrackingSession(task.id));
+}
+
 async function stopTracking(): Promise<void> {
   if (!currentTask) return;
-
-  const taskId = currentTask.id;
-  const elapsed = stopTrackingSync();
-
-  // Save elapsed time to database
-  if (elapsed > 0) {
-    await addTimeToTask(taskId, elapsed);
-  }
+  await stopTrackingSession();
+  applySession(null);
 }
 
-/**
- * Cleanup interval
- */
+async function init() {
+  if (initialized) return;
+  initialized = true;
+  await syncFromDb();
+  unsubscribeRefresh = await subscribeTasksRefresh(() => {
+    void syncFromDb();
+  });
+}
+
 function cleanup() {
-  if (intervalId) {
-    clearInterval(intervalId);
-  }
+  clearIntervalOnly();
+  unsubscribeRefresh?.();
+  unsubscribeRefresh = undefined;
+  initialized = false;
 }
 
-// Export a function that returns getters to maintain reactivity
 export function useTracking() {
   return {
     get currentTask() {
@@ -90,6 +105,7 @@ export function useTracking() {
     },
     startTracking,
     stopTracking,
+    init,
     cleanup,
   };
 }

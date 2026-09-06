@@ -1,11 +1,15 @@
 <script lang="ts">
+  import AnimatedClock from "$lib/components/AnimatedClock.svelte";
   import EditTaskDialog from "$lib/components/EditTaskDialog.svelte";
+  import { useTracking } from "$lib/hooks/tracking.svelte";
   import { getTasksInRange, subscribeTasksRefresh, type Task } from "$lib/services/tasks";
   import { formatTimeHuman } from "$lib/utils/time";
   import Icon from "$lib/components/Icon.svelte";
   import PageHeader from "$lib/components/PageHeader.svelte";
   import { slide } from "svelte/transition";
   import { onMount } from "svelte";
+
+  const tracking = useTracking();
 
   // State
   let weekOffset = $state(0); // 0 = current week, -1 = last week, etc.
@@ -116,9 +120,15 @@
     return () => unsubscribe?.();
   });
 
-  // Calculate total seconds for a day
+  function taskDisplaySeconds(task: Task): number {
+    if (tracking.currentTask?.id === task.id) {
+      return task.total_seconds + tracking.elapsedSeconds;
+    }
+    return task.total_seconds;
+  }
+
   function getDayTotal(tasks: Task[]): number {
-    return tasks.reduce((sum, task) => sum + task.total_seconds, 0);
+    return tasks.reduce((sum, task) => sum + taskDisplaySeconds(task), 0);
   }
 
   // Calculate week total
@@ -186,6 +196,7 @@
           {#each weekDates() as dateStr}
             {@const dayTasks = tasksByDate.get(dateStr) || []}
             {@const dayTotal = getDayTotal(dayTasks)}
+            {@const dayHasActive = dayTasks.some((task) => task.id === tracking.currentTask?.id)}
             {@const isToday = dateStr === new Date().toISOString().split("T")[0]}
 
             <div class="py-2">
@@ -198,7 +209,10 @@
                 <span class="font-medium {isToday ? 'text-accent' : ''}">
                   {formatDateDisplay(dateStr)}
                 </span>
-                <span class="font-mono">
+                <span class="flex items-center gap-2 font-mono {dayHasActive ? 'text-accent' : ''}">
+                  {#if dayHasActive && !openDays.has(dateStr)}
+                    <AnimatedClock class="w-4 h-4" />
+                  {/if}
                   {dayTotal > 0 ? formatTimeHuman(dayTotal) : "-"}
                 </span>
               </button>
@@ -211,13 +225,22 @@
                   transition:slide={{ duration: 200 }}
                 >
                   {#each dayTasks as task}
+                    {@const isActive = tracking.currentTask?.id === task.id}
                     <button
-                      class="w-full flex items-center justify-between px-2 py-3 rounded-xl transition-colors hover:bg-surface-raised text-left"
+                      class="w-full flex items-center justify-between px-2 py-3 rounded-xl transition-colors hover:bg-surface-raised text-left {isActive
+                        ? 'text-accent'
+                        : ''}"
                       onclick={() => handleEdit(task.id)}
+                      title={isActive ? "Currently tracking" : undefined}
                     >
-                      <div class="truncate flex-1 mr-4">{task.name}</div>
-                      <div class="font-mono text-on-surface-muted">
-                        {formatTimeHuman(task.total_seconds)}
+                      <div class="min-w-0 flex-1 mr-4 flex items-center gap-2">
+                        {#if isActive}
+                          <AnimatedClock class="w-4 h-4 shrink-0" />
+                        {/if}
+                        <div class="truncate">{task.name}</div>
+                      </div>
+                      <div class="font-mono {isActive ? 'text-accent' : 'text-on-surface-muted'}">
+                        {formatTimeHuman(taskDisplaySeconds(task))}
                       </div>
                     </button>
                   {/each}
