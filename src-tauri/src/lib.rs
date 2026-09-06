@@ -1,10 +1,11 @@
 use rusqlite::Connection;
 use std::sync::Mutex;
 use tauri::menu::{MenuBuilder, MenuItem, PredefinedMenuItem, SubmenuBuilder};
-use tauri::{Emitter, Manager};
+use tauri::{Emitter, Manager, RunEvent, WindowEvent};
 
 mod commands;
 mod db;
+mod db_watch;
 mod models;
 
 pub struct AppState {
@@ -19,8 +20,10 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_process::init())
         .setup(|app| {
+            let db_path = db::database_path(app.handle())?;
             let conn = db::init_db(app.handle())?;
             app.manage(AppState { db: Mutex::new(conn) });
+            db_watch::start(app.handle().clone(), db_path);
 
             // Set up macOS menu with Window menu for Minimize support
             #[cfg(target_os = "macos")]
@@ -110,14 +113,17 @@ pub fn run() {
                 }
             }
         })
+        .on_window_event(|window, event| {
+            if let WindowEvent::CloseRequested { .. } = event {
+                commit_active_tracking(window.app_handle());
+            }
+        })
         .invoke_handler(tauri::generate_handler![
             // Task commands
             commands::tasks::get_tasks_for_date,
-            commands::tasks::get_todays_tasks,
             commands::tasks::create_task,
             commands::tasks::update_task_time,
             commands::tasks::add_time_to_task,
-            commands::tasks::adjust_task_time,
             commands::tasks::get_tasks_in_range,
             commands::tasks::update_task_name,
             commands::tasks::delete_task,
@@ -129,9 +135,30 @@ pub fn run() {
             commands::favourites::get_favourites,
             commands::favourites::create_favourite,
             commands::favourites::delete_favourite,
+            commands::mcp::get_mcp_binary_path,
+            commands::tracking::get_active_tracking,
+            commands::tracking::start_tracking,
+            commands::tracking::stop_tracking,
         ])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        .expect("error while running tauri application")
+        .run(|app, event| {
+            if let RunEvent::ExitRequested { .. } = event {
+                commit_active_tracking(app);
+            }
+        });
+}
+
+fn commit_active_tracking(app: &tauri::AppHandle) {
+    let Some(state) = app.try_state::<AppState>() else {
+        return;
+    };
+    let Ok(conn) = state.db.lock() else {
+        return;
+    };
+    if let Err(error) = time_tracker_core::stop_tracking(&conn) {
+        eprintln!("TimeTracker failed to stop tracking on exit: {error}");
+    }
 }
 
 #[cfg(target_os = "macos")]

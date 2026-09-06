@@ -7,6 +7,7 @@
   import NewTaskInput from "$lib/components/NewTaskInput.svelte";
   import TaskDateNavigation from "$lib/components/TaskDateNavigation.svelte";
   import TaskTableHeader from "$lib/components/TaskTableHeader.svelte";
+  import { tasksRefreshGeneration } from "$lib/hooks/tasks-refresh.svelte";
   import { useTracking } from "$lib/hooks/tracking.svelte";
   import { formatDateForDisplay, addDays } from "$lib/utils/time";
   import {
@@ -116,11 +117,18 @@
   }
 
   // Load tasks on mount and when date changes
-  onMount(async () => {
+  onMount(() => {
     loadSortPreference();
     hasLoadedSortPreference = true;
-    await loadTasks();
-    isLoading = false;
+    void loadTasks().then(() => {
+      isLoading = false;
+    });
+    void loadSuggestions();
+  });
+
+  $effect(() => {
+    if (tasksRefreshGeneration() === 0) return;
+    void loadTasks();
     void loadSuggestions();
   });
 
@@ -154,19 +162,12 @@
 
   // Play/stop from task item
   async function handlePlayPause(task: Task) {
-    // If clicking the same task that's currently tracking, stop it
     if (tracking.currentTask?.id === task.id) {
       await tracking.stopTracking();
-      await loadTasks();
     } else {
-      // If tracking another task, stop it first and save
-      if (tracking.currentTask) {
-        await tracking.stopTracking();
-        await loadTasks();
-      }
-      // Start tracking the new task
-      tracking.startTracking(task);
+      await tracking.startTracking(task);
     }
+    await loadTasks();
   }
 
   // Stop from the bottom bar

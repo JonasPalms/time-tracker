@@ -1,6 +1,11 @@
 <script lang="ts">
   import "../app.css";
   import { useTheme } from "$lib/hooks/theme.svelte";
+  import {
+    startTasksRefresh,
+    stopTasksRefresh,
+    tasksRefreshGeneration,
+  } from "$lib/hooks/tasks-refresh.svelte";
   import { useTracking } from "$lib/hooks/tracking.svelte";
   import { useFavourites } from "$lib/hooks/favourites.svelte";
   import { useKeyboard } from "$lib/hooks/keyboard.svelte";
@@ -19,7 +24,6 @@
   const keyboard = useKeyboard();
   const updater = useUpdater();
 
-  let unlistenClose: (() => void) | null = null;
   let unlistenCheckUpdates: (() => void) | null = null;
 
   onMount(async () => {
@@ -29,23 +33,25 @@
       keyboard.init();
       updater.checkForUpdates();
       void useFavourites().reload();
+      void startTasksRefresh();
     } finally {
       await currentWindow.show();
     }
-
-    unlistenClose = await currentWindow.onCloseRequested(async () => {
-      await tracking.stopTracking();
-    });
 
     unlistenCheckUpdates = await listen("check-for-updates", () => {
       updater.checkForUpdates(true);
     });
   });
 
+  $effect(() => {
+    tasksRefreshGeneration();
+    void tracking.refresh();
+  });
+
   onDestroy(() => {
+    stopTasksRefresh();
     tracking.cleanup();
     keyboard.cleanup();
-    unlistenClose?.();
     unlistenCheckUpdates?.();
   });
 </script>

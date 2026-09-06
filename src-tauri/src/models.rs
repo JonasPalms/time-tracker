@@ -1,13 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Task {
-    pub id: i64,
-    pub name: String,
-    pub total_seconds: i64,
-    pub created_at: String,
-    pub note: Option<String>,
-}
+pub use time_tracker_core::Task;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Favourite {

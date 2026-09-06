@@ -48,6 +48,11 @@
   const isTracking = $derived(tracking.currentTask?.id === taskId);
 
   $effect(() => {
+    if (!isTracking || !task) return;
+    timeValue = formatTime(task.total_seconds + tracking.elapsedSeconds);
+  });
+
+  $effect(() => {
     taskId;
     initialTask;
 

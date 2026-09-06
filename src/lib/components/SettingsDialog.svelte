@@ -6,9 +6,11 @@
   import { useFavourites } from "$lib/hooks/favourites.svelte";
   import { useModalState } from "$lib/hooks/modal-state.svelte";
   import { formatTimeHuman } from "$lib/utils/time";
+  import SettingsMcpPanel from "./SettingsMcpPanel.svelte";
   import { Plus, Trash2, Check, X } from "@lucide/svelte";
 
   const MODAL_ID = "settings-dialog";
+  type SettingsTab = "general" | "mcp";
 
   let {
     open = $bindable(false),
@@ -20,7 +22,8 @@
   const favouritesContext = useFavourites();
   const modalState = useModalState();
 
-  let state = $state({
+  let tab = $state<SettingsTab>("general");
+  let favouriteForm = $state({
     showAddFavourite: false,
     newFavourite: {
       name: "",
@@ -44,21 +47,24 @@
   });
 
   function cancelAddFavourite() {
-    state.showAddFavourite = false;
-    state.newFavourite.name = "";
-    state.newFavourite.minutes = null;
+    favouriteForm.showAddFavourite = false;
+    favouriteForm.newFavourite.name = "";
+    favouriteForm.newFavourite.minutes = null;
   }
 
   async function handleCreateFavourite(e: Event) {
     e.preventDefault();
     if (
-      !state.newFavourite.name.trim() ||
-      state.newFavourite.minutes === null ||
-      state.newFavourite.minutes <= 0
+      !favouriteForm.newFavourite.name.trim() ||
+      favouriteForm.newFavourite.minutes === null ||
+      favouriteForm.newFavourite.minutes <= 0
     )
       return;
 
-    await favouritesContext.add(state.newFavourite.name.trim(), state.newFavourite.minutes * 60);
+    await favouritesContext.add(
+      favouriteForm.newFavourite.name.trim(),
+      favouriteForm.newFavourite.minutes * 60
+    );
     cancelAddFavourite();
   }
 
@@ -73,158 +79,195 @@
 </script>
 
 <Dialog.Root bind:open>
-  <Dialog.Content class="sm:max-w-xl bg-surface border-surface-hover">
+  <Dialog.Content class="min-w-0 overflow-hidden sm:max-w-2xl bg-surface border-surface-hover">
     <Dialog.Header>
       <Dialog.Title>Settings</Dialog.Title>
       <Dialog.Description>Customize your time tracker preferences.</Dialog.Description>
     </Dialog.Header>
 
-    <div class="py-4">
-      <!-- Theme Setting -->
-      <div class="space-y-3">
-        <h3 class="text-lg font-medium">Appearance</h3>
-        <div class="rounded-lg divide-y divide-surface-hover">
-          <div class="flex items-center justify-between py-3">
-            <div>
-              <div class="font-medium text-on-surface-muted">Theme</div>
-            </div>
-            <button
-              class="relative w-16 h-9 rounded-full transition-colors {theme.isDark
-                ? 'bg-accent'
-                : 'bg-on-surface/20'}"
-              onclick={theme.toggleTheme}
-              aria-label="Toggle theme"
-            >
-              <span
-                class="absolute top-1 left-1 w-7 h-7 rounded-full bg-surface-raised shadow-md transition-transform flex items-center justify-center {theme.isDark
-                  ? 'translate-x-7'
-                  : 'translate-x-0'}"
-              >
-                {theme.isDark ? "🌙" : "☀️"}
-              </span>
-            </button>
-          </div>
+    <div
+      class="flex gap-1 rounded-lg bg-surface-raised p-1"
+      role="tablist"
+      aria-label="Settings sections"
+    >
+      <button
+        type="button"
+        role="tab"
+        aria-selected={tab === "general"}
+        class="flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors {tab ===
+        'general'
+          ? 'bg-surface text-on-surface shadow-xs'
+          : 'text-on-surface-muted hover:text-on-surface'}"
+        onclick={() => (tab = "general")}
+      >
+        General
+      </button>
+      <button
+        type="button"
+        role="tab"
+        aria-selected={tab === "mcp"}
+        class="flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors {tab === 'mcp'
+          ? 'bg-surface text-on-surface shadow-xs'
+          : 'text-on-surface-muted hover:text-on-surface'}"
+        onclick={() => (tab = "mcp")}
+      >
+        MCP
+      </button>
+    </div>
 
-          <div class="flex items-center justify-between gap-4 py-3">
-            <div class="space-y-1">
-              <div class="font-medium text-on-surface-muted">Accent color</div>
-              <div class="text-sm text-on-surface-muted">
-                Updates highlights, focus states, and active controls.
-              </div>
-            </div>
-
-            <div class="flex items-center gap-3">
-              <label
-                class="relative h-9 w-9 shrink-0 overflow-hidden rounded-md border border-surface-hover bg-surface-raised shadow-xs"
-                aria-label="Accent color"
-              >
-                <span
-                  class="pointer-events-none absolute inset-0"
-                  style={`background-color: ${theme.accentColor}`}
-                ></span>
-                <input
-                  type="color"
-                  value={theme.accentColor}
-                  oninput={handleAccentColorInput}
-                  class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-                  aria-label="Pick accent color"
-                />
-              </label>
-
-              <div class="w-18 text-right font-mono text-sm text-on-surface-muted uppercase">
-                {theme.accentColor}
-              </div>
-
-              <Button variant="ghost" size="sm" onclick={theme.resetAccentColor}>
-                {theme.hasCustomAccent ? "Reset" : "Default"}
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Favourites Section -->
-      <div class="space-y-3 mt-6">
-        <h3 class="text-lg font-medium border-b border-muted pb-2">Favourites</h3>
-        {#if favouritesContext.favourites.length === 0}
-          <div class="text-sm text-on-surface-muted">
-            No favourites yet. Favourites will appear in the task input dropdown for quick access.
-          </div>
-        {:else}
-          <div class="space-y-2">
-            {#each favouritesContext.favourites as favourite, index (favourite.id)}
-              <div class="flex gap-2 items-stretch">
-                <div
-                  class="flex-1 flex items-center justify-between py-2 pl-4 pr-3 rounded-lg bg-surface-raised transition-colors"
+    <div class="min-w-0 py-4">
+      {#if tab === "mcp"}
+        <SettingsMcpPanel />
+      {:else}
+        <div>
+          <!-- Theme Setting -->
+          <div class="space-y-3">
+            <h3 class="text-lg font-medium">Appearance</h3>
+            <div class="rounded-lg divide-y divide-surface-hover">
+              <div class="flex items-center justify-between py-3">
+                <div>
+                  <div class="font-medium text-on-surface-muted">Theme</div>
+                </div>
+                <button
+                  class="relative w-16 h-9 rounded-full transition-colors {theme.isDark
+                    ? 'bg-accent'
+                    : 'bg-on-surface/20'}"
+                  onclick={theme.toggleTheme}
+                  aria-label="Toggle theme"
                 >
-                  <div>
-                    <span class="font-medium">{favourite.name}</span>
-                    <span class="ml-2 text-sm text-on-surface-muted"
-                      >{formatTimeHuman(favourite.duration_seconds)}</span
-                    >
-                  </div>
-                  <Button
-                    onclick={() => handleDeleteFavourite(favourite.id)}
-                    variant="ghost"
-                    size="icon"
-                    class="text-on-surface-muted hover:text-red-500"
-                    aria-label="Delete favourite"
+                  <span
+                    class="absolute top-1 left-1 w-7 h-7 rounded-full bg-surface-raised shadow-md transition-transform flex items-center justify-center {theme.isDark
+                      ? 'translate-x-7'
+                      : 'translate-x-0'}"
                   >
-                    <Trash2 class="w-4 h-4" />
+                    {theme.isDark ? "🌙" : "☀️"}
+                  </span>
+                </button>
+              </div>
+
+              <div class="flex items-center justify-between gap-4 py-3">
+                <div class="space-y-1">
+                  <div class="font-medium text-on-surface-muted">Accent color</div>
+                  <div class="text-sm text-on-surface-muted">
+                    Updates highlights, focus states, and active controls.
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                  <label
+                    class="relative h-9 w-9 shrink-0 overflow-hidden rounded-md border border-surface-hover bg-surface-raised shadow-xs"
+                    aria-label="Accent color"
+                  >
+                    <span
+                      class="pointer-events-none absolute inset-0"
+                      style={`background-color: ${theme.accentColor}`}
+                    ></span>
+                    <input
+                      type="color"
+                      value={theme.accentColor}
+                      oninput={handleAccentColorInput}
+                      class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                      aria-label="Pick accent color"
+                    />
+                  </label>
+
+                  <div class="w-18 text-right font-mono text-sm text-on-surface-muted uppercase">
+                    {theme.accentColor}
+                  </div>
+
+                  <Button variant="ghost" size="sm" onclick={theme.resetAccentColor}>
+                    {theme.hasCustomAccent ? "Reset" : "Default"}
                   </Button>
                 </div>
-                {#if index === favouritesContext.favourites.length - 1 && !state.showAddFavourite}
-                  <div>
-                    <Button
-                      onclick={() => (state.showAddFavourite = true)}
-                      class="h-full rounded-lg bg-surface-raised hover:bg-surface-hover transition-colors text-on-surface-muted hover:text-on-surface"
-                      aria-label="Add favourite"
-                      variant="ghost"
+              </div>
+            </div>
+          </div>
+
+          <!-- Favourites Section -->
+          <div class="space-y-3 mt-6">
+            <h3 class="text-lg font-medium border-b border-muted pb-2">Favourites</h3>
+            {#if favouritesContext.favourites.length === 0}
+              <div class="text-sm text-on-surface-muted">
+                No favourites yet. Favourites will appear in the task input dropdown for quick
+                access.
+              </div>
+            {:else}
+              <div class="space-y-2">
+                {#each favouritesContext.favourites as favourite, index (favourite.id)}
+                  <div class="flex gap-2 items-stretch">
+                    <div
+                      class="flex-1 flex items-center justify-between py-2 pl-4 pr-3 rounded-lg bg-surface-raised transition-colors"
                     >
-                      <Plus class="w-4 h-4" />
-                    </Button>
+                      <div>
+                        <span class="font-medium">{favourite.name}</span>
+                        <span class="ml-2 text-sm text-on-surface-muted"
+                          >{formatTimeHuman(favourite.duration_seconds)}</span
+                        >
+                      </div>
+                      <Button
+                        onclick={() => handleDeleteFavourite(favourite.id)}
+                        variant="ghost"
+                        size="icon"
+                        class="text-on-surface-muted hover:text-red-500"
+                        aria-label="Delete favourite"
+                      >
+                        <Trash2 class="w-4 h-4" />
+                      </Button>
+                    </div>
+                    {#if index === favouritesContext.favourites.length - 1 && !favouriteForm.showAddFavourite}
+                      <div>
+                        <Button
+                          onclick={() => (favouriteForm.showAddFavourite = true)}
+                          class="h-full rounded-lg bg-surface-raised hover:bg-surface-hover transition-colors text-on-surface-muted hover:text-on-surface"
+                          aria-label="Add favourite"
+                          variant="ghost"
+                        >
+                          <Plus class="w-4 h-4" />
+                        </Button>
+                      </div>
+                    {/if}
+                  </div>
+                {/each}
+
+                {#if favouriteForm.showAddFavourite}
+                  <div class="p-4 rounded-lg bg-surface-raised">
+                    <form onsubmit={handleCreateFavourite} class="flex gap-2">
+                      <Input
+                        type="text"
+                        placeholder="Name"
+                        bind:value={favouriteForm.newFavourite.name}
+                        class="flex-1 bg-surface-raised border-surface-hover h-9"
+                      />
+                      <Input
+                        type="number"
+                        min="1"
+                        placeholder="Min"
+                        bind:value={favouriteForm.newFavourite.minutes}
+                        class="w-20 bg-surface-raised border-surface-hover h-9"
+                      />
+                      <button
+                        type="submit"
+                        class="p-2 h-9 rounded-md hover:bg-surface-hover text-accent hover:text-accent transition-colors"
+                        aria-label="Add favourite"
+                      >
+                        <Check class="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onclick={cancelAddFavourite}
+                        class="p-2 rounded-md hover:bg-surface-hover text-on-surface-muted hover:text-red-500 transition-colors"
+                        aria-label="Cancel"
+                      >
+                        <X class="w-4 h-4" />
+                      </button>
+                    </form>
                   </div>
                 {/if}
               </div>
-            {/each}
-
-            {#if state.showAddFavourite}
-              <div class="p-4 rounded-lg bg-surface-raised">
-                <form onsubmit={handleCreateFavourite} class="flex gap-2">
-                  <Input
-                    type="text"
-                    placeholder="Name"
-                    bind:value={state.newFavourite.name}
-                    class="flex-1 bg-surface-raised border-surface-hover h-9"
-                  />
-                  <Input
-                    type="number"
-                    min="1"
-                    placeholder="Min"
-                    bind:value={state.newFavourite.minutes}
-                    class="w-20 bg-surface-raised border-surface-hover h-9"
-                  />
-                  <button
-                    type="submit"
-                    class="p-2 h-9 rounded-md hover:bg-surface-hover text-accent hover:text-accent transition-colors"
-                    aria-label="Add favourite"
-                  >
-                    <Check class="w-4 h-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onclick={cancelAddFavourite}
-                    class="p-2 rounded-md hover:bg-surface-hover text-on-surface-muted hover:text-red-500 transition-colors"
-                    aria-label="Cancel"
-                  >
-                    <X class="w-4 h-4" />
-                  </button>
-                </form>
-              </div>
             {/if}
           </div>
-        {/if}
-      </div>
+        </div>
+      {/if}
     </div>
 
     <Dialog.Footer>

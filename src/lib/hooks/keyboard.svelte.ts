@@ -1,5 +1,4 @@
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { useTracking } from "./tracking.svelte";
 
 type KeyboardShortcutHandler = (e: KeyboardEvent) => boolean | void | Promise<boolean | void>;
 
@@ -43,12 +42,7 @@ async function handleKeydown(e: KeyboardEvent) {
   }
 }
 
-/**
- * Close the window, stopping any active tracking first
- */
 async function closeWindow() {
-  const tracking = useTracking();
-  await tracking.stopTracking();
   const currentWindow = getCurrentWindow();
   await currentWindow.close();
 }
