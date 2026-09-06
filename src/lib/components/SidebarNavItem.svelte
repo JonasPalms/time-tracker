@@ -18,12 +18,13 @@
     onclick?: () => void;
   } = $props();
 
-  const isActive = $derived(href ? page.url.pathname === href : false);
+  const isActive = $derived(href ? page.route.id === href : false);
 </script>
 
 {#if href}
   <a
     {href}
+    aria-current={isActive ? "page" : undefined}
     class="flex items-center gap-2.5 px-2.5 py-2 rounded-lg transition-colors focus-visible:bg-black/5 focus-visible:text-on-surface dark:focus-visible:bg-white/10
       {isActive
         ? 'bg-black/5 text-on-surface dark:bg-white/10'
