@@ -116,11 +116,9 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             // Task commands
             commands::tasks::get_tasks_for_date,
-            commands::tasks::get_todays_tasks,
             commands::tasks::create_task,
             commands::tasks::update_task_time,
             commands::tasks::add_time_to_task,
-            commands::tasks::adjust_task_time,
             commands::tasks::get_tasks_in_range,
             commands::tasks::update_task_name,
             commands::tasks::delete_task,

@@ -1,9 +1,24 @@
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::time::Duration;
 
 use rusqlite::Connection;
 
 const BUSY_TIMEOUT: Duration = Duration::from_millis(5_000);
+const APP_SUPPORT_RELATIVE: &str = "Library/Application Support/com.jonaspalmsorensen.time-tracker";
+
+pub fn db_file_name(dev: bool) -> &'static str {
+    if dev {
+        "timetracker-dev.db"
+    } else {
+        "timetracker.db"
+    }
+}
+
+pub fn default_db_path(home: impl AsRef<Path>, dev: bool) -> PathBuf {
+    home.as_ref()
+        .join(APP_SUPPORT_RELATIVE)
+        .join(db_file_name(dev))
+}
 
 pub fn open(path: &Path) -> Result<Connection, String> {
     let conn = Connection::open(path).map_err(|error| error.to_string())?;
@@ -40,17 +55,6 @@ pub fn migrate(conn: &Connection) -> Result<(), String> {
         [],
     )
     .map_err(|error| format!("Failed to create tasks table: {error}"))?;
-
-    conn.execute(
-        "CREATE TABLE IF NOT EXISTS favourites (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            duration_seconds INTEGER NOT NULL,
-            created_at TEXT DEFAULT (datetime('now', 'localtime'))
-        )",
-        [],
-    )
-    .map_err(|error| format!("Failed to create favourites table: {error}"))?;
 
     conn.execute(
         "CREATE INDEX IF NOT EXISTS idx_tasks_created_at ON tasks(created_at)",

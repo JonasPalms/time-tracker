@@ -1,6 +1,4 @@
 import { invoke } from "@tauri-apps/api/core";
-import { listen } from "@tauri-apps/api/event";
-import { getCurrentWindow } from "@tauri-apps/api/window";
 
 export interface Task {
   id: number;
@@ -30,13 +28,6 @@ export async function getTasksForDate(date: string): Promise<Task[]> {
 }
 
 /**
- * Get all tasks for today (convenience function)
- */
-export async function getTodaysTasks(): Promise<Task[]> {
-  return invoke<Task[]>("get_todays_tasks");
-}
-
-/**
  * Create a new task
  * @param name - Task name
  * @param date - Date in YYYY-MM-DD format. Task will be created with this date at midnight.
@@ -59,20 +50,6 @@ export async function createTask(
  */
 export async function updateTaskTime(taskId: number, totalSeconds: number): Promise<void> {
   return invoke("update_task_time", { taskId, totalSeconds });
-}
-
-/**
- * Add seconds to a task's total time
- */
-export async function addTimeToTask(taskId: number, secondsToAdd: number): Promise<void> {
-  return invoke("add_time_to_task", { taskId, secondsToAdd });
-}
-
-/**
- * Adjust a task's time (can be positive or negative)
- */
-export async function adjustTaskTime(taskId: number, secondsToAdjust: number): Promise<void> {
-  return invoke("adjust_task_time", { taskId, secondsToAdjust });
 }
 
 /**
@@ -143,19 +120,4 @@ export async function startTracking(taskId: number): Promise<ActiveTracking> {
 
 export async function stopTracking(): Promise<Task | null> {
   return invoke<Task | null>("stop_tracking");
-}
-
-/** Refetch when SQLite changes on disk or the window is focused again. */
-export async function subscribeTasksRefresh(onRefresh: () => void): Promise<() => void> {
-  const unlistenEvent = await listen("tasks-changed", () => {
-    onRefresh();
-  });
-  const unlistenFocus = await getCurrentWindow().onFocusChanged(({ payload: focused }) => {
-    if (focused) onRefresh();
-  });
-
-  return () => {
-    unlistenEvent();
-    unlistenFocus();
-  };
 }

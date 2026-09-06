@@ -1,18 +1,11 @@
 use crate::models::Task;
 use crate::AppState;
-use chrono::Local;
 use tauri::State;
 
 #[tauri::command]
 pub fn get_tasks_for_date(state: State<AppState>, date: String) -> Result<Vec<Task>, String> {
     let conn = state.db.lock().map_err(|e| e.to_string())?;
     time_tracker_core::list_tasks_for_date(&conn, &date)
-}
-
-#[tauri::command]
-pub fn get_todays_tasks(state: State<AppState>) -> Result<Vec<Task>, String> {
-    let today = Local::now().format("%Y-%m-%d").to_string();
-    get_tasks_for_date(state, today)
 }
 
 #[tauri::command]
@@ -45,17 +38,6 @@ pub fn add_time_to_task(
 ) -> Result<(), String> {
     let conn = state.db.lock().map_err(|e| e.to_string())?;
     time_tracker_core::add_task_time(&conn, task_id, seconds_to_add)?;
-    Ok(())
-}
-
-#[tauri::command]
-pub fn adjust_task_time(
-    state: State<AppState>,
-    task_id: i64,
-    seconds_to_adjust: i64,
-) -> Result<(), String> {
-    let conn = state.db.lock().map_err(|e| e.to_string())?;
-    time_tracker_core::add_task_time(&conn, task_id, seconds_to_adjust)?;
     Ok(())
 }
 

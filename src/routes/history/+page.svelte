@@ -1,13 +1,13 @@
 <script lang="ts">
   import AnimatedClock from "$lib/components/AnimatedClock.svelte";
   import EditTaskDialog from "$lib/components/EditTaskDialog.svelte";
+  import { tasksRefreshGeneration } from "$lib/hooks/tasks-refresh.svelte";
   import { useTracking } from "$lib/hooks/tracking.svelte";
-  import { getTasksInRange, subscribeTasksRefresh, type Task } from "$lib/services/tasks";
+  import { getTasksInRange, type Task } from "$lib/services/tasks";
   import { formatTimeHuman } from "$lib/utils/time";
   import Icon from "$lib/components/Icon.svelte";
   import PageHeader from "$lib/components/PageHeader.svelte";
   import { slide } from "svelte/transition";
-  import { onMount } from "svelte";
 
   const tracking = useTracking();
 
@@ -105,19 +105,13 @@
 
   // Load tasks when week changes
   $effect(() => {
-    weekOffset; // Dependency
-    loadWeekTasks();
+    weekOffset;
+    void loadWeekTasks();
   });
 
-  onMount(() => {
-    let unsubscribe: (() => void) | undefined;
-    void subscribeTasksRefresh(() => {
-      void loadWeekTasks({ silent: true });
-    }).then((fn) => {
-      unsubscribe = fn;
-    });
-
-    return () => unsubscribe?.();
+  $effect(() => {
+    if (tasksRefreshGeneration() === 0) return;
+    void loadWeekTasks({ silent: true });
   });
 
   function taskDisplaySeconds(task: Task): number {

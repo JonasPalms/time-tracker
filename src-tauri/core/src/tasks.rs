@@ -147,9 +147,6 @@ pub fn set_task_date(conn: &Connection, task_id: i64, date: &str) -> Result<Task
 }
 
 pub fn delete_task(conn: &Connection, task_id: i64) -> Result<(), String> {
-    conn.execute("DELETE FROM active_tracking WHERE task_id = ?", [task_id])
-        .map_err(|error| error.to_string())?;
-
     let changed = conn
         .execute("DELETE FROM tasks WHERE id = ?", [task_id])
         .map_err(|error| error.to_string())?;

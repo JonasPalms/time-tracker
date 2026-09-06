@@ -1,6 +1,11 @@
 <script lang="ts">
   import "../app.css";
   import { useTheme } from "$lib/hooks/theme.svelte";
+  import {
+    startTasksRefresh,
+    stopTasksRefresh,
+    tasksRefreshGeneration,
+  } from "$lib/hooks/tasks-refresh.svelte";
   import { useTracking } from "$lib/hooks/tracking.svelte";
   import { useFavourites } from "$lib/hooks/favourites.svelte";
   import { useKeyboard } from "$lib/hooks/keyboard.svelte";
@@ -29,7 +34,7 @@
       keyboard.init();
       updater.checkForUpdates();
       void useFavourites().reload();
-      void tracking.init();
+      void startTasksRefresh();
     } finally {
       await currentWindow.show();
     }
@@ -43,7 +48,13 @@
     });
   });
 
+  $effect(() => {
+    tasksRefreshGeneration();
+    void tracking.refresh();
+  });
+
   onDestroy(() => {
+    stopTasksRefresh();
     tracking.cleanup();
     keyboard.cleanup();
     unlistenClose?.();

@@ -2,7 +2,7 @@ mod db;
 mod tasks;
 mod tracking;
 
-pub use db::{migrate, open, open_existing};
+pub use db::{db_file_name, default_db_path, migrate, open, open_existing};
 pub use rusqlite::Connection;
 pub use tasks::{
     add_task_time, create_task, delete_task, get_task_by_id, list_tasks_for_date,

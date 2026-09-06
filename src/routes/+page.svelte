@@ -7,6 +7,7 @@
   import NewTaskInput from "$lib/components/NewTaskInput.svelte";
   import TaskDateNavigation from "$lib/components/TaskDateNavigation.svelte";
   import TaskTableHeader from "$lib/components/TaskTableHeader.svelte";
+  import { tasksRefreshGeneration } from "$lib/hooks/tasks-refresh.svelte";
   import { useTracking } from "$lib/hooks/tracking.svelte";
   import { formatDateForDisplay, addDays } from "$lib/utils/time";
   import {
@@ -17,7 +18,6 @@
     updateTaskTime,
     deleteTask,
     getUniqueTaskNames,
-    subscribeTasksRefresh,
     type Task,
   } from "$lib/services/tasks";
   import { onMount } from "svelte";
@@ -124,16 +124,12 @@
       isLoading = false;
     });
     void loadSuggestions();
+  });
 
-    let unsubscribe: (() => void) | undefined;
-    void subscribeTasksRefresh(() => {
-      void loadTasks();
-      void loadSuggestions();
-    }).then((fn) => {
-      unsubscribe = fn;
-    });
-
-    return () => unsubscribe?.();
+  $effect(() => {
+    if (tasksRefreshGeneration() === 0) return;
+    void loadTasks();
+    void loadSuggestions();
   });
 
   $effect(() => {

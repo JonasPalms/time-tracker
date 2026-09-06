@@ -3,7 +3,6 @@ import {
   getActiveTracking,
   startTracking as startTrackingSession,
   stopTracking as stopTrackingSession,
-  subscribeTasksRefresh,
   type ActiveTracking,
 } from "$lib/services/tasks";
 
@@ -11,8 +10,6 @@ let currentTask = $state<Task | null>(null);
 let startedAtMs = $state<number | null>(null);
 let elapsedSeconds = $state(0);
 let intervalId: ReturnType<typeof setInterval> | null = null;
-let unsubscribeRefresh: (() => void) | undefined;
-let initialized = false;
 
 let isTracking = $derived(currentTask !== null);
 
@@ -61,7 +58,7 @@ function applySession(session: ActiveTracking | null) {
   ensureInterval();
 }
 
-async function syncFromDb() {
+async function refresh() {
   applySession(await getActiveTracking());
 }
 
@@ -76,20 +73,8 @@ async function stopTracking(): Promise<void> {
   applySession(null);
 }
 
-async function init() {
-  if (initialized) return;
-  initialized = true;
-  await syncFromDb();
-  unsubscribeRefresh = await subscribeTasksRefresh(() => {
-    void syncFromDb();
-  });
-}
-
 function cleanup() {
   clearIntervalOnly();
-  unsubscribeRefresh?.();
-  unsubscribeRefresh = undefined;
-  initialized = false;
 }
 
 export function useTracking() {
@@ -105,7 +90,7 @@ export function useTracking() {
     },
     startTracking,
     stopTracking,
-    init,
+    refresh,
     cleanup,
   };
 }
