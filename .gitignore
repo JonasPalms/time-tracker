@@ -11,6 +11,7 @@ src-tauri/gen/
 build/
 .svelte-kit/
 package/
+src-tauri/binaries/
 
 # Env files
 .env
@@ -21,3 +22,7 @@ package/
 # Vite temp files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Personal MCP client configs (not the product install path)
+.cursor/mcp.json
+.codex/config.toml

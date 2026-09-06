@@ -5,6 +5,7 @@ Guidance for coding agents working in this repository.
 ## Project Shape
 
 - Root: desktop app (Svelte 5 + Tauri v2)
+- `src-tauri/mcp-server/`: `timetracker-mcp` binary shipped inside the app
 
 ## High-Signal Rules
 
@@ -19,9 +20,18 @@ Guidance for coding agents working in this repository.
 - Tauri SQLite lives at `~/Library/Application Support/com.jonaspalmsorensen.time-tracker/`.
 - Use local-time timestamps (`YYYY-MM-DD HH:MM:SS`).
 
+## MCP
+
+- Clients launch the `timetracker-mcp` binary next to the app. Do not write other apps' configs.
+- Prod SQLite by default. Local override: copy `.env.example` to `.env` and set `TIMETRACKER_DB=dev` or `prod`.
+- Read-only tools: `list_tasks`, `summarize_range`, `search_tasks`
+- Settings → MCP copies a snippet that points at that binary.
+- Rebuild with `pnpm mcp:bin`. `tauri dev` / `tauri build` do this first.
+
 ## Validation Commands
 
 - Desktop app (repo root): `pnpm check` and `pnpm build`
+- MCP binary: `pnpm mcp:bin`
 
 ## Release Notes
 

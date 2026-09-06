@@ -12,9 +12,9 @@
     }
   },
   "build": {
-    "beforeDevCommand": "pnpm dev",
+    "beforeDevCommand": "pnpm mcp:bin && pnpm dev",
     "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "pnpm build",
+    "beforeBuildCommand": "pnpm mcp:bin && pnpm build",
     "frontendDist": "../build"
   },
   "app": {
@@ -45,6 +45,7 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "externalBin": ["binaries/timetracker-mcp"]
   }
 }

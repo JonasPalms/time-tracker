@@ -129,6 +129,7 @@ pub fn run() {
             commands::favourites::get_favourites,
             commands::favourites::create_favourite,
             commands::favourites::delete_favourite,
+            commands::mcp::get_mcp_binary_path,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
