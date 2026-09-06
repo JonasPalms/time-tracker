@@ -3,10 +3,6 @@
   import { onMount, onDestroy } from "svelte";
   import { useSidebar } from "$lib/hooks/sidebar.svelte";
   import { PanelLeftClose, PanelLeft } from "@lucide/svelte";
-
-  const sidebar = useSidebar();
-
-  // Import traffic light SVGs
   import noFocusIcon from "$lib/icons/traffic-lights/0-all-three-nofocus.svg?raw";
   import closeNormal from "$lib/icons/traffic-lights/1-close-1-normal.svg?raw";
   import closeHover from "$lib/icons/traffic-lights/2-close-2-hover.svg?raw";
@@ -17,6 +13,8 @@
   import maximizeNormal from "$lib/icons/traffic-lights/3-maximize-1-normal.svg?raw";
   import maximizeHover from "$lib/icons/traffic-lights/3-maximize-2-hover.svg?raw";
   import maximizePress from "$lib/icons/traffic-lights/3-maximize-3-press.svg?raw";
+
+  const sidebar = useSidebar();
 
   let isMacOS = $state(false);
   let isWindowFocused = $state(true);
@@ -88,10 +86,10 @@
 </script>
 
 {#if isMacOS}
-  <div class="flex items-center gap-2">
+  <div class="flex items-center gap-3">
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div
-      class="flex items-center gap-2 px-2"
+      class="flex items-center gap-2"
       onmouseenter={() => (isGroupHovered = true)}
       onmouseleave={() => {
         isGroupHovered = false;
@@ -107,7 +105,7 @@
         onmouseleave={() => (closeState = "normal")}
         onmousedown={() => (closeState = "press")}
         onmouseup={() => (closeState = "hover")}
-        class="size-3 focus:outline-none [&_svg]:pointer-events-none"
+        class="size-3 [&_svg]:pointer-events-none"
         aria-label="Close window"
       >
         {@html getCloseIcon()}
@@ -120,7 +118,7 @@
         onmouseleave={() => (minimizeState = "normal")}
         onmousedown={() => (minimizeState = "press")}
         onmouseup={() => (minimizeState = "hover")}
-        class="size-3 focus:outline-none [&_svg]:pointer-events-none"
+        class="size-3 [&_svg]:pointer-events-none"
         aria-label="Minimize window"
       >
         {@html getMinimizeIcon()}
@@ -133,7 +131,7 @@
         onmouseleave={() => (maximizeState = "normal")}
         onmousedown={() => (maximizeState = "press")}
         onmouseup={() => (maximizeState = "hover")}
-        class="size-3 focus:outline-none [&_svg]:pointer-events-none"
+        class="size-3 [&_svg]:pointer-events-none"
         aria-label="Maximize window"
       >
         {@html getMaximizeIcon()}
@@ -143,7 +141,7 @@
     <!-- Sidebar toggle button -->
     <button
       onclick={sidebar.toggle}
-      class="p-1 rounded hover:bg-surface-hover text-on-surface-muted hover:text-on-surface transition-colors"
+      class="p-1 rounded-md hover:bg-black/5 dark:hover:bg-white/10 text-on-surface-muted hover:text-on-surface transition-colors"
       aria-label={sidebar.hidden ? "Show sidebar" : "Hide sidebar"}
     >
       {#if sidebar.hidden}

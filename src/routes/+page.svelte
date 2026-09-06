@@ -207,8 +207,8 @@
   }
 </script>
 
-<div class="h-full flex flex-col">
-  <section class="shrink-0 px-app pt-4 border-b border-on-surface/10">
+<div class="relative h-full flex flex-col">
+  <section class="shrink-0 px-app pt-page-header">
     <TaskDateNavigation
       {displayDate}
       {isToday}
@@ -216,13 +216,11 @@
       onNextDay={handleNextDay}
       onGoToToday={handleGoToToday}
     />
-
-    <NewTaskInput onAddTask={handleAddTask} {suggestions} />
   </section>
-  <section class="flex-1 overflow-y-auto py-4">
+  <section class="flex-1 overflow-y-auto py-4 pb-24">
     <div class="px-app">
       {#if isLoading}
-        <div class="text-center py-8 text-on-surface-muted">Loading...</div>
+        <div class="text-center py-8 text-on-surface-muted">Loading…</div>
       {:else}
         <table class="w-full border-collapse table-fixed">
           <TaskTableHeader {sortBy} {sortDirection} onToggleSort={toggleSort} />
@@ -260,6 +258,12 @@
       </div>
     </section>
   {/if}
+
+  <NewTaskInput
+    onAddTask={handleAddTask}
+    {suggestions}
+    raised={tracking.currentTask !== null}
+  />
 </div>
 
 <EditTaskDialog bind:open={editDialogOpen} taskId={editTaskId} onTaskChange={handleTaskChange} />

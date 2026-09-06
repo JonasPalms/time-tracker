@@ -18,20 +18,20 @@
 
 <div class="flex items-center gap-3 mb-4">
   <button
-    class="p-2 rounded-lg hover:bg-surface-raised transition-colors"
+    class="p-2 rounded-lg bg-surface-raised hover:bg-surface-hover transition-colors"
     onclick={onPreviousDay}
     aria-label="Previous day"
   >
     <Icon name="chevron-left" class="w-6 h-6" />
   </button>
   <button
-    class="p-2 rounded-lg hover:bg-surface-raised transition-colors"
+    class="p-2 rounded-lg bg-surface-raised hover:bg-surface-hover transition-colors"
     onclick={onNextDay}
     aria-label="Next day"
   >
     <Icon name="chevron-right" class="w-6 h-6" />
   </button>
-  <h1 class="text-2xl ml-2 font-black text-accent">
+  <h1 class="text-2xl ml-2 font-black text-pretty text-accent">
     {displayDate}
   </h1>
   {#if !isToday}

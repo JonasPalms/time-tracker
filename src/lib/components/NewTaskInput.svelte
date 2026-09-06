@@ -1,8 +1,11 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
   import { getCurrentWindow } from "@tauri-apps/api/window";
+  import { Tween } from "svelte/motion";
+  import { backInOut } from "svelte/easing";
   import * as Command from "$lib/components/ui/command/index.js";
   import CommandIcon from "@lucide/svelte/icons/command";
+  import PlusIcon from "@lucide/svelte/icons/plus";
   import { useFavourites } from "$lib/hooks/favourites.svelte";
   import { useKeyboard } from "$lib/hooks/keyboard.svelte";
   import { useModalState } from "$lib/hooks/modal-state.svelte";
@@ -11,9 +14,11 @@
   let {
     onAddTask,
     suggestions = [],
+    raised = false,
   }: {
     onAddTask: (taskName: string, initialSeconds?: number) => void;
     suggestions?: string[];
+    raised?: boolean;
   } = $props();
 
   const NO_SELECTION = "__none__";
@@ -25,17 +30,21 @@
   let commandRef = $state<HTMLDivElement>(null!);
   let commandValue = $state("");
   let isUsingKeyboard = $state(false);
+  let isMacOS = $state(true);
 
   // Favourites from shared context
   const favouritesContext = useFavourites();
   const keyboard = useKeyboard();
   const modalState = useModalState();
+  const lift = Tween.of(() => (raised ? -100 : 0), { duration: 200, easing: backInOut });
 
   // Register Cmd+N shortcut to focus input
   let unregisterShortcut: (() => void) | null = null;
   let unlistenWindowFocus: (() => void) | null = null;
 
   onMount(async () => {
+    isMacOS = navigator.userAgent.toLowerCase().includes("mac");
+
     unregisterShortcut = keyboard.register("focus-new-task", (e) => {
       const isMac = navigator.userAgent.toLowerCase().includes("mac");
       const modKey = isMac ? e.metaKey : e.ctrlKey;
@@ -181,22 +190,36 @@
   }
 </script>
 
-<div class="mb-4">
-  <button
-    type="button"
-    class="group relative w-full rounded-lg bg-surface-raised px-4 py-3 pr-16 text-left text-on-surface outline-none transition-colors focus-visible:ring-2 focus-visible:ring-on-surface/20"
-    aria-haspopup="dialog"
-    aria-expanded={open}
-    onclick={openDialog}
-  >
-    <span class="text-on-surface-muted">What are you working on?</span>
-    <div
-      class="absolute right-5 top-1/2 hidden -translate-y-1/2 items-center gap-1 text-on-surface-muted pointer-events-none group-hover:flex"
+<div
+  class="pointer-events-none absolute right-5 bottom-5 z-20"
+  style="transform: translateY({lift.current}px)"
+>
+  <div class="group pointer-events-auto relative">
+    <button
+      type="button"
+      class="flex size-11 items-center justify-center rounded-full bg-accent text-on-accent shadow-lg"
+      aria-haspopup="dialog"
+      aria-expanded={open}
+      aria-label="New task"
+      onclick={openDialog}
     >
-      <CommandIcon class="size-4" />
-      <span class="text-md font-medium">N</span>
+      <PlusIcon class="size-6" />
+    </button>
+    <div
+      role="tooltip"
+      class="pointer-events-none absolute right-0 bottom-full mb-2 flex items-center gap-2 whitespace-nowrap rounded-lg bg-stone-900 px-3 py-1.5 text-sm text-white opacity-0 shadow-md transition-opacity delay-0 duration-150 group-hover:opacity-100 group-hover:delay-300 group-focus-within:opacity-100 group-focus-within:delay-300 dark:bg-stone-100 dark:text-stone-900"
+    >
+      <span>New task</span>
+      <span class="inline-flex items-center gap-0.5 text-white/70 dark:text-stone-500" aria-hidden="true">
+        {#if isMacOS}
+          <CommandIcon class="size-3.5" />
+        {:else}
+          <span class="text-xs font-medium">Ctrl</span>
+        {/if}
+        <span class="text-xs font-medium">N</span>
+      </span>
     </div>
-  </button>
+  </div>
 
   <Command.Dialog
     bind:open

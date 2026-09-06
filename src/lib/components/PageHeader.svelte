@@ -7,9 +7,9 @@
     border?: boolean;
   }
 
-  let { children, border = true }: Props = $props();
+  let { children, border = false }: Props = $props();
 </script>
 
-<header class={cn("shrink-0 px-app py-4", border && "border-b border-on-surface/10")}>
+<header class={cn("shrink-0 px-app pt-page-header pb-4", border && "border-b border-on-surface/10")}>
   {@render children()}
 </header>

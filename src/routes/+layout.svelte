@@ -13,13 +13,15 @@
   import { getCurrentWindow } from "@tauri-apps/api/window";
   import { listen } from "@tauri-apps/api/event";
   import { onMount, onDestroy } from "svelte";
-  import WindowControls from "$lib/components/WindowControls.svelte";
   import AppSidebar from "$lib/components/AppSidebar.svelte";
   import UpdateDialog from "$lib/components/UpdateDialog.svelte";
+  import WindowControls from "$lib/components/WindowControls.svelte";
+  import { useSidebar } from "$lib/hooks/sidebar.svelte";
 
   let { children } = $props();
 
   useTheme();
+  const sidebar = useSidebar();
   const tracking = useTracking();
   const keyboard = useKeyboard();
   const updater = useUpdater();
@@ -58,26 +60,25 @@
 
 <div
   id="app-shell"
-  class="relative isolate h-screen flex flex-col bg-surface text-on-surface overflow-hidden rounded-2xl"
+  class="relative isolate h-screen flex bg-stone-200 text-on-surface overflow-hidden rounded-2xl dark:bg-black"
 >
-  <!-- Title bar with window controls -->
-  <header
-    class="shrink-0 h-10 flex items-center px-2 border-b border-border"
+  <div
+    class="absolute inset-x-0 top-0 z-30 flex items-center pt-5 pl-5 pr-2"
     data-tauri-drag-region
   >
-    <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div onmousedown={(e) => e.stopPropagation()}>
-      <WindowControls />
-    </div>
-  </header>
-
-  <!-- Main content area with sidebar -->
-  <div class="flex-1 flex overflow-hidden">
-    <AppSidebar />
-    <main class="flex-1 overflow-hidden">
-      {@render children()}
-    </main>
+    <WindowControls />
   </div>
+
+  <AppSidebar />
+  <main
+    class="relative flex-1 min-w-0 my-2.5 mr-2.5 overflow-hidden rounded-2xl bg-surface pt-5
+      {sidebar.hidden ? 'ml-2' : ''}
+      shadow-[0_0_0_1px_rgba(0,0,0,0.04),0_2px_10px_rgba(0,0,0,0.06)]
+      dark:shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_8px_24px_rgba(0,0,0,0.45)]"
+  >
+    <div class="absolute inset-x-0 top-0 z-10 h-3" data-tauri-drag-region></div>
+    {@render children()}
+  </main>
 </div>
 
 <UpdateDialog
