@@ -1,6 +1,6 @@
 import {
-  clearAccentColor as clearSavedAccentColor,
-  getAccentColor as getSavedAccentColor,
+  clearAccentColor,
+  getAccentColor,
   getTheme,
   setAccentColor as saveAccentColor,
   setTheme,
@@ -8,7 +8,6 @@ import {
 } from "$lib/services/settings";
 import { deriveAccentPalette, getDefaultAccentColor, normalizeHexColor } from "$lib/utils";
 
-// Module-level reactive state - shared globally
 let theme = $state<Theme>("dark");
 let accentColor = $state(getDefaultAccentColor("dark"));
 let hasCustomAccent = $state(false);
@@ -41,27 +40,36 @@ function applyAccent() {
   root.style.setProperty("--accent-hover", palette.accentHover);
 }
 
-async function init() {
-  theme = await getTheme();
-  applyTheme();
+function persist() {
+  setTheme(theme);
+  if (hasCustomAccent) {
+    saveAccentColor(accentColor);
+  } else {
+    clearAccentColor();
+  }
+}
 
-  const savedAccentColor = normalizeHexColor(await getSavedAccentColor());
+function applyResolvedTheme(nextTheme: Theme, savedAccentColor: string | null) {
+  theme = nextTheme;
+  applyTheme();
   hasCustomAccent = savedAccentColor !== null;
   accentColor = savedAccentColor ?? getDefaultAccentColor(theme);
   applyAccent();
 }
 
-async function toggleTheme() {
+applyResolvedTheme(getTheme(), normalizeHexColor(getAccentColor()));
+
+function toggleTheme() {
   theme = theme === "dark" ? "light" : "dark";
-  await setTheme(theme);
   applyTheme();
   if (!hasCustomAccent) {
     accentColor = getDefaultAccentColor(theme);
   }
   applyAccent();
+  persist();
 }
 
-async function setAccentColor(color: string) {
+function setAccentColor(color: string) {
   const normalized = normalizeHexColor(color);
 
   if (!normalized) return;
@@ -69,17 +77,16 @@ async function setAccentColor(color: string) {
   accentColor = normalized;
   hasCustomAccent = true;
   applyAccent();
-  await saveAccentColor(normalized);
+  persist();
 }
 
-async function resetAccentColor() {
+function resetAccentColor() {
   hasCustomAccent = false;
   accentColor = getDefaultAccentColor(theme);
   applyAccent();
-  await clearSavedAccentColor();
+  persist();
 }
 
-// Export a function that returns getters to maintain reactivity
 export function useTheme() {
   return {
     get theme() {
@@ -94,7 +101,6 @@ export function useTheme() {
     get hasCustomAccent() {
       return hasCustomAccent;
     },
-    init,
     toggleTheme,
     setAccentColor,
     resetAccentColor,

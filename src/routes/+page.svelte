@@ -120,8 +120,8 @@
     loadSortPreference();
     hasLoadedSortPreference = true;
     await loadTasks();
-    await loadSuggestions();
     isLoading = false;
+    void loadSuggestions();
   });
 
   $effect(() => {

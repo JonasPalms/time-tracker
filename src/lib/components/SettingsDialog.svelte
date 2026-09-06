@@ -66,9 +66,9 @@
     await favouritesContext.remove(id);
   }
 
-  async function handleAccentColorInput(event: Event) {
+  function handleAccentColorInput(event: Event) {
     const { value } = event.currentTarget as HTMLInputElement;
-    await theme.setAccentColor(value);
+    theme.setAccentColor(value);
   }
 </script>
 

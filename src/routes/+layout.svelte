@@ -14,7 +14,7 @@
 
   let { children } = $props();
 
-  const theme = useTheme();
+  useTheme();
   const tracking = useTracking();
   const keyboard = useKeyboard();
   const updater = useUpdater();
@@ -26,22 +26,20 @@
     const currentWindow = getCurrentWindow();
 
     try {
-      await theme.init();
-      await useFavourites().reload();
       keyboard.init();
-
       updater.checkForUpdates();
-
-      unlistenClose = await currentWindow.onCloseRequested(async () => {
-        await tracking.stopTracking();
-      });
-
-      unlistenCheckUpdates = await listen("check-for-updates", () => {
-        updater.checkForUpdates(true);
-      });
+      void useFavourites().reload();
     } finally {
       await currentWindow.show();
     }
+
+    unlistenClose = await currentWindow.onCloseRequested(async () => {
+      await tracking.stopTracking();
+    });
+
+    unlistenCheckUpdates = await listen("check-for-updates", () => {
+      updater.checkForUpdates(true);
+    });
   });
 
   onDestroy(() => {

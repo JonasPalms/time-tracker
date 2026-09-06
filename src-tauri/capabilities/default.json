@@ -14,7 +14,6 @@
     "core:window:allow-maximize",
     "core:window:allow-toggle-maximize",
     "opener:default",
-    "store:default",
     "core:window:allow-is-maximized",
     "core:window:allow-unmaximize",
     "updater:default",
