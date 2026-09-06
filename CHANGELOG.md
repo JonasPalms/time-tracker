@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-09-06
+
+### Changed
+
+- Replace the title bar with a floating content card, traffic lights in a fixed chrome strip, and a sidebar that is either open or closed
+- Open new tasks from a plus button instead of a fake text field
+- Move the active-task stop button to the left of the tracking card
+
 ## [0.6.0] - 2026-09-06
 
 ### Added
