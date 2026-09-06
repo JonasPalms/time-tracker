@@ -157,24 +157,24 @@
   <PageHeader>
     <div class="flex items-center gap-3">
       <button
-        class="p-2 rounded-lg hover:bg-surface-raised transition-colors"
+        class="p-2 rounded-lg bg-surface-raised hover:bg-surface-hover transition-colors"
         onclick={() => (weekOffset -= 1)}
         aria-label="Previous week"
       >
         <Icon name="chevron-left" class="w-6 h-6" />
       </button>
       <button
-        class="p-2 rounded-lg hover:bg-surface-raised transition-colors disabled:opacity-30"
+        class="p-2 rounded-lg bg-surface-raised hover:bg-surface-hover transition-colors disabled:opacity-30"
         onclick={() => (weekOffset += 1)}
         disabled={weekOffset >= 0}
         aria-label="Next week"
       >
         <Icon name="chevron-right" class="w-6 h-6" />
       </button>
-      <h1 class="text-2xl ml-2 font-black text-accent">
+      <h1 class="text-2xl ml-2 font-black text-pretty text-accent">
         {currentRange()}
       </h1>
-      <span class="ml-auto text-2xl font-black text-white">
+      <span class="ml-auto text-2xl font-black text-on-surface">
         {formatTimeHuman(weekTotal())}
       </span>
     </div>
@@ -184,7 +184,7 @@
   <section class="flex-1 overflow-y-auto pt-2">
     <div class="px-app">
       {#if isLoading}
-        <div class="text-center py-8 text-on-surface-muted">Loading...</div>
+        <div class="text-center py-8 text-on-surface-muted">Loading…</div>
       {:else}
         <div>
           {#each weekDates() as dateStr}

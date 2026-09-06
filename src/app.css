@@ -1,7 +1,8 @@
 @import "./shadcn.css";
 
 @theme {
-  --spacing-app: 1rem;
+  --spacing-app: 0.75rem;
+  --spacing-page-header: 26px;
 }
 
 /*
@@ -9,7 +10,7 @@
  */
 @layer base {
   html {
-    @apply bg-surface text-on-surface rounded-2xl;
+    @apply bg-transparent text-on-surface;
     color-scheme: dark;
   }
 
