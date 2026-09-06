@@ -1,7 +1,7 @@
 use rusqlite::Connection;
 use std::sync::Mutex;
 use tauri::menu::{MenuBuilder, MenuItem, PredefinedMenuItem, SubmenuBuilder};
-use tauri::{Emitter, Manager};
+use tauri::{Emitter, Manager, RunEvent, WindowEvent};
 
 mod commands;
 mod db;
@@ -113,6 +113,11 @@ pub fn run() {
                 }
             }
         })
+        .on_window_event(|window, event| {
+            if let WindowEvent::CloseRequested { .. } = event {
+                commit_active_tracking(window.app_handle());
+            }
+        })
         .invoke_handler(tauri::generate_handler![
             // Task commands
             commands::tasks::get_tasks_for_date,
@@ -135,8 +140,25 @@ pub fn run() {
             commands::tracking::start_tracking,
             commands::tracking::stop_tracking,
         ])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        .expect("error while running tauri application")
+        .run(|app, event| {
+            if let RunEvent::ExitRequested { .. } = event {
+                commit_active_tracking(app);
+            }
+        });
+}
+
+fn commit_active_tracking(app: &tauri::AppHandle) {
+    let Some(state) = app.try_state::<AppState>() else {
+        return;
+    };
+    let Ok(conn) = state.db.lock() else {
+        return;
+    };
+    if let Err(error) = time_tracker_core::stop_tracking(&conn) {
+        eprintln!("TimeTracker failed to stop tracking on exit: {error}");
+    }
 }
 
 #[cfg(target_os = "macos")]

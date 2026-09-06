@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Persist the running timer in SQLite and expose start/stop over MCP
 - Refresh the task list when the database file changes or the window is focused
 
+### Fixed
+
+- Stop the running timer when the window or app closes, from the Rust side
+
 ## [0.5.19] - 2026-09-06
 
 ### Changed

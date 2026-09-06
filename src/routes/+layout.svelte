@@ -24,7 +24,6 @@
   const keyboard = useKeyboard();
   const updater = useUpdater();
 
-  let unlistenClose: (() => void) | null = null;
   let unlistenCheckUpdates: (() => void) | null = null;
 
   onMount(async () => {
@@ -38,10 +37,6 @@
     } finally {
       await currentWindow.show();
     }
-
-    unlistenClose = await currentWindow.onCloseRequested(async () => {
-      await tracking.stopTracking();
-    });
 
     unlistenCheckUpdates = await listen("check-for-updates", () => {
       updater.checkForUpdates(true);
@@ -57,7 +52,6 @@
     stopTasksRefresh();
     tracking.cleanup();
     keyboard.cleanup();
-    unlistenClose?.();
     unlistenCheckUpdates?.();
   });
 </script>
