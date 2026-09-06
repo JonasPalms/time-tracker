@@ -16,6 +16,7 @@
   --secondary-foreground: oklch(0.216 0.006 56.043);
   --muted: theme(colors.stone.200);
   --muted-foreground: theme(colors.stone.500);
+  --surface-elevated: theme(colors.stone.200);
   --accent: theme(colors.amber.600);
   --accent-hover: theme(colors.amber.700);
   --accent-foreground: theme(colors.white);
@@ -51,6 +52,7 @@
   --secondary-foreground: oklch(0.985 0.001 106.423);
   --muted: theme(colors.stone.700);
   --muted-foreground: theme(colors.stone.500);
+  --surface-elevated: theme(colors.stone.800);
   --accent: theme(colors.amber.500);
   --accent-hover: theme(colors.amber.400);
   --accent-foreground: theme(colors.stone.950);
@@ -112,7 +114,7 @@
   /* Custom surface colors mapped to shadcn colors */
   --color-surface: var(--background);
   --color-surface-raised: var(--card);
-  --color-surface-elevated: theme(colors.stone.800);
+  --color-surface-elevated: var(--surface-elevated);
   --color-surface-hover: var(--muted);
   --color-on-surface: var(--foreground);
   --color-on-surface-muted: var(--muted-foreground);
