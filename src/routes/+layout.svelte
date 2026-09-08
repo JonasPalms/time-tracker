@@ -60,7 +60,7 @@
 
 <div
   id="app-shell"
-  class="relative isolate h-screen flex bg-stone-200 text-on-surface overflow-hidden rounded-2xl dark:bg-black"
+  class="relative isolate h-screen flex bg-stone-200 text-on-surface overflow-hidden rounded-window dark:bg-black"
 >
   <div
     class="absolute inset-x-0 top-0 z-30 flex items-center pt-5 pl-5 pr-2"
@@ -71,7 +71,7 @@
 
   <AppSidebar />
   <main
-    class="relative flex-1 min-w-0 my-2.5 mr-2.5 overflow-hidden rounded-2xl bg-surface pt-5
+    class="relative flex-1 min-w-0 my-2.5 mr-2.5 overflow-hidden rounded-panel bg-surface pt-5
       {sidebar.hidden ? 'ml-2' : ''}
       shadow-[0_0_0_1px_rgba(0,0,0,0.04),0_2px_10px_rgba(0,0,0,0.06)]
       dark:shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_8px_24px_rgba(0,0,0,0.45)]"
