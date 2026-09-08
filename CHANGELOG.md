@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.2] - 2026-09-08
+
+### Changed
+
+- Use concentric corner radii on the window shell and the content panel
+- Tighten chrome insets so Settings and the traffic lights sit evenly from the window edge
+- Align the sidebar Home item with the date navigation and match their control height
+
 ## [0.7.1] - 2026-09-06
 
 ### Fixed
