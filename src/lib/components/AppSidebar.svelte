@@ -37,7 +37,7 @@
 >
   <div class="shrink-0 h-[52px]" data-tauri-drag-region></div>
 
-  <nav class="flex-1 flex flex-col gap-0.5 px-2 pt-1 pb-5" data-tauri-drag-region>
+  <nav class="flex-1 flex flex-col gap-0.5 px-2 pt-1 pb-chrome-y" data-tauri-drag-region>
     <SidebarNavItem href="/" icon="home" label="Home" />
     <SidebarNavItem href="/history" icon="clock" label="History" />
 

@@ -3,6 +3,8 @@
 @theme {
   --spacing-app: 0.75rem;
   --spacing-page-header: 26px;
+  --spacing-chrome: 1rem;
+  --spacing-chrome-y: 0.875rem;
   --radius-panel: 0.5rem;
   --radius-window: calc(var(--radius-panel) + 0.625rem);
 }

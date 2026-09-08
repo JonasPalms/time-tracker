@@ -63,7 +63,7 @@
   class="relative isolate h-screen flex bg-stone-200 text-on-surface overflow-hidden rounded-window dark:bg-black"
 >
   <div
-    class="absolute inset-x-0 top-0 z-30 flex items-center pt-5 pl-5 pr-2"
+    class="absolute inset-x-0 top-0 z-30 flex items-center pt-chrome-y pl-chrome pr-2"
     data-tauri-drag-region
   >
     <WindowControls />
